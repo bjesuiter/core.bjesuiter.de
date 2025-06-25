@@ -3,8 +3,7 @@ import Cloudflare from "cloudflare";
 import { env } from "../../../utils/env.ts";
 
 const cfApiClient = new Cloudflare({
-  apiEmail: env.CLOUDFLARE_EMAIL,
-  apiKey: env.CLOUDFLARE_DDNS_API_TOKEN,
+  apiToken: env.CLOUDFLARE_DDNS_API_TOKEN,
 });
 
 /**
