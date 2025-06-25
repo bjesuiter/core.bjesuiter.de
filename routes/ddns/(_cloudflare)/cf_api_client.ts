@@ -1,6 +1,7 @@
 import "cloudflare/shims/web";
 import Cloudflare from "cloudflare";
 import { env } from "../../../utils/env.ts";
+import { err, ok } from "neverthrow";
 
 const cfApiClient = new Cloudflare({
   apiToken: env.CLOUDFLARE_DDNS_API_TOKEN,
