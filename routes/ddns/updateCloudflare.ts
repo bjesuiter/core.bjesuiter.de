@@ -92,21 +92,23 @@ export const handler = async (
   });
 
   // Update auxillary records for synas.hibisk.de, which are served by the same network
-  const auxRecords = [
-    "homeserv1",
-    "immich",
-    "jdownloader.synas",
-    "jellyfin.synas",
-    "plex.synas",
-    "dsm.synas",
-  ].map((r) => `${r}.hibisk.de`);
+  if (forHost === "synas.hibisk.de") {
+    const auxRecords = [
+      "homeserv1",
+      "immich",
+      "jdownloader.synas",
+      "jellyfin.synas",
+      "plex.synas",
+      "dsm.synas",
+    ].map((r) => `${r}.hibisk.de`);
 
-  for (const record of auxRecords) {
-    await updateDnsRecord({
-      zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
-      recordName: record,
-      newIP: ip,
-    });
+    for (const record of auxRecords) {
+      await updateDnsRecord({
+        zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+        recordName: record,
+        newIP: ip,
+      });
+    }
   }
 
   if (cfResponse.content === ip) {
