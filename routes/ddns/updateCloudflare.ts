@@ -1,7 +1,11 @@
 import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
 import { env } from "../../utils/env.ts";
-import { updateDnsRecord } from "./(_cloudflare)/cf_api_client.ts";
+import {
+  createOrUpdateDnsRecord,
+  DDNSUpdateErrors,
+  updateDnsRecord,
+} from "./(_cloudflare)/cf_api_client.ts";
 import { logAuthorizedDDNSUpdateRequest } from "../../utils/kv.ts";
 
 /**
@@ -82,45 +86,59 @@ export const handler = async (
     sourceIp: ctx.remoteAddr.hostname,
   });
 
+  // Assemble records to update
+  const recordsToUpdate = [
+    `${forHost}`,
+  ];
+  if (forHost === "synas.hibisk.de") {
+    recordsToUpdate.push(
+      "homeserv1.hibisk.de",
+      "immich.hibisk.de",
+      "dsm.hibisk.de",
+      "jdownloader.hibisk.de",
+      "jellyfin.hibisk.de",
+      "plex.hibisk.de",
+    );
+  }
+
   // Last Step - change IP Records on Cloudflare
   // https://developers.cloudflare.com/dns/manage-dns-records/how-to/managing-dynamic-ip-addresses/
 
-  const cfResponse = await updateDnsRecord({
-    zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
-    recordName: forHost,
-    newIP: ip,
-  });
+  let allUpdatesOk = true;
+  for (const record of recordsToUpdate) {
+    const result = await createOrUpdateDnsRecord({
+      zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+      recordName: record,
+      newIP: ip,
+    });
 
-  // Update auxillary records for synas.hibisk.de, which are served by the same network
-  if (forHost === "synas.hibisk.de") {
-    const auxRecords = [
-      "homeserv1",
-      "immich",
-      "jdownloader.synas",
-      "jellyfin.synas",
-      "plex.synas",
-      "dsm.synas",
-    ].map((r) => `${r}.hibisk.de`);
-
-    for (const record of auxRecords) {
-      await updateDnsRecord({
-        zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
-        recordName: record,
-        newIP: ip,
-      });
-    }
+    result.match(
+      (message) => console.info(message),
+      (e) => {
+        allUpdatesOk = false;
+        switch (e.type) {
+          case DDNSUpdateErrors.RecordCreationFailed:
+            console.error(
+              `Failed to create DNS record ${forHost} - ${e.innerError}`,
+            );
+            break;
+          case DDNSUpdateErrors.UncatchedCfApiError:
+            console.error(
+              `Failed to update DNS record ${forHost} - ${e.innerError}`,
+            );
+            break;
+          default:
+            console.error(`Failed to update DNS record ${forHost} - ${e}`);
+        }
+      },
+    );
   }
 
-  if (cfResponse.content === ip) {
+  if (allUpdatesOk) {
     return new Response("OK", {
       status: 200,
     });
   } else {
-    console.error(`Failed to update DNS record ${forHost} - ip mismatch`, {
-      targetIp: ip,
-      actualIp: cfResponse.content,
-      cfResponse,
-    });
     return new Response("Internal Server Error", {
       status: 500,
     });

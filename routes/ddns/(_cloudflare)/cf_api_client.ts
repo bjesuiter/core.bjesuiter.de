@@ -100,3 +100,23 @@ export async function createDnsRecord(data: {
       });
     });
 }
+
+export async function createOrUpdateDnsRecord(data: {
+  zoneId: string;
+  recordName: string;
+  newIP: string;
+}) {
+  const { zoneId, recordName, newIP } = data;
+
+  const result = await updateDnsRecord({ zoneId, recordName, newIP });
+
+  if (result.isOk()) {
+    return result;
+  }
+
+  if (result.error.type === DDNSUpdateErrors.RecordDoesNotExist) {
+    return await createDnsRecord({ zoneId, recordName, newIP });
+  }
+
+  return result;
+}
