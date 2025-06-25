@@ -27,20 +27,36 @@ export async function updateDnsRecord(data: {
       ttl: 120,
       type: "A",
       content: newIP,
+    }).catch((e) => {
+      console.error(
+        `Cloudflare Record "${recordName}" IPv4 update failed: ${e}`,
+      );
+      throw e;
     });
+
+    console.info(`Cloudflare Record "${recordName}" updated to IPv4: ${newIP}`);
     return response;
   } catch (err) {
     if (err instanceof Cloudflare.APIError) {
       // error is a known cloudflare api error
       if (err.errors.some((e) => e.code === 81044)) {
-        console.info(`Cloudflare Record: ${recordName} not found, creating...`);
+        console.info(
+          `Cloudflare Record "${recordName}" not found, creating...`,
+        );
         const response = await cfApiClient.dns.records.create({
           zone_id: zoneId,
           name: recordName,
           ttl: 120,
           type: "A",
           content: newIP,
+        }).catch((e) => {
+          console.error(
+            `Cloudflare Record "${recordName}" creation failed: ${e}`,
+          );
+          throw e;
         });
+
+        console.info(`Cloudflare Record "${recordName}" created`);
         return response;
       }
 

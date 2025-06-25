@@ -41,10 +41,6 @@ export const handler = async (
     decodeBase64(authString ?? ""),
   );
   const [username, password] = decodedAuthString.split(":");
-  console.debug("Auth", {
-    username,
-    password,
-  });
   if (
     username !== env.CORE_DDNS_USERNAME || password !== env.CORE_DDNS_PASSWORD
   ) {
