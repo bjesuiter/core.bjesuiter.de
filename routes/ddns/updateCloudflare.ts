@@ -1,10 +1,14 @@
 import { FreshContext } from "$fresh/server.ts";
 
-export const handler = (_req: Request, _ctx: FreshContext): Response => {
+export const handler = async (
+  _req: Request,
+  _ctx: FreshContext,
+): Promise<Response> => {
   console.debug("Request received", {
     credentials: _req.credentials,
     method: _req.method,
     url: _req.url,
+    body: await _req.text(),
   });
   return new Response("", {
     status: 200,
