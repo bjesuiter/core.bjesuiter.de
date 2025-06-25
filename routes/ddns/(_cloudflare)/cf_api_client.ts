@@ -1,6 +1,6 @@
 import "cloudflare/shims/web";
 import Cloudflare from "cloudflare";
-import { env } from "node:process";
+import { env } from "../../../utils/env.ts";
 
 const cfApiClient = new Cloudflare({
   apiEmail: env.CLOUDFLARE_EMAIL,
