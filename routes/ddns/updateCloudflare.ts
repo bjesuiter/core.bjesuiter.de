@@ -34,7 +34,10 @@ export const handler = async (
     });
   }
 
-  const [username, password] = decodeBase64(authString).split(":");
+  const decodedAuthString = new TextDecoder().decode(
+    decodeBase64(authString ?? ""),
+  );
+  const [username, password] = decodedAuthString.split(":");
   console.debug("Auth", {
     username,
     password,
