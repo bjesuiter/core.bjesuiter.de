@@ -2,6 +2,7 @@ import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
 import { env } from "../../utils/env.ts";
 import { updateDnsRecord } from "./(_cloudflare)/cf_api_client.ts";
+import { logAuthorizedDDNSUpdateRequest } from "../../utils/kv.ts";
 
 /**
  * Request URL Example:
@@ -16,19 +17,19 @@ import { updateDnsRecord } from "./(_cloudflare)/cf_api_client.ts";
  * user-agent: Synology DDNS Updater/72806 support@synology.com
  */
 export const handler = async (
-  _req: Request,
-  _ctx: FreshContext,
+  req: Request,
+  ctx: FreshContext,
 ): Promise<Response> => {
   console.debug("Request received", {
-    credentials: _req.credentials,
-    method: _req.method,
-    url: _req.url,
-    headers: Object.fromEntries(_req.headers),
-    body: await _req.text(),
+    credentials: req.credentials,
+    method: req.method,
+    url: req.url,
+    headers: Object.fromEntries(req.headers),
+    body: await req.text(),
   });
 
   // Step 1 - validate authorization
-  const authHeader = _req.headers.get("authorization");
+  const authHeader = req.headers.get("authorization");
   const [authType, authString] = authHeader?.split(" ") ?? [];
   if (authType !== "Basic") {
     return new Response("Unauthorized", {
@@ -53,7 +54,7 @@ export const handler = async (
   }
 
   // Step 2 - validate user agent
-  const userAgent = _req.headers.get("user-agent");
+  const userAgent = req.headers.get("user-agent");
   if (userAgent !== "Synology DDNS Updater/72806 support@synology.com") {
     return new Response("Forbidden", {
       status: 403,
@@ -61,7 +62,7 @@ export const handler = async (
   }
 
   // Step 3 - get the target host
-  const forHost = new URL(_req.url).searchParams.get("forHost");
+  const forHost = new URL(req.url).searchParams.get("forHost");
   if (!forHost) {
     return new Response("Bad Request - missing forHost parameter", {
       status: 400,
@@ -69,12 +70,21 @@ export const handler = async (
   }
 
   // Step 4 - get the IP from the request
-  const ip = new URL(_req.url).searchParams.get("ip");
+  const ip = new URL(req.url).searchParams.get("ip");
   if (!ip) {
     return new Response("Bad Request - missing ip parameter", {
       status: 400,
     });
   }
+
+  // Log the authorized request
+  await logAuthorizedDDNSUpdateRequest({
+    url: req.url,
+    authorized_user: username,
+    forHost,
+    forIp: ip,
+    sourceIp: ctx.remoteAddr.hostname,
+  });
 
   // Last Step - change IP Records on Cloudflare
   // https://developers.cloudflare.com/dns/manage-dns-records/how-to/managing-dynamic-ip-addresses/

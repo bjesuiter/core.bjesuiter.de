@@ -2,20 +2,22 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $_auth_middleware from "./routes/(auth)/_middleware.ts";
+import * as $_auth_users from "./routes/(auth)/users.tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
-import * as $api_joke from "./routes/api/joke.ts";
-import * as $greet_name_ from "./routes/greet/[name].tsx";
+import * as $ddns_updateCloudflare from "./routes/ddns/updateCloudflare.ts";
 import * as $index from "./routes/index.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
+    "./routes/(auth)/_middleware.ts": $_auth_middleware,
+    "./routes/(auth)/users.tsx": $_auth_users,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
-    "./routes/api/joke.ts": $api_joke,
-    "./routes/greet/[name].tsx": $greet_name_,
+    "./routes/ddns/updateCloudflare.ts": $ddns_updateCloudflare,
     "./routes/index.tsx": $index,
   },
   islands: {
