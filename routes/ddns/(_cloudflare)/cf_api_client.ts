@@ -1,15 +1,36 @@
 import "cloudflare/shims/web";
-import Cloudflare from "cloudflare";
+import Cloudflare, { APIError } from "cloudflare";
 import { env } from "../../../utils/env.ts";
 import { err, ok } from "neverthrow";
 
+// init cf api client
 const cfApiClient = new Cloudflare({
   apiToken: env.CLOUDFLARE_DDNS_API_TOKEN,
 });
 
+/* Helper functions*/
+function isCfApiError(err: unknown): err is APIError {
+  return err instanceof Cloudflare.APIError;
+}
+
+function hasSpecificErrorCode(
+  err: APIError,
+  code: number,
+): boolean {
+  return err.errors.some((e) => e.code === code);
+}
+
+export enum DDNSUpdateErrors {
+  RecordDoesNotExist = "RecordDoesNotExist",
+  RecordCreationFailed = "RecordCreationFailed",
+  UncatchedCfApiError = "UncatchedCfApiError",
+}
+
+/*Main functions*/
+
 /**
  * @param data
- *  - zoneId - a cloduflare id for the zone to change
+ *  - zoneId - a cloudflare id for the zone to change
  *  - recordName - the name of the record to change (like "www.example.com")
  *  - the new IPv4 to assign to this record
  * @returns A RecordResponse https://developers.cloudflare.com/api/node/resources/dns/subresources/records/models/record_response/#(schema)
@@ -21,56 +42,61 @@ export async function updateDnsRecord(data: {
 }) {
   const { zoneId, recordName, newIP } = data;
 
-  try {
-    const response = await cfApiClient.dns.records.update(zoneId, {
-      zone_id: zoneId,
-      name: recordName,
-      ttl: 120,
-      type: "A",
-      content: newIP,
-    }).catch((e) => {
+  // try {
+  return await cfApiClient.dns.records.update(zoneId, {
+    zone_id: zoneId,
+    name: recordName,
+    ttl: 120,
+    type: "A",
+    content: newIP,
+  }).then(() => {
+    return ok(`Record ${recordName} updated successfully to IPv4: ${newIP}`);
+  })
+    .catch((e) => {
+      if (isCfApiError(e) && hasSpecificErrorCode(e, 81058)) {
+        return ok("Record already up to date");
+      }
+
+      if (isCfApiError(e) && hasSpecificErrorCode(e, 81044)) {
+        return err({
+          type: DDNSUpdateErrors.RecordDoesNotExist,
+          innerError: e,
+        });
+      }
+
       console.error(
         `Cloudflare Record "${recordName}" IPv4 update failed: ${e}`,
       );
-      throw e;
+      return err({ type: DDNSUpdateErrors.UncatchedCfApiError, innerError: e });
     });
+}
 
-    console.info(`Cloudflare Record "${recordName}" updated to IPv4: ${newIP}`);
-    return response;
-  } catch (err) {
-    if (err instanceof Cloudflare.APIError) {
-      // error is a known cloudflare api error
-      if (err.errors.some((e) => e.code === 81044)) {
-        console.info(
-          `Cloudflare Record "${recordName}" not found, creating...`,
-        );
-        const response = await cfApiClient.dns.records.create({
-          zone_id: zoneId,
-          name: recordName,
-          ttl: 120,
-          type: "A",
-          content: newIP,
-        }).catch((e) => {
-          console.error(
-            `Cloudflare Record "${recordName}" creation failed: ${e}`,
-          );
-          throw e;
-        });
+export async function createDnsRecord(data: {
+  zoneId: string;
+  recordName: string;
+  newIP: string;
+}) {
+  const { zoneId, recordName, newIP } = data;
 
-        console.info(`Cloudflare Record "${recordName}" created`);
-        return response;
-      }
-
-      // error is unknown cloudflare api error
-      console.error(`Cloudflare API Error: 
-        Status: ${err.status}
-        Name: ${err.name}
-        Errors: ${JSON.stringify(err.errors, null, 2)}
-      `);
-    }
-
-    // default handling for unknown errors
-    console.error(err);
-    throw err;
-  }
+  return await cfApiClient.dns.records.create({
+    zone_id: zoneId,
+    name: recordName,
+    ttl: 120,
+    type: "A",
+    content: newIP,
+  })
+    .then(() => {
+      return ok(
+        `Record ${recordName} created successfully with IPv4: ${newIP}`,
+      );
+    })
+    .catch((e) => {
+      console.error(
+        `Cloudflare Record "${recordName}" creation failed: ${e}`,
+      );
+      return err({
+        type: DDNSUpdateErrors.RecordCreationFailed,
+        innerError: e,
+      });
+    });
 }
