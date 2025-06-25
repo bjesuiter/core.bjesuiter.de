@@ -91,12 +91,30 @@ export const handler = async (
     newIP: ip,
   });
 
+  // Update auxillary records for synas.hibisk.de, which are served by the same network
+  const auxRecords = [
+    "homeserv1",
+    "immich",
+    "jdownloader.synas",
+    "jellyfin.synas",
+    "plex.synas",
+    "dsm.synas",
+  ].map((r) => `${r}.hibisk.de`);
+
+  for (const record of auxRecords) {
+    await updateDnsRecord({
+      zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+      recordName: record,
+      newIP: ip,
+    });
+  }
+
   if (cfResponse.content === ip) {
     return new Response("OK", {
       status: 200,
     });
   } else {
-    console.error("Failed to update DNS record - ip mismatch", {
+    console.error(`Failed to update DNS record ${forHost} - ip mismatch`, {
       targetIp: ip,
       actualIp: cfResponse.content,
       cfResponse,
