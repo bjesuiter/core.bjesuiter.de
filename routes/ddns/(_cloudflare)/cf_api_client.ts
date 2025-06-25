@@ -20,13 +20,40 @@ export async function updateDnsRecord(data: {
 }) {
   const { zoneId, recordName, newIP } = data;
 
-  const response = await cfApiClient.dns.records.update(zoneId, {
-    zone_id: zoneId,
-    name: recordName,
-    ttl: 300,
-    type: "A",
-    content: newIP,
-  });
+  try {
+    const response = await cfApiClient.dns.records.update(zoneId, {
+      zone_id: zoneId,
+      name: recordName,
+      ttl: 120,
+      type: "A",
+      content: newIP,
+    });
+    return response;
+  } catch (err) {
+    if (err instanceof Cloudflare.APIError) {
+      // error is a known cloudflare api error
+      if (err.errors.some((e) => e.code === 81044)) {
+        console.info(`Cloudflare Record: ${recordName} not found, creating...`);
+        const response = await cfApiClient.dns.records.create({
+          zone_id: zoneId,
+          name: recordName,
+          ttl: 120,
+          type: "A",
+          content: newIP,
+        });
+        return response;
+      }
 
-  return response;
+      // error is unknown cloudflare api error
+      console.error(`Cloudflare API Error: 
+        Status: ${err.status}
+        Name: ${err.name}
+        Errors: ${JSON.stringify(err.errors, null, 2)}
+      `);
+    }
+
+    // default handling for unknown errors
+    console.error(err);
+    throw err;
+  }
 }
