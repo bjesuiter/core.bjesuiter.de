@@ -1,6 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
 import { env } from "../../utils/env.ts";
+import { updateDnsRecord } from "./(_cloudflare)/cf_api_client.ts";
 
 /**
  * Request URL Example:
@@ -59,7 +60,43 @@ export const handler = async (
     });
   }
 
-  return new Response("", {
-    status: 200,
+  // Step 3 - get the target host
+  const forHost = new URL(_req.url).searchParams.get("forHost");
+  if (!forHost) {
+    return new Response("Bad Request - missing forHost parameter", {
+      status: 400,
+    });
+  }
+
+  // Step 4 - get the IP from the request
+  const ip = new URL(_req.url).searchParams.get("ip");
+  if (!ip) {
+    return new Response("Bad Request - missing ip parameter", {
+      status: 400,
+    });
+  }
+
+  // Last Step - change IP Records on Cloudflare
+  // https://developers.cloudflare.com/dns/manage-dns-records/how-to/managing-dynamic-ip-addresses/
+
+  const cfResponse = await updateDnsRecord({
+    zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+    recordName: forHost,
+    newIP: ip,
   });
+
+  if (cfResponse.content === ip) {
+    return new Response("OK", {
+      status: 200,
+    });
+  } else {
+    console.error("Failed to update DNS record - ip mismatch", {
+      targetIp: ip,
+      actualIp: cfResponse.content,
+      cfResponse,
+    });
+    return new Response("Internal Server Error", {
+      status: 500,
+    });
+  }
 };
