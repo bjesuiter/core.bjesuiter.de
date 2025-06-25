@@ -1,5 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
+import { env } from "../../utils/env.ts";
 
 /**
  * Request URL Example:
@@ -42,11 +43,13 @@ export const handler = async (
     username,
     password,
   });
-  //   if (username !== "ddns" || password !== "ddns") {
-  //     return new Response("Unauthorized", {
-  //       status: 401,
-  //     });
-  //   }
+  if (
+    username !== env.CORE_DDNS_USERNAME || password !== env.CORE_DDNS_PASSWORD
+  ) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
 
   // Step 2 - validate user agent
   const userAgent = _req.headers.get("user-agent");
