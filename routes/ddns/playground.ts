@@ -8,5 +8,9 @@ export default defineRoute(async (req, ctx) => {
     recordName: "test.hibisk.de",
   });
 
+  if (recordId.isErr()) {
+    console.error(recordId.error);
+  }
+
   return new Response(JSON.stringify(recordId));
 });
