@@ -22,6 +22,7 @@ function hasSpecificErrorCode(
 
 export enum DDNSUpdateErrors {
   RecordDoesNotExist = "RecordDoesNotExist",
+  RecordAlreadyExists = "RecordAlreadyExists",
   RecordCreationFailed = "RecordCreationFailed",
   UncatchedCfApiError = "UncatchedCfApiError",
 }
@@ -85,8 +86,20 @@ export async function updateDnsRecord(data: {
 }) {
   const { zoneId, recordName, newIP } = data;
 
-  // try {
-  return await cfApiClient.dns.records.update(zoneId, {
+  const recordIdResult = await findDnsRecordId({ zoneId, recordName });
+
+  if (recordIdResult.isErr()) {
+    return recordIdResult;
+  }
+
+  if (recordIdResult.value === undefined) {
+    return err({
+      type: DDNSUpdateErrors.RecordDoesNotExist,
+      innerError: undefined,
+    });
+  }
+
+  return await cfApiClient.dns.records.update(recordIdResult.value, {
     zone_id: zoneId,
     name: recordName,
     ttl: 120,
@@ -120,6 +133,15 @@ export async function createDnsRecord(data: {
   newIP: string;
 }) {
   const { zoneId, recordName, newIP } = data;
+
+  const recordIdResult = await findDnsRecordId({ zoneId, recordName });
+
+  if (recordIdResult.isOk()) {
+    return err({
+      type: DDNSUpdateErrors.RecordAlreadyExists,
+      innerError: undefined,
+    });
+  }
 
   return await cfApiClient.dns.records.create({
     zone_id: zoneId,
