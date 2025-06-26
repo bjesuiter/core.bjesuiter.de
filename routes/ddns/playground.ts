@@ -10,7 +10,9 @@ export default defineRoute(async (req, ctx) => {
 
   if (recordId.isErr()) {
     console.error(recordId.error);
+    throw recordId.error.innerError;
   }
 
-  return new Response(JSON.stringify(recordId));
+  console.log(`Playground: Record ID: ${recordId.value}`);
+  return new Response(JSON.stringify(recordId.value, null, 2));
 });
