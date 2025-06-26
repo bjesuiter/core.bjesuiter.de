@@ -28,6 +28,10 @@ export enum DDNSUpdateErrors {
 
 /*Main functions*/
 
+/**
+ * @param data
+ * @returns result(undefined) when not found, result(recordId) if found
+ */
 export async function findDnsRecordId(data: {
   zoneId: string;
   recordName: string;
@@ -41,7 +45,10 @@ export async function findDnsRecordId(data: {
       exact: recordName,
     },
   }).then((response) => {
-    return ok(response.result);
+    if (response.result.length === 0) {
+      return ok(undefined);
+    }
+    return ok(response.result[0]);
   }).catch((e) => {
     return err({ type: DDNSUpdateErrors.UncatchedCfApiError, innerError: e });
   });
