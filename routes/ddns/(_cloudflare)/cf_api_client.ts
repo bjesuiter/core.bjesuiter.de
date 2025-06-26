@@ -115,6 +115,7 @@ export async function createOrUpdateDnsRecord(data: {
   }
 
   if (result.error.type === DDNSUpdateErrors.RecordDoesNotExist) {
+    console.info(`Record ${recordName} does not exist, creating...`);
     return await createDnsRecord({ zoneId, recordName, newIP });
   }
 
