@@ -31,6 +31,23 @@ export enum DDNSUpdateErrors {
 /**
  * @param data
  * @returns result(undefined) when not found, result(recordId) if found
+ *
+ * Example result from cf api:
+ * {
+        id: "1e23bde30c2c8973fcdda3183c6cfd3d",
+        name: "homeserv1.hibisk.de",
+        type: "A",
+        content: "87.167.95.203",
+        proxiable: true,
+        proxied: false,
+        ttl: 120,
+        settings: {},
+        meta: {},
+        comment: null,
+        tags: [],
+        created_on: "2025-06-26T08:22:49.608355Z",
+        modified_on: "2025-06-26T08:22:49.608355Z"
+      }
  */
 export async function findDnsRecordId(data: {
   zoneId: string;
@@ -48,7 +65,7 @@ export async function findDnsRecordId(data: {
     if (response.result.length === 0) {
       return ok(undefined);
     }
-    return ok(response.result[0]);
+    return ok(response.result[0].id);
   }).catch((e) => {
     return err({ type: DDNSUpdateErrors.UncatchedCfApiError, innerError: e });
   });
