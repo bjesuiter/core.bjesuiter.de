@@ -41,7 +41,7 @@ export async function findDnsRecordId(data: {
       exact: recordName,
     },
   }).then((response) => {
-    return ok(response.result[0].id);
+    return ok(response.result);
   }).catch((e) => {
     return err({ type: DDNSUpdateErrors.UncatchedCfApiError, innerError: e });
   });
