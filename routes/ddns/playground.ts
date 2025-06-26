@@ -1,4 +1,5 @@
 import { defineRoute } from "$fresh/server.ts";
+import { record } from "zod/v4";
 import { env } from "../../utils/env.ts";
 import { findDnsRecordId } from "./(_cloudflare)/cf_api_client.ts";
 
@@ -10,9 +11,13 @@ export default defineRoute(async (req, ctx) => {
 
   if (recordId.isErr()) {
     console.error(recordId.error);
-    throw recordId.error.innerError;
+    return new Response("ERROR LOGGED", {
+      status: 500,
+    });
   }
 
-  console.log(`Playground: Record ID: ${recordId.value}`);
-  return new Response(JSON.stringify(recordId.value, null, 2));
+  console.log(`Playground: Record ID:`, recordId.value);
+  return new Response("INFO LOGGED", {
+    status: 200,
+  });
 });
