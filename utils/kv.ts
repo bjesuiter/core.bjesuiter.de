@@ -9,5 +9,8 @@ export async function logAuthorizedDDNSUpdateRequest(data: {
   sourceIp: string;
 }) {
   const forHost = data.forHost;
-  await kv.set(["ddns", "update", forHost, new Date().toISOString()], data);
+  await kv.set(["ddns", "update", forHost, "latest"], {
+    ...data,
+    timestamp: new Date().toISOString(),
+  });
 }
