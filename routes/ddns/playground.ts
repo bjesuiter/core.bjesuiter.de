@@ -5,8 +5,10 @@ import { findDnsRecordId } from "./(_cloudflare)/cf_api_client.ts";
 export default defineRoute(async (req, ctx) => {
   const recordId = await findDnsRecordId({
     zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
-    recordName: "homeserv1.hibisk.de",
+    recordName: "synas.hibisk.de",
   });
+
+  console.info(`Playground: Find record id for "synas.hibisk.de"`);
 
   if (recordId.isErr()) {
     console.error(recordId.error);
