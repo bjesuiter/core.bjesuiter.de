@@ -42,7 +42,7 @@ export async function findDnsRecordId(data: {
     zone_id: zoneId,
     type: "A",
     name: {
-      exact: recordName,
+      startswith: recordName,
     },
   }).then((response) => {
     if (response.result.length === 0) {
