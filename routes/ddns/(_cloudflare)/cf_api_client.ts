@@ -28,6 +28,25 @@ export enum DDNSUpdateErrors {
 
 /*Main functions*/
 
+export async function findDnsRecordId(data: {
+  zoneId: string;
+  recordName: string;
+}) {
+  const { zoneId, recordName } = data;
+
+  return await cfApiClient.dns.records.list({
+    zone_id: zoneId,
+    type: "A",
+    name: {
+      exact: recordName,
+    },
+  }).then((response) => {
+    return ok(response.result[0].id);
+  }).catch((e) => {
+    return err({ type: DDNSUpdateErrors.UncatchedCfApiError, innerError: e });
+  });
+}
+
 /**
  * @param data
  *  - zoneId - a cloudflare id for the zone to change
