@@ -1,7 +1,7 @@
 import { Handlers } from "$fresh/server.ts";
 import { Cookie } from "tough-cookie";
-import { FreshCtxState } from "../types/fresh_ctx_state.type.ts";
-import { deleteSession } from "../utils/auth.ts";
+import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
+import { deleteSession } from "../../utils/auth.ts";
 
 export const handler: Handlers<unknown, FreshCtxState> = {
   POST: async (req, ctx) => {
