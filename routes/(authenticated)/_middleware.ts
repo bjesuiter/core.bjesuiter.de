@@ -1,15 +1,16 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Cookie } from "tough-cookie";
-import { Session } from "../../utils/auth.ts";
-import { User } from "../../utils/user.type.ts";
+import { Session, validateSessionToken } from "../../utils/auth.ts";
+import { kv } from "../../utils/kv.ts";
+import { User, userSchema } from "../../utils/user.type.ts";
 
 interface State {
-  session: Session | undefined;
-  user: User | undefined;
+  session: Session;
+  user: User;
 }
 
 /**
- * TODO: write an authentication middleware
+ * Authentication middleware
  */
 export async function handler(
   req: Request,
@@ -21,9 +22,49 @@ export async function handler(
       return Cookie.parse(cookieString);
     },
   );
-  console.log(reqCookies);
 
-  //TODO: validate the session cookie, if invalid, redirect to login page
+  const sessionTokenCookie = reqCookies?.find(
+    (cookie) => cookie?.key === "session_token",
+  );
+
+  const redirectToLogin = () => {
+    const headers = new Headers();
+    headers.set("location", "/login");
+    return new Response(null, {
+      status: 303,
+      headers,
+    });
+  };
+
+  if (!sessionTokenCookie) {
+    console.log("No session token cookie found - not authenticated");
+    return redirectToLogin();
+  }
+
+  const session = await validateSessionToken(sessionTokenCookie.value);
+  if (!session) {
+    console.log(
+      "Session token is invalid, session expired or session not found - not authenticated",
+    );
+    return redirectToLogin();
+  }
+
+  const userKvResult = await kv.get(["users", session.userEmail]);
+  if (!userKvResult.value) {
+    console.error(`User ${session.userEmail} was not found`);
+    return redirectToLogin();
+  }
+
+  const user = userSchema.safeParse(userKvResult.value);
+  if (!user.success) {
+    console.error(
+      `User ${session.userEmail} was found in kv, but is invalid: ${user.error.message}`,
+    );
+    return redirectToLogin();
+  }
+
+  ctx.state.session = session;
+  ctx.state.user = user.data;
 
   // Step 2 - call next middleware / route handler
   const resp = await ctx.next();

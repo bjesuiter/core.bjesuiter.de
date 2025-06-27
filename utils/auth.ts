@@ -7,6 +7,7 @@ import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 
 export interface Session {
   id: string;
+  userEmail: string;
   secretHash: Uint8Array; // Uint8Array is a byte array
   createdAt: Date;
 }
@@ -24,7 +25,11 @@ const sessionExpiresInSeconds = 60 * 60 * 24; // 1 day
 /**
  * uses deno KV to store the session
  */
-export async function createSession(): Promise<SessionWithToken> {
+export async function createSession({
+  userEmail,
+}: {
+  userEmail: string;
+}): Promise<SessionWithToken> {
   const now = new Date();
 
   const id = generateSecureRandomString();
@@ -38,12 +43,14 @@ export async function createSession(): Promise<SessionWithToken> {
     secretHash,
     createdAt: now,
     token,
+    userEmail,
   };
 
   await kv.set(["sessions", session.id], {
     id,
     secretHash,
     createdAt: now,
+    userEmail,
   });
 
   return session;
