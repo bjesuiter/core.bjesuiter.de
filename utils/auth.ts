@@ -102,7 +102,7 @@ export async function validateSessionToken(
   return session;
 }
 
-async function deleteSession(sessionId: string): Promise<void> {
+export async function deleteSession(sessionId: string): Promise<void> {
   await kv.delete(["sessions", sessionId]);
 }
 

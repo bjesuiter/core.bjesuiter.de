@@ -1,20 +1,16 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Cookie } from "tough-cookie";
-import { Session, validateSessionToken } from "../../utils/auth.ts";
+import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
+import { validateSessionToken } from "../../utils/auth.ts";
 import { kv } from "../../utils/kv.ts";
-import { User, userSchema } from "../../utils/user.type.ts";
-
-interface State {
-  session: Session;
-  user: User;
-}
+import { userSchema } from "../../utils/user.type.ts";
 
 /**
  * Authentication middleware
  */
 export async function handler(
   req: Request,
-  ctx: FreshContext<State>,
+  ctx: FreshContext<FreshCtxState>,
 ) {
   // Step 1 - analyze the request
   const reqCookies = req.headers.get("cookie")?.split(";").map(
@@ -42,7 +38,7 @@ export async function handler(
   }
 
   const session = await validateSessionToken(sessionTokenCookie.value);
-  if (!session) {
+  if (!session || !session.userEmail) {
     console.log(
       "Session token is invalid, session expired or session not found - not authenticated",
     );
