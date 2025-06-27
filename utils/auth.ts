@@ -102,7 +102,7 @@ async function deleteSession(sessionId: string): Promise<void> {
  * Helper functions
  */
 
-function generateSecureRandomString(): string {
+export function generateSecureRandomString(): string {
   // Human readable alphabet (a-z, 0-9 without l, o, 0, 1 to avoid confusion)
   const alphabet = "abcdefghijklmnpqrstuvwxyz23456789";
 

@@ -6,6 +6,7 @@ export const userSchema = z.object({
   label: z.string(),
   email: z.email(),
   password_hash: z.string(),
+  password_salt: z.string(),
 });
 
 export type User = z.infer<typeof userSchema>;
