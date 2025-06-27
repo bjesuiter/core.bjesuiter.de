@@ -29,7 +29,9 @@ export default defineRoute(async (req, ctx) => {
   const password_hash = hash({
     name: "argon2",
     algorithm: "argon2id",
-    memoryCost: 2 ** 16, // 64 MB
+    // NOTE: try to use default memory cost of 19456
+    // https://jsr.io/@stdext/crypto/0.1.0/_wasm/crypto_hash_argon2.generated.d.mts
+    // memoryCost: 2 ** 16, // 64 MB
     timeCost: 3,
     parallelism: 1,
   }, password);
