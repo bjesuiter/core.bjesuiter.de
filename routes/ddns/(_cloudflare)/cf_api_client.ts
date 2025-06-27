@@ -166,7 +166,7 @@ export async function createDnsRecord(data: {
     });
 }
 
-export async function createOrUpdateDnsRecord(data: {
+export async function updateOrCreateDnsRecord(data: {
   zoneId: string;
   recordName: string;
   newIP: string;
