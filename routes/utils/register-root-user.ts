@@ -44,7 +44,7 @@ export default defineRoute(async (req, ctx) => {
     password_salt: salt,
   };
 
-  await kv.set(["users", newUser.id], newUser);
+  await kv.set(["users", newUser.email], newUser);
 
   return new Response("User registered", { status: 200 });
 });
