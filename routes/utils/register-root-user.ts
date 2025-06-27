@@ -24,7 +24,10 @@ export default defineRoute(async (req, ctx) => {
     return new Response("CORE_ROOT_USER_PASSWORD is not set", { status: 500 });
   }
 
-  const password_hash = hash("argon2", password);
+  const password_hash = hash({
+    name: "argon2",
+    algorithm: "argon2i",
+  }, password);
 
   const newUser: User = {
     id: crypto.randomUUID(),
