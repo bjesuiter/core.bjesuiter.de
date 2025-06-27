@@ -1,4 +1,5 @@
 import { kv } from "./kv.ts";
+import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
@@ -119,13 +120,17 @@ export function generateSecureRandomString(): string {
   return id;
 }
 
-async function hashSecret(secret: string): Promise<Uint8Array> {
+export async function hashSecret(
+  secret: string,
+): Promise<Uint8Array> {
   const secretBytes = new TextEncoder().encode(secret);
   const secretHashBuffer = await crypto.subtle.digest("SHA-256", secretBytes);
-  return new Uint8Array(secretHashBuffer);
+  const uint8Array = new Uint8Array(secretHashBuffer);
+
+  return uint8Array;
 }
 
-function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
+export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.byteLength !== b.byteLength) {
     return false;
   }
@@ -134,4 +139,15 @@ function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
     c |= a[i] ^ b[i];
   }
   return c === 0;
+}
+
+export async function hashSecretBase64(secret: string): Promise<string> {
+  const uint8Array = await hashSecret(secret);
+  return encodeBase64(uint8Array);
+}
+
+export function constantTimeEqualBase64(a: string, b: string): boolean {
+  const aBytes = decodeBase64(a);
+  const bBytes = decodeBase64(b);
+  return constantTimeEqual(aBytes, bBytes);
 }
