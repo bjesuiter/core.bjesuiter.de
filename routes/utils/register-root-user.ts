@@ -1,5 +1,5 @@
 import { defineRoute } from "$fresh/server.ts";
-import argon2 from "argon2";
+import { hash, verify } from "@stdext/crypto/hash/argon2";
 import { User } from "../../utils/user.type.ts";
 
 const kv = await Deno.openKv();
@@ -24,12 +24,7 @@ export default defineRoute(async (req, ctx) => {
     return new Response("CORE_ROOT_USER_PASSWORD is not set", { status: 500 });
   }
 
-  const password_hash = await argon2.hash(password, {
-    type: argon2.argon2id,
-    memoryCost: 2 ** 16, // 64 MB
-    timeCost: 3,
-    parallelism: 1,
-  });
+  const password_hash = hash("argon2", password);
 
   const newUser: User = {
     id: crypto.randomUUID(),
