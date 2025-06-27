@@ -2,23 +2,29 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
-import * as $_auth_middleware from "./routes/(auth)/_middleware.ts";
-import * as $_auth_users from "./routes/(auth)/users.tsx";
+import * as $_authenticated_middleware from "./routes/(authenticated)/_middleware.ts";
+import * as $_authenticated_home from "./routes/(authenticated)/home.tsx";
+import * as $_authenticated_users from "./routes/(authenticated)/users.tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
+import * as $ddns_playground from "./routes/ddns/playground.ts";
 import * as $ddns_updateCloudflare from "./routes/ddns/updateCloudflare.ts";
 import * as $index from "./routes/index.tsx";
+import * as $login from "./routes/login.tsx";
 import * as $Counter from "./islands/Counter.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
-    "./routes/(auth)/_middleware.ts": $_auth_middleware,
-    "./routes/(auth)/users.tsx": $_auth_users,
+    "./routes/(authenticated)/_middleware.ts": $_authenticated_middleware,
+    "./routes/(authenticated)/home.tsx": $_authenticated_home,
+    "./routes/(authenticated)/users.tsx": $_authenticated_users,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
+    "./routes/ddns/playground.ts": $ddns_playground,
     "./routes/ddns/updateCloudflare.ts": $ddns_updateCloudflare,
     "./routes/index.tsx": $index,
+    "./routes/login.tsx": $login,
   },
   islands: {
     "./islands/Counter.tsx": $Counter,
