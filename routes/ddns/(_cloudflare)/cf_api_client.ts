@@ -1,11 +1,11 @@
 import "cloudflare/shims/web";
 import Cloudflare, { APIError } from "cloudflare";
-import { env } from "../../../utils/env.ts";
+import { envStore } from "../../../utils/env_store.ts";
 import { err, ok } from "neverthrow";
 
 // init cf api client
 const cfApiClient = new Cloudflare({
-  apiToken: env.CLOUDFLARE_DDNS_API_TOKEN,
+  apiToken: envStore.CLOUDFLARE_DDNS_API_TOKEN,
 });
 
 /* Helper functions*/

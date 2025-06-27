@@ -22,7 +22,7 @@ if (isRunningOnDenoDeploy) {
 }
 
 // init envs with fake values for github actions
-export const env = isRunningOnDenoDeploy
+export const envStore = isRunningOnDenoDeploy
   ? envSchema.parse({ ...Deno.env.toObject() })
   : envSchema.parse({
     CLOUDFLARE_EMAIL: "github_actions",

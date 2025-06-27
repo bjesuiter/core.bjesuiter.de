@@ -1,10 +1,9 @@
 import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
-import { env } from "../../utils/env.ts";
+import { envStore } from "../../utils/env_store.ts";
 import {
   createOrUpdateDnsRecord,
   DDNSUpdateErrors,
-  updateDnsRecord,
 } from "./(_cloudflare)/cf_api_client.ts";
 import { logAuthorizedDDNSUpdateRequest } from "../../utils/kv.ts";
 
@@ -46,7 +45,8 @@ export const handler = async (
   );
   const [username, password] = decodedAuthString.split(":");
   if (
-    username !== env.CORE_DDNS_USERNAME || password !== env.CORE_DDNS_PASSWORD
+    username !== envStore.CORE_DDNS_USERNAME ||
+    password !== envStore.CORE_DDNS_PASSWORD
   ) {
     return new Response("Unauthorized", {
       status: 401,
@@ -107,7 +107,7 @@ export const handler = async (
   let allUpdatesOk = true;
   for (const record of recordsToUpdate) {
     const result = await createOrUpdateDnsRecord({
-      zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+      zoneId: envStore.CLOUDFLARE_ZONE_ID_HIBISK_DE,
       recordName: record,
       newIP: ip,
     });

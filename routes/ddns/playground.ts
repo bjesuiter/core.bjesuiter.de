@@ -1,10 +1,10 @@
 import { defineRoute } from "$fresh/server.ts";
-import { env } from "../../utils/env.ts";
+import { envStore } from "../../utils/env_store.ts";
 import { findDnsRecordId } from "./(_cloudflare)/cf_api_client.ts";
 
 export default defineRoute(async (req, ctx) => {
   const recordId = await findDnsRecordId({
-    zoneId: env.CLOUDFLARE_ZONE_ID_HIBISK_DE,
+    zoneId: envStore.CLOUDFLARE_ZONE_ID_HIBISK_DE,
     recordName: "synas.hibisk.de",
   });
 
