@@ -24,7 +24,9 @@ export default async function UserPage(props: PageProps) {
       <h1>Platform Users (TODO)</h1>
       <ul>
         {users.map((user) => (
-          <li>{user.value.label}&lt;{user.value.email}&gt;</li>
+          <li>
+            {user.value.label}&lt;{user.value.email}&gt; - {user.value.id}
+          </li>
         ))}
       </ul>
     </div>
