@@ -8,7 +8,7 @@
     "build": "deno run -A --unstable-kv dev.ts build",
     "preview": "deno run -A --unstable-kv main.ts",
     "update": "deno run -A --unstable-kv -r https://fresh.deno.dev/update .",
-    "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns.ts"
+    "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns_playground.local.ts"
   },
   "lint": {
     "rules": {
@@ -22,6 +22,7 @@
     "**/_fresh/*"
   ],
   "imports": {
+    "@/": "./",
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
     "cloudflare": "npm:cloudflare@^4.4.1",

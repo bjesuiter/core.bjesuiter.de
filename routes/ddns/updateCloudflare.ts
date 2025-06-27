@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
 import { decodeBase64 } from "@std/encoding";
-import { envStore } from "../../utils/env_store.ts";
+import { envStore } from "@/utils/env_store.ts";
 import {
   DDNSUpdateErrors,
   updateOrCreateDnsRecord,
