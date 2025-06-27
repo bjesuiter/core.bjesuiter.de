@@ -1,5 +1,4 @@
 import { Handlers } from "$fresh/server.ts";
-import { Cookie } from "tough-cookie";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 import { deleteSession } from "../../utils/auth.ts";
 
