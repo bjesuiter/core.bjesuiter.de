@@ -25,6 +25,7 @@
     "@/": "./",
     "$fresh/": "https://deno.land/x/fresh@1.7.3/",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "argon2": "npm:argon2@^0.43.0",
     "cloudflare": "npm:cloudflare@^4.4.1",
     "neverthrow": "npm:neverthrow@^8.2.0",
     "preact": "https://esm.sh/preact@10.22.0",

@@ -12,6 +12,7 @@ import * as $ddns_playground from "./routes/ddns/playground.ts";
 import * as $ddns_updateCloudflare from "./routes/ddns/updateCloudflare.ts";
 import * as $index from "./routes/index.tsx";
 import * as $login from "./routes/login.tsx";
+import * as $utils_register_root_user from "./routes/utils/register-root-user.ts";
 import * as $Counter from "./islands/Counter.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -27,6 +28,7 @@ const manifest = {
     "./routes/ddns/updateCloudflare.ts": $ddns_updateCloudflare,
     "./routes/index.tsx": $index,
     "./routes/login.tsx": $login,
+    "./routes/utils/register-root-user.ts": $utils_register_root_user,
   },
   islands: {
     "./islands/Counter.tsx": $Counter,

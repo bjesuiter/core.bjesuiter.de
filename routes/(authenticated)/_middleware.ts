@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Cookie } from "tough-cookie";
 import { Session } from "../../utils/auth.ts";
-import { User } from "../../utils/user.ts";
+import { User } from "../../utils/user.type.ts";
 
 interface State {
   session: Session | undefined;
