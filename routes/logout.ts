@@ -5,21 +5,13 @@ import { deleteSession } from "../utils/auth.ts";
 
 export const handler: Handlers<unknown, FreshCtxState> = {
   POST: async (req, ctx) => {
-    const session = ctx.state.session;
-    await deleteSession(session.id);
+    await deleteSession(ctx.state.session.id);
 
-    const cookie = new Cookie({
-      key: "session_token",
-      value: "",
-      expires: new Date(0),
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-    });
+    // NOTE: no need to "delete" the session cookie, it will not be valid anyway,
+    // so the app will redirect to the login page.
 
     const headers = new Headers();
     headers.set("location", "/login");
-    headers.set("Set-Cookie", cookie.toString());
     return new Response(null, {
       status: 303,
       headers,
