@@ -24,10 +24,12 @@ export const handler = async (
   ctx: FreshContext,
 ): Promise<Response> => {
   console.debug("Request received", {
-    credentials: req.credentials,
     method: req.method,
     url: req.url,
-    headers: Object.fromEntries(req.headers),
+    // CAUTION: DO not log the "authorization" header! - not logging headers at all for now
+    // headers: Object.fromEntries(
+    //   req.headers,
+    // ),
     body: await req.text(),
   });
 
