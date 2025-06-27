@@ -60,7 +60,7 @@ export const handler: Handlers = {
       return new Response("User or password is incorrect", { status: 401 });
     }
 
-    const session = await createSession();
+    const session = await createSession({ userEmail: email });
     // store cookie like this:
     // https://lucia-auth.com/sessions/basic#:~:text=0%3B%0A%7D-,Client%2Dside%20storage,-For%20most%20websites
     const cookie = new Cookie({
