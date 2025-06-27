@@ -24,9 +24,14 @@ export default defineRoute(async (req, ctx) => {
     return new Response("CORE_ROOT_USER_PASSWORD is not set", { status: 500 });
   }
 
+  // NOTE: Memory limit for deno deploy is 512MB:
+  // https://docs.deno.com/deploy/manual/pricing-and-limits/#memory-allocation
   const password_hash = hash({
     name: "argon2",
-    algorithm: "argon2i",
+    algorithm: "argon2id",
+    memoryCost: 2 ** 16, // 64 MB
+    timeCost: 3,
+    parallelism: 1,
   }, password);
 
   const newUser: User = {
