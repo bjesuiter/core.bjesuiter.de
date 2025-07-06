@@ -1,5 +1,8 @@
-import { kv } from "./kv.ts";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
+import { err, ok, Result } from "neverthrow";
+import { Cookie } from "tough-cookie";
+import { kv } from "./kv.ts";
+import { User, userSchema } from "./user.type.ts";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
@@ -17,6 +20,15 @@ export interface SessionWithToken extends Session {
 }
 
 // Token format for client: <SESSION_ID>.<SESSION_SECRET>
+
+// The error type enum for the auth module
+export enum AuthErrors {
+  NoSessionTokenCookie = "NoSessionTokenCookie",
+  SessionTokenInvalid = "SessionTokenInvalid",
+  SessionNotFoundInDb = "SessionNotFoundInDb",
+  UserNotFoundInDb = "UserNotFoundInDb",
+  UserInvalidInDb = "UserInvalidInDb",
+}
 
 // Settings for this module
 // -------------------------
@@ -104,6 +116,54 @@ export async function validateSessionToken(
 
 export async function deleteSession(sessionId: string): Promise<void> {
   await kv.delete(["sessions", sessionId]);
+}
+
+/**
+ * High-level functions
+ */
+
+export async function isRequestAuthenticated(
+  req: Request,
+): Promise<Result<{ session: Session; user: User }, AuthErrors>> {
+  // Step 1 - analyze the request
+  const reqCookies = req.headers.get("cookie")?.split(";").map(
+    (cookieString) => {
+      return Cookie.parse(cookieString);
+    },
+  );
+
+  const sessionTokenCookie = reqCookies?.find(
+    (cookie) => cookie?.key === "session_token",
+  );
+
+  if (!sessionTokenCookie) {
+    console.log("No session token cookie found - not authenticated");
+    return err(AuthErrors.NoSessionTokenCookie);
+  }
+
+  const session = await validateSessionToken(sessionTokenCookie.value);
+  if (!session || !session.userEmail) {
+    console.log(
+      "Session token is invalid, session expired or session not found - not authenticated",
+    );
+    return err(AuthErrors.SessionTokenInvalid);
+  }
+
+  const userKvResult = await kv.get(["users", session.userEmail]);
+  if (!userKvResult.value) {
+    console.error(`User ${session.userEmail} was not found`);
+    return err(AuthErrors.UserNotFoundInDb);
+  }
+
+  const user = userSchema.safeParse(userKvResult.value);
+  if (!user.success) {
+    console.error(
+      `User ${session.userEmail} was found in kv, but is invalid: ${user.error.message}`,
+    );
+    return err(AuthErrors.UserInvalidInDb);
+  }
+
+  return ok({ session, user: user.data });
 }
 
 /**
