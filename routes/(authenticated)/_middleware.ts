@@ -4,6 +4,7 @@ import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 import { validateSessionToken } from "../../utils/auth.ts";
 import { kv } from "../../utils/kv.ts";
 import { userSchema } from "../../utils/user.type.ts";
+import { redirectToLogin } from "../../utils/routing.ts";
 
 /**
  * Authentication middleware
@@ -22,15 +23,6 @@ export async function handler(
   const sessionTokenCookie = reqCookies?.find(
     (cookie) => cookie?.key === "session_token",
   );
-
-  const redirectToLogin = () => {
-    const headers = new Headers();
-    headers.set("location", "/login");
-    return new Response(null, {
-      status: 303,
-      headers,
-    });
-  };
 
   if (!sessionTokenCookie) {
     console.log("No session token cookie found - not authenticated");
