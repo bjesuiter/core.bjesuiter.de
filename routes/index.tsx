@@ -1,8 +1,11 @@
-export default function Home() {
-  const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID");
-  return (
-    <div class="px-4 py-8 mx-auto bg-[#86efac]">
-      <p>DENO_DEPLOYMENT_ID: {denoDeploymentId}</p>
-    </div>
-  );
+import { isRequestAuthenticated } from "../utils/auth.ts";
+import { redirectToHome, redirectToLogin } from "../utils/routing.ts";
+
+export default async function Home(req: Request) {
+  const authResult = await isRequestAuthenticated(req);
+  if (authResult.isErr()) {
+    return redirectToLogin();
+  }
+
+  return redirectToHome();
 }

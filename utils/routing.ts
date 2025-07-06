@@ -2,14 +2,22 @@
  * Usage from a route handler:
  *
  * ```ts
- * return redirectToLogin();
+ * return redirectTo("/login");
  * ```
  */
-export function redirectToLogin() {
+export function redirectTo(relativePath: string) {
   const headers = new Headers();
-  headers.set("location", "/login");
+  headers.set("location", relativePath);
   return new Response(null, {
     status: 303,
     headers,
   });
+}
+
+export function redirectToLogin() {
+  return redirectTo("/login");
+}
+
+export function redirectToHome() {
+  return redirectTo("/home");
 }
