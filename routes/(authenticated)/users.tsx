@@ -17,18 +17,41 @@ import { User } from "../../utils/user.type.ts";
 export default async function UserPage(props: PageProps) {
   const usersAsyncIterator = kv.list<User>({ prefix: ["users"] });
 
-  const users = await Array.fromAsync(usersAsyncIterator);
+  const users = (await Array.fromAsync(usersAsyncIterator)).map((user) => {
+    return {
+      email: user.value.email,
+      label: user.value.label,
+      id: user.value.id,
+    };
+  });
 
   return (
-    <div>
+    <div class="flex flex-col gap-4">
       <h1>Platform Users (TODO)</h1>
-      <ul>
-        {users.map((user) => (
-          <li>
-            {user.value.label}&lt;{user.value.email}&gt; - {user.value.id}
-          </li>
-        ))}
-      </ul>
+      <table class="min-w-full border-collapse border border-gray-300 ">
+        <thead>
+          <tr>
+            {Object.keys(users[0] ?? {}).map((key) => (
+              <th class="border border-gray-300 px-2 py-1 text-left" key={key}>
+                {key === "id" ? "id (for info only)" : key}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user, idx) => (
+            <tr key={user.id ?? idx}>
+              {Object.entries(user).map(([key, value]) => (
+                <td class="border border-gray-300 px-2 py-1" key={key}>
+                  {typeof value === "object" && value !== null
+                    ? JSON.stringify(value)
+                    : String(value)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
