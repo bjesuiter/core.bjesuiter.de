@@ -1,9 +1,14 @@
 import { PageProps } from "$fresh/server.ts";
+import { Toolbar } from "../../../components/Toolbar.tsx";
+import { NavButton } from "../../../components/NavButton.tsx";
 
 export default async function AddUserPage(props: PageProps) {
   return (
     <div class="flex flex-col gap-4">
-      <h1>Add User</h1>
+      <Toolbar
+        title="Add User"
+        actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
+      />
       <form class="flex flex-col gap-4 max-w-md">
         <label for="email">Email</label>
         <input
