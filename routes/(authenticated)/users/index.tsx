@@ -2,6 +2,7 @@ import { PageProps } from "$fresh/server.ts";
 import { kv } from "@/utils/kv.ts";
 import { User } from "../../../utils/user.type.ts";
 import { Toolbar } from "../../../components/Toolbar.tsx";
+import { NavButton } from "../../../components/NavButton.tsx";
 
 // TODO: merge with main users KV
 // interface User {
@@ -30,14 +31,7 @@ export default async function UserPage(props: PageProps) {
     <div class="flex flex-col gap-4">
       <Toolbar
         title="Platform Users (TODO)"
-        actions={
-          <a
-            href="/users/add"
-            class="bg-cyan-500 text-white px-4 py-2 rounded-md"
-          >
-            Add User
-          </a>
-        }
+        actions={<NavButton href="/users/add">Add User</NavButton>}
       />
 
       <table class="min-w-full border-collapse border border-gray-300 ">
