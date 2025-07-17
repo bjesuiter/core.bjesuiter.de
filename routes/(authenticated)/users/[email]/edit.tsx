@@ -44,7 +44,7 @@ export default async function EditUserPage(
         <input type="text" id="label" name="label" value={user.label} />
 
         <p>TODO: build a password change component</p>
-        <button type="submit">Save</button>
+        <button type="submit" class="button">Save</button>
       </form>
     </Card>
   );
