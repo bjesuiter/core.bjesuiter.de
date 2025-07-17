@@ -28,7 +28,7 @@ export default async function EditUserPage(
       <form
         method="post"
         action={`/users/edit/${user.email}`}
-        class="flex flex-col gap-2 max-w-md mx-auto"
+        class="flex flex-col gap-2 max-w-md"
       >
         <input type="hidden" name="oldEmail" value={user.email} />
         <label for="email">Email</label>

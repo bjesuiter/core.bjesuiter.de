@@ -24,6 +24,26 @@ export async function getUser(
   return ok(user.value);
 }
 
+export enum DeleteUserErrors {
+  UserNotFound = "UserNotFound",
+  UserIsProtected = "UserIsProtected",
+}
+
+export async function deleteUser(
+  email: string,
+): Promise<Result<void, DeleteUserErrors>> {
+  if (email === Deno.env.get("CORE_ROOT_USER_EMAIL")) {
+    return err(DeleteUserErrors.UserIsProtected);
+  }
+
+  const user = await kv.get<User>(["users", email]);
+  if (!user.value) {
+    return err(DeleteUserErrors.UserNotFound);
+  }
+  await kv.delete(["users", email]);
+  return ok(undefined);
+}
+
 export enum RegisterUserErrors {
   UserAlreadyExists = "UserAlreadyExists",
   PasswordTooShort = "PasswordTooShort",

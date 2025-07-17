@@ -56,9 +56,9 @@ export default async function UserPage(props: PageProps) {
                     : String(value)}
                 </td>
               ))}
-              <td class="border border-gray-300 px-2 py-2">
+              <td class="border border-gray-300 px-2 py-2 flex gap-2">
                 <NavButton href={`/users/${user.email}/edit`}>Edit</NavButton>
-                <NavButton href={`/users/delete/${user.email}`}>
+                <NavButton href={`/users/${user.email}/delete`}>
                   Delete
                 </NavButton>
               </td>

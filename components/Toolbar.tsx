@@ -17,7 +17,7 @@ export function Toolbar(
   },
 ) {
   return (
-    <div class="flex flex-row gap-4 justify-between items-center">
+    <div class="flex flex-row gap-4 justify-between items-center mb-4">
       {props.actionsSlotLeft ?? null}
       {props.titleSlot ?? <h1>{props.title}</h1>}
       {props.children ?? <div class="flex-grow" />}
