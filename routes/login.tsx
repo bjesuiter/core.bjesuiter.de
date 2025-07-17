@@ -15,10 +15,11 @@ import { Cookie } from "tough-cookie";
 export const handler: Handlers = {
   /**
    * When /login is requested with GET, simply render the page
+   * @bjesuiter: if no GET handler is defined, the page will auto-render
    */
-  async GET(req, ctx) {
-    return await ctx.render();
-  },
+  // async GET(req, ctx) {
+  //   return await ctx.render();
+  // },
 
   /**
    * When /login is requested with POST, validate the form data and redirect to /home page
