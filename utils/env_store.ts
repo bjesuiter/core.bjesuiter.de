@@ -7,6 +7,7 @@ const envSchema = z.object({
   CORE_ROOT_USER_EMAIL: z.email(),
   CORE_DDNS_USERNAME: z.string(),
   CORE_DDNS_PASSWORD: z.string(),
+  STAGE: z.string().optional(),
 });
 
 // bjesuiter: make sure, these envs are only loaded when running on deno deploy,

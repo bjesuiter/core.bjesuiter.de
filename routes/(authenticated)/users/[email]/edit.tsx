@@ -1,4 +1,5 @@
 import { FreshContext } from "$fresh/server.ts";
+import { Card } from "../../../../components/Card.tsx";
 import { NavButton } from "../../../../components/NavButton.tsx";
 import { Toolbar } from "../../../../components/Toolbar.tsx";
 import { getUser, GetUserErrors } from "../../../../utils/user_utils.ts";
@@ -19,7 +20,7 @@ export default async function EditUserPage(
   const user = userResult.value;
 
   return (
-    <div>
+    <Card>
       <Toolbar
         title={`Edit User ${user.email}`}
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
@@ -45,6 +46,6 @@ export default async function EditUserPage(
         <p>TODO: build a password change component</p>
         <button type="submit">Save</button>
       </form>
-    </div>
+    </Card>
   );
 }
