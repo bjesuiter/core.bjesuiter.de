@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-export function InitPasswordOptions() {
+export function InitPasswordOption() {
   const [initPasswordOptions, setInitPasswordOptions] = useState<
     "generate_password" | "custom_password"
   >("generate_password");
@@ -10,7 +10,7 @@ export function InitPasswordOptions() {
       <div class="flex flex-row gap-4">
         <input
           type="radio"
-          name="password_prefill_options"
+          name="init_password_option"
           id="generate_password"
           value="generate_password"
           checked={initPasswordOptions === "generate_password"}
@@ -22,7 +22,7 @@ export function InitPasswordOptions() {
 
         <input
           type="radio"
-          name="password_prefill_options"
+          name="init_password_option"
           id="custom_password"
           value="custom_password"
           checked={initPasswordOptions === "custom_password"}

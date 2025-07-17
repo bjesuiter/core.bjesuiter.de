@@ -1,7 +1,32 @@
-import { PageProps } from "$fresh/server.ts";
+import { FreshContext, PageProps } from "$fresh/server.ts";
 import { Toolbar } from "../../../components/Toolbar.tsx";
 import { NavButton } from "../../../components/NavButton.tsx";
-import { InitPasswordOptions } from "./(_islands)/InitPasswordOptions.tsx";
+import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
+
+export const handler = {
+  POST: async (req: Request, ctx: FreshContext) => {
+    const formData = await req.formData();
+
+    const initPasswordOption = formData.get("init_password_option");
+
+    switch (initPasswordOption) {
+      case "generate_password":
+        break;
+      case "custom_password":
+        break;
+      default:
+        return new Response(
+          "Invalid init password option, only valid: generate_password, custom_password",
+          {
+            status: 400,
+          },
+        );
+    }
+
+    console.log(formData);
+    return await ctx.render();
+  },
+};
 
 export default async function AddUserPage(props: PageProps) {
   return (
@@ -10,7 +35,11 @@ export default async function AddUserPage(props: PageProps) {
         title="Add User"
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
       />
-      <form class="flex flex-col gap-4 max-w-md">
+      <form
+        class="flex flex-col gap-4 max-w-md"
+        action="/users/add"
+        method="POST"
+      >
         <label for="email">Email</label>
         <input
           type="email"
@@ -31,7 +60,7 @@ export default async function AddUserPage(props: PageProps) {
         />
 
         <label for="password">Password</label>
-        <InitPasswordOptions />
+        <InitPasswordOption />
 
         <button
           type="submit"
