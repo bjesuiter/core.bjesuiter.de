@@ -35,10 +35,15 @@ export const handler = {
 
     const result = await registerUser(email, label, password);
 
-    result.match(
-      (_user) => {
-        return new Response("User registered", {
-          status: 200,
+    return result.match(
+      async (user) => {
+        return await ctx.render({
+          status: "user_added",
+          email: user.email,
+          initPasswordOption,
+          generatedPassword: initPasswordOption === "generate_password"
+            ? password
+            : undefined,
         });
       },
       (error) => {
@@ -76,12 +81,35 @@ export const handler = {
         }
       },
     );
-
-    return await ctx.render();
   },
 };
 
-export default async function AddUserPage(props: PageProps) {
+export default function AddUserPage(props: PageProps) {
+  if (props.data?.status === "user_added") {
+    const { generatedPassword, initPasswordOption } = props.data;
+
+    return (
+      <Card class="flex flex-col gap-4 w-max mx-auto">
+        <Toolbar
+          title="Add User"
+          actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
+          actionsSlotRight={
+            <NavButton href="/users/add">Add Another User</NavButton>
+          }
+        />
+        <p>User added: {props.data.email}</p>
+        {initPasswordOption === "generate_password" && generatedPassword && (
+          <p>
+            Generated password:{" "}
+            <code class="font-mono p-2 rounded-md bg-gray-100">
+              {generatedPassword}
+            </code>
+          </p>
+        )}
+      </Card>
+    );
+  }
+
   return (
     <Card class="flex flex-col gap-4 w-max mx-auto">
       <Toolbar
