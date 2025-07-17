@@ -28,13 +28,19 @@ export async function getUser(
 export enum DeleteUserErrors {
   UserNotFound = "UserNotFound",
   UserIsProtected = "UserIsProtected",
+  UserIsCurrentUser = "UserIsCurrentUser",
 }
 
 export async function deleteUser(
   email: string,
+  currentUserEmail: string,
 ): Promise<Result<void, DeleteUserErrors>> {
   if (email === envStore.CORE_ROOT_USER_EMAIL) {
     return err(DeleteUserErrors.UserIsProtected);
+  }
+
+  if (email === currentUserEmail) {
+    return err(DeleteUserErrors.UserIsCurrentUser);
   }
 
   const user = await kv.get<User>(["users", email]);
