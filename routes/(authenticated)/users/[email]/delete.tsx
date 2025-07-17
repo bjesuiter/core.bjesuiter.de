@@ -1,6 +1,8 @@
 import { FreshContext } from "$fresh/server.ts";
 import { NavButton } from "../../../../components/NavButton.tsx";
 import { deleteUser, DeleteUserErrors } from "../../../../utils/user_utils.ts";
+import { Card } from "../../../../components/Card.tsx";
+import { Toolbar } from "../../../../components/Toolbar.tsx";
 
 export default async function DeleteUserPage(
   _req: Request,
@@ -26,9 +28,12 @@ export default async function DeleteUserPage(
   }
 
   return (
-    <div class="flex flex-col gap-2 max-w-md mx-auto">
+    <Card class="flex flex-col gap-2 max-w-md mx-auto">
+      <Toolbar
+        title={`Delete User ${email}`}
+        actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
+      />
       <p>{message}</p>
-      <NavButton href="/users">Back</NavButton>
-    </div>
+    </Card>
   );
 }
