@@ -103,7 +103,7 @@ export default async function LoginPage(props: PageProps) {
             placeholder="Password"
             required
           />
-          <button type="submit" class="bg-cyan-500 text-white mt-2">
+          <button type="submit" class="button mt-2">
             Login
           </button>
         </form>
