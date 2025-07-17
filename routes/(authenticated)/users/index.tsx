@@ -43,6 +43,7 @@ export default async function UserPage(props: PageProps) {
                 {key === "id" ? "id (for info only)" : key}
               </th>
             ))}
+            <th class="border border-gray-300 px-2 py-1 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -55,6 +56,9 @@ export default async function UserPage(props: PageProps) {
                     : String(value)}
                 </td>
               ))}
+              <td class="border border-gray-300 px-2 py-2">
+                <NavButton href={`/users/edit/${user.email}`}>Edit</NavButton>
+              </td>
             </tr>
           ))}
         </tbody>
