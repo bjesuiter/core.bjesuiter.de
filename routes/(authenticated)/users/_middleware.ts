@@ -2,6 +2,8 @@ import { FreshContext } from "$fresh/server.ts";
 import { FreshCtxState } from "../../../types/fresh_ctx_state.type.ts";
 import { envStore } from "../../../utils/env_store.ts";
 
+const allowedUsers = [envStore.CORE_ROOT_USER_EMAIL, "affenmaster02@gmail.com"];
+
 /**
  * Check who can access the user management UI
  * @param _req
@@ -14,7 +16,7 @@ export async function handler(
 ) {
   const user = ctx.state.user;
 
-  if (user.email !== envStore.CORE_ROOT_USER_EMAIL) {
+  if (!allowedUsers.includes(user.email)) {
     return new Response("Forbidden", { status: 403 });
   }
 
