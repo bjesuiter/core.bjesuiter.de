@@ -10,6 +10,20 @@ export function generateStrongPassword() {
   return password;
 }
 
+export enum GetUserErrors {
+  UserNotFound = "UserNotFound",
+}
+
+export async function getUser(
+  email: string,
+): Promise<Result<User, GetUserErrors>> {
+  const user = await kv.get<User>(["users", email]);
+  if (!user.value) {
+    return err(GetUserErrors.UserNotFound);
+  }
+  return ok(user.value);
+}
+
 export enum RegisterUserErrors {
   UserAlreadyExists = "UserAlreadyExists",
   PasswordTooShort = "PasswordTooShort",
