@@ -14,6 +14,8 @@ const envSchema = z.object({
 
 // bjesuiter own inits
 const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID");
+const stage = Deno.env.get("STAGE");
+
 const isRunningOnDenoDeploy = denoDeploymentId !== undefined &&
   denoDeploymentId.length > 0;
 if (isRunningOnDenoDeploy) {
@@ -21,14 +23,16 @@ if (isRunningOnDenoDeploy) {
     "Detected DENO_DEPLOYMENT_ID - initializing envs",
   );
 }
+const isRunningLocally = stage === "local";
 
 // init envs with fake values for github actions
-export const envStore = isRunningOnDenoDeploy
+export const envStore = isRunningOnDenoDeploy || isRunningLocally
   ? envSchema.parse({ ...Deno.env.toObject() })
   : envSchema.parse({
     CLOUDFLARE_EMAIL: "github_actions",
     CLOUDFLARE_DDNS_API_TOKEN: "github_actions",
     CLOUDFLARE_ZONE_ID_HIBISK_DE: "github_actions",
+    CORE_ROOT_USER_EMAIL: "github_actions",
     CORE_DDNS_USERNAME: "github_actions",
     CORE_DDNS_PASSWORD: "github_actions",
   });
