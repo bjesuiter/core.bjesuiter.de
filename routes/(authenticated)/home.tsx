@@ -12,17 +12,25 @@ export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
         <section>
           <p>Welcome, {props.state.user.label}</p>
           <p>User Email: {props.state.user.email}</p>
-          <p>DENO_DEPLOYMENT_ID: {denoDeploymentId}</p>
+          <p>User ID: {props.state.user.id}</p>
         </section>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          <div class="bg-zinc-100 border-zinc-400 border-2 rounded-md p-4 shadow-sm">
+          <div class="underline underline-offset-4">
             <a href="/users">Manage Users</a>
           </div>
         </div>
 
         <LogoutButton />
       </div>
+
+      <hr class="my-4 border-b border-gray-300" />
+
+      <footer class="text-sm text-gray-500 text-center">
+        <p>
+          DENO_DEPLOYMENT_ID: {denoDeploymentId}
+        </p>
+      </footer>
     </div>
   );
 }
