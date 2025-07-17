@@ -26,9 +26,10 @@ export const handler = {
       );
     }
 
-    let password = (initPasswordOption === "generate_password")
+    const password = initPasswordOption === "generate_password"
       ? generateStrongPassword()
       : formData.get("password");
+
     const email = formData.get("email");
     const label = formData.get("label");
 
