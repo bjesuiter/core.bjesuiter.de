@@ -1,4 +1,5 @@
 import { PageProps } from "$fresh/server.ts";
+import { NavTextLink } from "../../components/NavTextLink.tsx";
 import { LogoutButton } from "../../islands/LogoutButton.tsx";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 
@@ -15,10 +16,13 @@ export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
           <p>User ID: {props.state.user.id}</p>
         </section>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          <div class="underline underline-offset-4">
-            <a href="/users">Manage Users</a>
-          </div>
+        <div class="flex flex-row gap-4">
+          <NavTextLink href="/users">Manage Users</NavTextLink>
+          <NavTextLink href="/sessions">Manage Sessions (TODO)</NavTextLink>
+          <NavTextLink href="/permissions">
+            Manage Permissions (TODO)
+          </NavTextLink>
+          <NavTextLink href="/ddns">Manage DDNS (TODO)</NavTextLink>
         </div>
 
         <LogoutButton />
