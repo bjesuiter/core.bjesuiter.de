@@ -89,7 +89,7 @@ export default function AddUserPage(props: PageProps) {
     const { generatedPassword, initPasswordOption } = props.data;
 
     return (
-      <Card class="flex flex-col gap-4 w-max mx-auto">
+      <Card class="flex flex-col gap-4 w-[30rem] mx-auto">
         <Toolbar
           title="Add User"
           actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
@@ -111,7 +111,7 @@ export default function AddUserPage(props: PageProps) {
   }
 
   return (
-    <Card class="flex flex-col gap-4 w-max mx-auto">
+    <Card class="flex flex-col gap-4 mx-auto w-[30rem]">
       <Toolbar
         title="Add User"
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
@@ -145,7 +145,7 @@ export default function AddUserPage(props: PageProps) {
 
         <button
           type="submit"
-          class="bg-cyan-500 text-white px-4 py-2 rounded-md"
+          class="button"
         >
           Add User
         </button>
