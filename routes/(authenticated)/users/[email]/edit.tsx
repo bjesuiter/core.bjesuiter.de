@@ -20,7 +20,7 @@ export default async function EditUserPage(
   const user = userResult.value;
 
   return (
-    <Card>
+    <Card class="mx-auto w-[30rem]">
       <Toolbar
         title={`Edit User ${user.email}`}
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
