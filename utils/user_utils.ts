@@ -1,8 +1,9 @@
-import { kv } from "./kv.ts";
-import { User } from "./user.type.ts";
-import { generateSecureRandomString, hashSecretBase64 } from "./auth.ts";
 import { err, ok, Result } from "neverthrow";
 import z from "zod/v4";
+import { generateSecureRandomString, hashSecretBase64 } from "./auth.ts";
+import { envStore } from "./env_store.ts";
+import { kv } from "./kv.ts";
+import { User } from "./user.type.ts";
 
 export function generateStrongPassword() {
   // TODO: @bjesuiter: check if this is a good fit for the password generator!
@@ -32,7 +33,7 @@ export enum DeleteUserErrors {
 export async function deleteUser(
   email: string,
 ): Promise<Result<void, DeleteUserErrors>> {
-  if (email === Deno.env.get("CORE_ROOT_USER_EMAIL")) {
+  if (email === envStore.CORE_ROOT_USER_EMAIL) {
     return err(DeleteUserErrors.UserIsProtected);
   }
 

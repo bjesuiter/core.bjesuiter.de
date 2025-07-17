@@ -8,6 +8,7 @@ import * as $_authenticated_home from "./routes/(authenticated)/home.tsx";
 import * as $_authenticated_logout from "./routes/(authenticated)/logout.ts";
 import * as $_authenticated_users_email_delete from "./routes/(authenticated)/users/[email]/delete.tsx";
 import * as $_authenticated_users_email_edit from "./routes/(authenticated)/users/[email]/edit.tsx";
+import * as $_authenticated_users_middleware from "./routes/(authenticated)/users/_middleware.ts";
 import * as $_authenticated_users_add from "./routes/(authenticated)/users/add.tsx";
 import * as $_authenticated_users_index from "./routes/(authenticated)/users/index.tsx";
 import * as $_404 from "./routes/_404.tsx";
@@ -33,6 +34,8 @@ const manifest = {
       $_authenticated_users_email_delete,
     "./routes/(authenticated)/users/[email]/edit.tsx":
       $_authenticated_users_email_edit,
+    "./routes/(authenticated)/users/_middleware.ts":
+      $_authenticated_users_middleware,
     "./routes/(authenticated)/users/add.tsx": $_authenticated_users_add,
     "./routes/(authenticated)/users/index.tsx": $_authenticated_users_index,
     "./routes/_404.tsx": $_404,
