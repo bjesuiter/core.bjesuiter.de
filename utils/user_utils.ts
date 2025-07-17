@@ -2,6 +2,7 @@ import { kv } from "./kv.ts";
 import { User } from "./user.type.ts";
 import { generateSecureRandomString, hashSecretBase64 } from "./auth.ts";
 import { err, ok, Result } from "neverthrow";
+import z from "zod/v4";
 
 export function generateStrongPassword() {
   // TODO: @bjesuiter: check if this is a good fit for the password generator!
@@ -12,24 +13,40 @@ export function generateStrongPassword() {
 export enum RegisterUserErrors {
   UserAlreadyExists = "UserAlreadyExists",
   PasswordTooShort = "PasswordTooShort",
+  EmailInvalid = "EmailInvalid",
+  LabelInvalid = "LabelInvalid",
 }
 
 export async function registerUser(
-  email: string,
-  label: string,
-  password: string,
+  email: string | FormDataEntryValue | null,
+  label: string | FormDataEntryValue | null,
+  password: string | FormDataEntryValue | null,
 ): Promise<Result<User, RegisterUserErrors>> {
-  const user = await kv.get<User>(["users", email]);
+  // Step 1: validate email
+  const parsedEmail = z.email().safeParse(email);
+  if (parsedEmail.success === false) {
+    return err(RegisterUserErrors.EmailInvalid);
+  }
 
+  // Step 2: check if user already exists
+  const user = await kv.get<User>(["users", parsedEmail.data]);
   if (!user.value === null) {
     return err(RegisterUserErrors.UserAlreadyExists);
   }
 
-  if (password.length < 8) {
+  // Step 3: validate password
+  const parsedPassword = z.string().min(8).safeParse(password);
+  if (parsedPassword.success === false) {
     return err(RegisterUserErrors.PasswordTooShort);
   }
 
-  // generate salt for the new user
+  // Step 4: validate label
+  const parsedLabel = z.string().min(1).safeParse(label);
+  if (parsedLabel.success === false) {
+    return err(RegisterUserErrors.LabelInvalid);
+  }
+
+  // Step 5: generate salt for the new user
   const salt = generateSecureRandomString();
   const passwordPlusSalt = password + salt;
 
@@ -39,8 +56,8 @@ export async function registerUser(
 
   const newUser: User = {
     id: crypto.randomUUID(),
-    label,
-    email,
+    label: parsedLabel.data,
+    email: parsedEmail.data,
     password_hash_b64: passwordHashB64,
     password_salt: salt,
   };

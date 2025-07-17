@@ -2,6 +2,13 @@ import { FreshContext, PageProps } from "$fresh/server.ts";
 import { Toolbar } from "../../../components/Toolbar.tsx";
 import { NavButton } from "../../../components/NavButton.tsx";
 import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
+import {
+  generateStrongPassword,
+  registerUser,
+  RegisterUserErrors,
+} from "../../../utils/user_utils.ts";
+import { Err, Ok } from "neverthrow";
+import { z } from "zod/v4";
 
 export const handler = {
   POST: async (req: Request, ctx: FreshContext) => {
@@ -9,21 +16,65 @@ export const handler = {
 
     const initPasswordOption = formData.get("init_password_option");
 
-    switch (initPasswordOption) {
-      case "generate_password":
-        break;
-      case "custom_password":
-        break;
-      default:
-        return new Response(
-          "Invalid init password option, only valid: generate_password, custom_password",
-          {
-            status: 400,
-          },
-        );
+    if (!initPasswordOption) {
+      return new Response(
+        "init_password_option is required: valid values: generate_password, custom_password",
+        {
+          status: 400,
+        },
+      );
     }
 
-    console.log(formData);
+    let password = (initPasswordOption === "generate_password")
+      ? generateStrongPassword()
+      : formData.get("password");
+    const email = formData.get("email");
+    const label = formData.get("label");
+
+    const result = await registerUser(email, label, password);
+
+    result.match(
+      (_user) => {
+        return new Response("User registered", {
+          status: 200,
+        });
+      },
+      (error) => {
+        // TODO: @bjesuiter: add these errors to rendering
+        switch (error) {
+          case RegisterUserErrors.EmailInvalid:
+            return new Response(
+              "E-Mail is required and must be a valid e-mail address",
+              {
+                status: 400,
+              },
+            );
+          case RegisterUserErrors.LabelInvalid:
+            return new Response(
+              "Display Name is required and must be a non-empty string",
+              {
+                status: 400,
+              },
+            );
+          case RegisterUserErrors.PasswordTooShort:
+            return new Response(
+              "Password is required and must be at least 8 characters long",
+              {
+                status: 400,
+              },
+            );
+          case RegisterUserErrors.UserAlreadyExists:
+            return new Response("User already exists", {
+              status: 400,
+            });
+          default:
+            return new Response("An unknown error occurred", {
+              status: 400,
+            });
+        }
+      },
+    );
+
     return await ctx.render();
   },
 };
