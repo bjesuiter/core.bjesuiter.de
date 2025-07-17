@@ -6,6 +6,7 @@ import {
   hashSecretBase64,
 } from "@/utils/auth.ts";
 import { encodeBase64 } from "@std/encoding/base64";
+import { registerUser } from "../../utils/user_utils.ts";
 
 const kv = await Deno.openKv();
 
@@ -29,22 +30,7 @@ export default defineRoute(async (req, ctx) => {
     return new Response("CORE_ROOT_USER_PASSWORD is not set", { status: 500 });
   }
 
-  const salt = generateSecureRandomString();
-  const passPlusSalt = pass + salt;
-
-  // NOTE: Memory limit for deno deploy is 512MB:
-  // https://docs.deno.com/deploy/manual/pricing-and-limits/#memory-allocation
-  const password_hash_b64 = await hashSecretBase64(passPlusSalt);
-
-  const newUser: User = {
-    id: crypto.randomUUID(),
-    label,
-    email,
-    password_hash_b64: password_hash_b64,
-    password_salt: salt,
-  };
-
-  await kv.set(["users", newUser.email], newUser);
+  registerUser(email, label, pass);
 
   return new Response("User registered", { status: 200 });
 });
