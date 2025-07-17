@@ -31,6 +31,7 @@ export default async function UserPage(props: PageProps) {
     <div class="flex flex-col gap-4">
       <Toolbar
         title="Platform Users (TODO)"
+        actionsSlotLeft={<NavButton href="/">Back</NavButton>}
         actionsSlotRight={<NavButton href="/users/add">Add User</NavButton>}
       />
 
