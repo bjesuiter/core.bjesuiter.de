@@ -32,7 +32,7 @@ export const envStore = isRunningOnDenoDeploy || isRunningLocally
     CLOUDFLARE_EMAIL: "github_actions",
     CLOUDFLARE_DDNS_API_TOKEN: "github_actions",
     CLOUDFLARE_ZONE_ID_HIBISK_DE: "github_actions",
-    CORE_ROOT_USER_EMAIL: "github_actions",
+    CORE_ROOT_USER_EMAIL: "github_actions@bjesuiter.de",
     CORE_DDNS_USERNAME: "github_actions",
     CORE_DDNS_PASSWORD: "github_actions",
   });
