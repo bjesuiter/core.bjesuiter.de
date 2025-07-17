@@ -1,6 +1,7 @@
 import { PageProps } from "$fresh/server.ts";
 import { Toolbar } from "../../../components/Toolbar.tsx";
 import { NavButton } from "../../../components/NavButton.tsx";
+import { InitPasswordOptions } from "./(_islands)/InitPasswordOptions.tsx";
 
 export default async function AddUserPage(props: PageProps) {
   return (
@@ -19,14 +20,19 @@ export default async function AddUserPage(props: PageProps) {
           required
           class="border border-gray-300 rounded-md p-2"
         />
-        <label for="label">Label</label>
+
+        <label for="label">Display Name</label>
         <input
           type="text"
           name="label"
           id="label"
-          placeholder="Label"
+          placeholder="Display Name"
           required
         />
+
+        <label for="password">Password</label>
+        <InitPasswordOptions />
+
         <button
           type="submit"
           class="bg-cyan-500 text-white px-4 py-2 rounded-md"

@@ -18,6 +18,7 @@ import * as $login from "./routes/login.tsx";
 import * as $utils_register_root_user from "./routes/utils/register-root-user.ts";
 import * as $Counter from "./islands/Counter.tsx";
 import * as $LogoutButton from "./islands/LogoutButton.tsx";
+import * as $_authenticated_users_islands_InitPasswordOptions from "./routes/(authenticated)/users/(_islands)/InitPasswordOptions.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -40,6 +41,8 @@ const manifest = {
   islands: {
     "./islands/Counter.tsx": $Counter,
     "./islands/LogoutButton.tsx": $LogoutButton,
+    "./routes/(authenticated)/users/(_islands)/InitPasswordOptions.tsx":
+      $_authenticated_users_islands_InitPasswordOptions,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
