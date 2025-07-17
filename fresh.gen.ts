@@ -6,8 +6,8 @@ import * as $_authenticated_layout from "./routes/(authenticated)/_layout.tsx";
 import * as $_authenticated_middleware from "./routes/(authenticated)/_middleware.ts";
 import * as $_authenticated_home from "./routes/(authenticated)/home.tsx";
 import * as $_authenticated_logout from "./routes/(authenticated)/logout.ts";
+import * as $_authenticated_users_email_edit from "./routes/(authenticated)/users/[email]/edit.tsx";
 import * as $_authenticated_users_add from "./routes/(authenticated)/users/add.tsx";
-import * as $_authenticated_users_edit_email_ from "./routes/(authenticated)/users/edit/[email].tsx";
 import * as $_authenticated_users_index from "./routes/(authenticated)/users/index.tsx";
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
@@ -28,9 +28,9 @@ const manifest = {
     "./routes/(authenticated)/_middleware.ts": $_authenticated_middleware,
     "./routes/(authenticated)/home.tsx": $_authenticated_home,
     "./routes/(authenticated)/logout.ts": $_authenticated_logout,
+    "./routes/(authenticated)/users/[email]/edit.tsx":
+      $_authenticated_users_email_edit,
     "./routes/(authenticated)/users/add.tsx": $_authenticated_users_add,
-    "./routes/(authenticated)/users/edit/[email].tsx":
-      $_authenticated_users_edit_email_,
     "./routes/(authenticated)/users/index.tsx": $_authenticated_users_index,
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
