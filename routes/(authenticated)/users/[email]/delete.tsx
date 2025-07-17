@@ -22,6 +22,9 @@ export default async function DeleteUserPage(
       case DeleteUserErrors.UserIsProtected:
         message = "Can't delete user, user is protected";
         break;
+      case DeleteUserErrors.UserIsCurrentUser:
+        message = "Can't delete user, user is current user";
+        break;
       default:
         message = "Can't delete user, unknown error";
         break;
