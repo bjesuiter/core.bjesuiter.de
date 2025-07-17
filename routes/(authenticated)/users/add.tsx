@@ -9,6 +9,7 @@ import {
 } from "../../../utils/user_utils.ts";
 import { Err, Ok } from "neverthrow";
 import { z } from "zod/v4";
+import { Card } from "../../../components/Card.tsx";
 
 export const handler = {
   POST: async (req: Request, ctx: FreshContext) => {
@@ -81,7 +82,7 @@ export const handler = {
 
 export default async function AddUserPage(props: PageProps) {
   return (
-    <div class="flex flex-col gap-4">
+    <Card class="flex flex-col gap-4 w-max mx-auto">
       <Toolbar
         title="Add User"
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
@@ -120,6 +121,6 @@ export default async function AddUserPage(props: PageProps) {
           Add User
         </button>
       </form>
-    </div>
+    </Card>
   );
 }
