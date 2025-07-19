@@ -1,25 +1,20 @@
-import { PageProps } from "$fresh/server.ts";
-
 import { Handlers } from "$fresh/server.ts";
-import {
-  constantTimeEqual,
-  constantTimeEqualBase64,
-  createSession,
-} from "../utils/auth.ts";
-import { kv } from "../utils/kv.ts";
-import { userSchema } from "@/utils/user.type.ts";
 import { hashSecret } from "@/utils/auth.ts";
+import { userSchema } from "@/utils/user.type.ts";
 import { decodeBase64 } from "@std/encoding/base64";
 import { Cookie } from "tough-cookie";
+import { constantTimeEqual, createSession } from "../utils/auth.ts";
+import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
+import { kv } from "../utils/kv.ts";
 
 export const handler: Handlers = {
   /**
    * When /login is requested with GET, simply render the page
    * @bjesuiter: if no GET handler is defined, the page will auto-render
    */
-  // async GET(req, ctx) {
-  //   return await ctx.render();
-  // },
+  async GET(req, ctx) {
+    return await ctx.render();
+  },
 
   /**
    * When /login is requested with POST, validate the form data and redirect to /home page
@@ -69,14 +64,15 @@ export const handler: Handlers = {
       value: session.token,
       maxAge: 86400, // 1 day, in seconds
       httpOnly: true,
-      secure: true,
+      secure: isRunningOnDenoDeploy ? true : false,
       sameSite: "lax",
     });
 
-    // Redirect user to authenticated homepage
     const headers = new Headers();
-    headers.set("location", "/home");
     headers.set("Set-Cookie", cookie.toString());
+    // TODO: allow user to return to the url he was trying to access before the login prompt
+    // If not set, redirect to /home
+    headers.set("location", "/home");
     return new Response(null, {
       status: 303, // See Other
       headers,
@@ -84,9 +80,7 @@ export const handler: Handlers = {
   },
 };
 
-export default async function LoginPage(props: PageProps) {
-  // todo: check if already authenticated and redirect to /home page
-
+export default function LoginPage() {
   return (
     <div class="flex flex-col items-center justify-center h-screen bg-teal-50">
       {/* Card Container */}

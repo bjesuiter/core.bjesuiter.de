@@ -21,6 +21,8 @@ import * as $login from "./routes/login.tsx";
 import * as $utils_register_root_user from "./routes/utils/register-root-user.ts";
 import * as $BrowserBackButton from "./islands/BrowserBackButton.tsx";
 import * as $LogoutButton from "./islands/LogoutButton.tsx";
+import * as $Redirect from "./islands/Redirect.tsx";
+import * as $RedirectReplace from "./islands/RedirectReplace.tsx";
 import * as $_authenticated_users_islands_InitPasswordOption from "./routes/(authenticated)/users/(_islands)/InitPasswordOption.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
@@ -50,6 +52,8 @@ const manifest = {
   islands: {
     "./islands/BrowserBackButton.tsx": $BrowserBackButton,
     "./islands/LogoutButton.tsx": $LogoutButton,
+    "./islands/Redirect.tsx": $Redirect,
+    "./islands/RedirectReplace.tsx": $RedirectReplace,
     "./routes/(authenticated)/users/(_islands)/InitPasswordOption.tsx":
       $_authenticated_users_islands_InitPasswordOption,
   },

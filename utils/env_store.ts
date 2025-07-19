@@ -17,8 +17,9 @@ const envSchema = z.object({
 const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID");
 const stage = Deno.env.get("STAGE");
 
-const isRunningOnDenoDeploy = denoDeploymentId !== undefined &&
+export const isRunningOnDenoDeploy = denoDeploymentId !== undefined &&
   denoDeploymentId.length > 0;
+
 if (isRunningOnDenoDeploy) {
   console.debug(
     "Detected DENO_DEPLOYMENT_ID - initializing envs",
