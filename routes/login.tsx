@@ -35,8 +35,14 @@ export const handler: Handlers = {
       );
     }
 
-    if (!password) {
-      return new Response("Password is required", { status: 400 });
+    const parsedPassword = z.string().min(8).safeParse(password);
+    if (!parsedPassword.success) {
+      return new Response(
+        "Password is required and must be at least 8 characters long",
+        {
+          status: 400,
+        },
+      );
     }
 
     const userKvResult = await kv.get(["users", parsedEmail.data]);
@@ -53,7 +59,7 @@ export const handler: Handlers = {
       return new Response("User or password is incorrect", { status: 401 });
     }
 
-    const passPlusSalt = password + user.data.password_salt;
+    const passPlusSalt = parsedPassword.data + user.data.password_salt;
     const reqPasswordHash = await hashSecret(passPlusSalt);
     const dbPasswordHash = decodeBase64(user.data.password_hash_b64);
     const valid = constantTimeEqual(reqPasswordHash, dbPasswordHash);
@@ -63,7 +69,7 @@ export const handler: Handlers = {
       return new Response("User or password is incorrect", { status: 401 });
     }
 
-    const session = await createSession({ userEmail: email });
+    const session = await createSession({ userEmail: parsedEmail.data });
     // store cookie like this:
     // https://lucia-auth.com/sessions/basic#:~:text=0%3B%0A%7D-,Client%2Dside%20storage,-For%20most%20websites
     const cookie = new Cookie({
