@@ -64,7 +64,7 @@ export async function registerUser(
   password: string | FormDataEntryValue | null,
 ): Promise<Result<User, RegisterUserErrors>> {
   // Step 1: validate email
-  const parsedEmail = z.email().safeParse(email);
+  const parsedEmail = z.email().toLowerCase().trim().safeParse(email);
   if (parsedEmail.success === false) {
     return err(RegisterUserErrors.EmailInvalid);
   }

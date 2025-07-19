@@ -6,6 +6,7 @@ import { Cookie } from "tough-cookie";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
 import { kv } from "../utils/kv.ts";
+import z from "zod/v4";
 
 export const handler: Handlers = {
   /**
@@ -24,15 +25,21 @@ export const handler: Handlers = {
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
 
-    if (!email) {
-      return new Response("Email is required", { status: 400 });
+    const parsedEmail = z.email().toLowerCase().trim().safeParse(email);
+    if (!parsedEmail.success) {
+      return new Response(
+        "Email is required and must be a valid e-mail address",
+        {
+          status: 400,
+        },
+      );
     }
 
     if (!password) {
       return new Response("Password is required", { status: 400 });
     }
 
-    const userKvResult = await kv.get(["users", email]);
+    const userKvResult = await kv.get(["users", parsedEmail.data]);
     if (!userKvResult.value) {
       console.error(`User ${email} was not found`);
       // CAUTION: Returning 401 here instead of 404 to avoid leaking information about the existence of the user
