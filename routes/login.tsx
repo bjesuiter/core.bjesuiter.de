@@ -35,7 +35,7 @@ export const handler: Handlers = {
       );
     }
 
-    const parsedPassword = z.string().min(8).safeParse(password);
+    const parsedPassword = z.string().safeParse(password);
     if (!parsedPassword.success) {
       return new Response(
         "Password is required and must be at least 8 characters long",
@@ -54,7 +54,7 @@ export const handler: Handlers = {
     const user = userSchema.safeParse(userKvResult.value);
     if (!user.success) {
       console.error(
-        `User ${email} was found in kv, butis invalid: ${user.error.message}`,
+        `User ${email} was found in kv, but is invalid: ${user.error.message}`,
       );
       return new Response("User or password is incorrect", { status: 401 });
     }
