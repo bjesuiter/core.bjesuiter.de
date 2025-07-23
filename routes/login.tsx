@@ -1,7 +1,6 @@
 import { Handlers } from "$fresh/server.ts";
 import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
-import { decodeBase64 } from "@std/encoding/base64";
 import { Cookie } from "tough-cookie";
 import z from "zod/v4";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
