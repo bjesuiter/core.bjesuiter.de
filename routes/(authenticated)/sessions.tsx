@@ -36,14 +36,14 @@ export default async function SessionsPage(
         {/* TODO: disabled flag not working yet */}
         <NavButton
           href={`?page=${page - 1}`}
-          disabled={page - 1 < 0 ? true : false}
+          disabled={(page - 1) < 0}
         >
           Previous Page
         </NavButton>
         <span>Page: {page + 1}</span>
         <NavButton
           href={`?page=${page + 1}`}
-          disabled={sessions.length < itemsPerPage ? true : false}
+          disabled={sessions.length < itemsPerPage}
         >
           Next Page
         </NavButton>
