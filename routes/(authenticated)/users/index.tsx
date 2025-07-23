@@ -17,7 +17,7 @@ import { asc } from "drizzle-orm";
 // }
 
 // CAUTION: Cookie based auth needs to be implemented beforehand!
-export default async function UserPage(props: PageProps) {
+export default async function UserPage() {
   // TODO: Add pagination controls on the frontend
   const users = await db.select().from(UsersTable).orderBy(
     asc(UsersTable.email),
