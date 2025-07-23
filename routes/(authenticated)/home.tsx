@@ -19,6 +19,7 @@ export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
         <div class="flex flex-row gap-4">
           <NavTextLink href="/users">Manage Users</NavTextLink>
           <NavTextLink href="/sessions">Manage Sessions</NavTextLink>
+          <NavTextLink href="/ddns">Manage DDNS</NavTextLink>
           <NavTextLink href="/permissions">
             Manage Permissions (TODO)
           </NavTextLink>
