@@ -11,6 +11,7 @@
     "update": "deno run -A --unstable-kv -r https://fresh.deno.dev/update .",
     "db-push": "drizzle-kit --config .config/drizzle-dev.config.ts push",
     "db-studio": "drizzle-kit --config .config/drizzle-dev.config.ts studio",
+    "db-push-prod": "drizzle-kit --config .config/drizzle-prod.config.ts push",
     "db-studio-prod": "drizzle-kit --config .config/drizzle-prod.config.ts studio",
     "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns_playground.local.ts"
   },
