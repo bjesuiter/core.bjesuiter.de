@@ -17,7 +17,11 @@ export default async function EditUserPage(
     return <p>Unknown error!</p>;
   }
 
-  const user = userResult.value;
+  const user = {
+    id: userResult.value.id,
+    email: userResult.value.email,
+    label: userResult.value.label,
+  };
 
   return (
     <Card class="mx-auto w-[30rem]">
@@ -29,21 +33,22 @@ export default async function EditUserPage(
       <form
         method="post"
         action={`/users/edit/${user.email}`}
-        class="flex flex-col gap-2 max-w-md"
+        class="flex flex-col gap-6 max-w-md"
       >
-        <input type="hidden" name="oldEmail" value={user.email} />
-        <label for="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={user.email}
-          disabled
-        />
-        <label for="label">Display Name</label>
-        <input type="text" id="label" name="label" value={user.label} />
+        <label for="id" class="flex flex-col gap-1">
+          <span class="pl-[0.5ch]">ID</span>
+          <input type="text" name="id" value={user.id} disabled />
+        </label>
+        <label for="email" class="flex flex-col gap-1">
+          <span class="pl-[0.5ch]">E-Mail</span>
+          <input type="email" name="email" value={user.email} disabled />
+        </label>
+        <label for="label" class="flex flex-col gap-1">
+          <span class="pl-[0.5ch]">Display Name</span>
+          <input type="text" id="label" name="label" value={user.label} />
+        </label>
 
-        <p>TODO: build a password change component</p>
+        {/* <p>TODO: build a password change component</p> */}
         <button type="submit" class="button">Save</button>
       </form>
     </Card>

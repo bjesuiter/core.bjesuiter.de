@@ -34,24 +34,18 @@ export default async function UserPage(props: PageProps) {
       <table class="min-w-full border-collapse border border-gray-300 ">
         <thead>
           <tr>
-            {Object.keys(users[0] ?? {}).map((key) => (
-              <th class="border border-gray-300 px-2 py-1 text-left" key={key}>
-                {key === "id" ? "id (for info only)" : key}
-              </th>
-            ))}
+            <th class="border border-gray-300 px-2 py-1 text-left">ID</th>
+            <th class="border border-gray-300 px-2 py-1 text-left">Email</th>
+            <th class="border border-gray-300 px-2 py-1 text-left">Label</th>
             <th class="border border-gray-300 px-2 py-1 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user, idx) => (
             <tr key={user.id ?? idx}>
-              {Object.entries(user).map(([key, value]) => (
-                <td class="border border-gray-300 px-2 py-1" key={key}>
-                  {typeof value === "object" && value !== null
-                    ? JSON.stringify(value)
-                    : String(value)}
-                </td>
-              ))}
+              <td class="border border-gray-300 px-2 py-1">{user.id}</td>
+              <td class="border border-gray-300 px-2 py-1">{user.email}</td>
+              <td class="border border-gray-300 px-2 py-1">{user.label}</td>
               <td class="border border-gray-300 px-2 py-2 flex gap-2">
                 <NavButton href={`/users/${user.email}/edit`}>Edit</NavButton>
                 <NavButton href={`/users/${user.email}/delete`}>
