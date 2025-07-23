@@ -4,8 +4,10 @@ export function NavButton(props: {
   disabled?: boolean;
 }) {
   return (
-    <a href={props.href} class="button" disabled={props.disabled}>
-      {props.children}
+    <a href={props.href}>
+      <button type="button" class="button" disabled={props.disabled}>
+        {props.children}
+      </button>
     </a>
   );
 }
