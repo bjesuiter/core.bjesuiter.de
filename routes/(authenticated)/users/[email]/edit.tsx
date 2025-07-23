@@ -2,14 +2,14 @@ import { FreshContext } from "$fresh/server.ts";
 import { Card } from "../../../../components/Card.tsx";
 import { NavButton } from "../../../../components/NavButton.tsx";
 import { Toolbar } from "../../../../components/Toolbar.tsx";
-import { getUser, GetUserErrors } from "../../../../utils/user_utils.ts";
+import { getUserByEmail, GetUserErrors } from "../../../../utils/user_utils.ts";
 
 export default async function EditUserPage(
   _request: Request,
   ctx: FreshContext,
 ) {
   const email = ctx.params.email;
-  const userResult = await getUser(email);
+  const userResult = await getUserByEmail(email);
   if (userResult.isErr() && userResult.error === GetUserErrors.UserNotFound) {
     return <p>User not found!</p>;
   }
