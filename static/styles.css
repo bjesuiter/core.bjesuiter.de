@@ -16,7 +16,7 @@
   }
 
   input {
-    @apply border border-gray-300 rounded-md py-1 px-2;
+    @apply border border-gray-300 rounded-md py-1 px-2 outline-teal-700;
   }
 
  .button {
