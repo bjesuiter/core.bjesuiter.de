@@ -1,12 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
-import { Cookie } from "tough-cookie";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
-import {
-  isRequestAuthenticated,
-  validateSessionToken,
-} from "../../utils/auth.ts";
-import { kv } from "../../utils/kv.ts";
-import { userSchema } from "../../utils/user.type.ts";
+import { isRequestAuthenticated } from "../../utils/auth.ts";
 import { redirectToLogin } from "../../utils/routing.ts";
 
 /**
