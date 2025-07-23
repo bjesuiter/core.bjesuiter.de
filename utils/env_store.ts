@@ -29,7 +29,7 @@ function initEnvStore() {
         CORE_ROOT_USER_EMAIL: "github_actions@bjesuiter.de",
         CORE_DDNS_USERNAME: "github_actions",
         CORE_DDNS_PASSWORD: "github_actions",
-        TURSO_DATABASE_URL: "github_actions",
+        CORE_DATABASE_URL: "github_actions",
         TURSO_AUTH_TOKEN: "github_actions",
       });
     case "local":
