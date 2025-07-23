@@ -1,15 +1,14 @@
 import { FreshContext, PageProps } from "$fresh/server.ts";
-import { Toolbar } from "../../../components/Toolbar.tsx";
+import { Card } from "../../../components/Card.tsx";
+import { FormFieldWithLabel } from "../../../components/FormFieldWithLabel.tsx";
 import { NavButton } from "../../../components/NavButton.tsx";
-import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
+import { Toolbar } from "../../../components/Toolbar.tsx";
 import {
   generateStrongPassword,
   registerUser,
   RegisterUserErrors,
 } from "../../../utils/user_utils.ts";
-import { Err, Ok } from "neverthrow";
-import { z } from "zod/v4";
-import { Card } from "../../../components/Card.tsx";
+import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
 
 export const handler = {
   POST: async (req: Request, ctx: FreshContext) => {
@@ -117,31 +116,35 @@ export default function AddUserPage(props: PageProps) {
         actionsSlotLeft={<NavButton href="/users">Back</NavButton>}
       />
       <form
-        class="flex flex-col gap-4 max-w-md"
+        class="flex flex-col gap-6 max-w-md"
         action="/users/add"
         method="POST"
       >
-        <label for="email">Email</label>
-        <input
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Email"
-          required
-          class="border border-gray-300 rounded-md p-2"
-        />
+        <FormFieldWithLabel label="E-Mail" forId="email">
+          <input
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Email"
+            required
+            class="border border-gray-300 rounded-md p-2"
+          />
+        </FormFieldWithLabel>
 
-        <label for="label">Display Name</label>
-        <input
-          type="text"
-          name="label"
-          id="label"
-          placeholder="Display Name"
-          required
-        />
+        <FormFieldWithLabel label="Display Name" forId="label">
+          <input
+            type="text"
+            name="label"
+            id="label"
+            placeholder="Display Name"
+            required
+            class="border border-gray-300 rounded-md p-2"
+          />
+        </FormFieldWithLabel>
 
-        <label for="password">Password</label>
-        <InitPasswordOption />
+        <FormFieldWithLabel label="Password" forId="password">
+          <InitPasswordOption />
+        </FormFieldWithLabel>
 
         <button
           type="submit"
