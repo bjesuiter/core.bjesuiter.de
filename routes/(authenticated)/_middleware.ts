@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
-import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
-import { isRequestAuthenticated } from "../../utils/auth.ts";
-import { redirectToLogin } from "../../utils/routing.ts";
+import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
+import { isRequestAuthenticated } from "@/utils/auth.ts";
+import { redirectToLogin } from "@/utils/routing.ts";
 
 /**
  * Authentication middleware

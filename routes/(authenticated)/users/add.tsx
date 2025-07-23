@@ -1,13 +1,13 @@
 import { FreshContext, PageProps } from "$fresh/server.ts";
-import { Card } from "../../../components/Card.tsx";
-import { FormFieldWithLabel } from "../../../components/FormFieldWithLabel.tsx";
-import { NavButton } from "../../../components/NavButton.tsx";
-import { Toolbar } from "../../../components/Toolbar.tsx";
+import { Card } from "@/components/Card.tsx";
+import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
+import { NavButton } from "@/components/NavButton.tsx";
+import { Toolbar } from "@/components/Toolbar.tsx";
 import {
   generateStrongPassword,
   registerUser,
   RegisterUserErrors,
-} from "../../../utils/user_utils.ts";
+} from "@/utils/user_utils.ts";
 import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
 
 export const handler = {

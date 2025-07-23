@@ -1,6 +1,6 @@
 import { FreshContext } from "$fresh/server.ts";
-import { FreshCtxState } from "../../../types/fresh_ctx_state.type.ts";
-import { envStore } from "../../../utils/env_store.ts";
+import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
+import { envStore } from "@/utils/env_store.ts";
 
 const allowedUsers = [envStore.CORE_ROOT_USER_EMAIL, "affenmaster02@gmail.com"];
 

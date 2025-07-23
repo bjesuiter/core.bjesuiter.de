@@ -1,14 +1,5 @@
 import { defineRoute } from "$fresh/server.ts";
-import { User } from "@/utils/user.type.ts";
-import {
-  generateSecureRandomString,
-  hashSecret,
-  hashSecretBase64,
-} from "@/utils/auth.ts";
-import { encodeBase64 } from "@std/encoding/base64";
-import { registerUser } from "../../utils/user_utils.ts";
-
-const kv = await Deno.openKv();
+import { registerUser } from "@/utils/user_utils.ts";
 
 /**
  * Utility function to register a user to the database.

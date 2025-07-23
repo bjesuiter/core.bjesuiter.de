@@ -1,7 +1,7 @@
 import { PageProps } from "$fresh/server.ts";
-import { NavTextLink } from "../../components/NavTextLink.tsx";
-import { LogoutButton } from "../../islands/LogoutButton.tsx";
-import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
+import { NavTextLink } from "@/components/NavTextLink.tsx";
+import { LogoutButton } from "@/islands/LogoutButton.tsx";
+import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 
 export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
   const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID") ?? "unknown";

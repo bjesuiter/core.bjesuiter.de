@@ -1,9 +1,9 @@
 import { PageProps } from "$fresh/server.ts";
+import { NavButton } from "@/components/NavButton.tsx";
+import { Toolbar } from "@/components/Toolbar.tsx";
+import { db } from "@/lib/db/index.ts";
+import { UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { asc } from "drizzle-orm";
-import { NavButton } from "../../../components/NavButton.tsx";
-import { Toolbar } from "../../../components/Toolbar.tsx";
-import { db } from "../../../lib/db/index.ts";
-import { UsersTable } from "../../../lib/db/schemas/users.table.ts";
 
 // TODO: merge with main users KV
 // interface User {
