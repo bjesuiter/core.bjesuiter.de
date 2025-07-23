@@ -33,11 +33,20 @@ export default async function SessionsPage(
         title="Sessions"
         actionsSlotLeft={<NavButton href="/">Back</NavButton>}
       >
-        <NavButton href={`./?page=${page - 1}`} disabled={page - 1 < 0}>
+        {/* TODO: disabled flag not working yet */}
+        <NavButton
+          href={`?page=${page - 1}`}
+          disabled={page - 1 < 0 ? true : false}
+        >
           Previous Page
         </NavButton>
         <span>Page: {page + 1}</span>
-        <NavButton href={`./?page=${page + 1}`}>Next Page</NavButton>
+        <NavButton
+          href={`?page=${page + 1}`}
+          disabled={sessions.length < itemsPerPage ? true : false}
+        >
+          Next Page
+        </NavButton>
       </Toolbar>
 
       {/* Sessions Table */}
