@@ -33,7 +33,6 @@ export default async function SessionsPage(
         title="Sessions"
         actionsSlotLeft={<NavButton href="/">Back</NavButton>}
       >
-        {/* TODO: disabled flag not working yet */}
         <NavButton
           href={`?page=${page - 1}`}
           disabled={(page - 1) < 0}
