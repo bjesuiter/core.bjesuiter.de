@@ -6,7 +6,7 @@ import { db } from "../lib/db/index.ts";
 import { UsersTable } from "../lib/db/schemas/users.table.ts";
 import { generateSecureRandomString, hashSecret } from "./auth.ts";
 import { envStore } from "./env_store.ts";
-import { User } from "./user.type.ts";
+import { User, userSchema } from "./user.type.ts";
 
 export function generateStrongPassword() {
   // TODO: @bjesuiter: check if this is a good fit for the password generator!
@@ -16,6 +16,7 @@ export function generateStrongPassword() {
 
 export enum GetUserErrors {
   UserNotFound = "UserNotFound",
+  UserInvalid = "UserInvalid",
 }
 
 export async function getUserById(
@@ -26,13 +27,18 @@ export async function getUserById(
   if (user.length === 0) {
     return err(GetUserErrors.UserNotFound);
   }
-  return ok({
+  const userParsed = userSchema.safeParse({
     id: user[0].id,
     label: user[0].label,
     email: user[0].email,
     password_hash: new Uint8Array(user[0].passwordHash),
     password_salt: user[0].passwordSalt,
   });
+  if (!userParsed.success) {
+    return err(GetUserErrors.UserInvalid);
+  }
+
+  return ok(userParsed.data);
 }
 
 export async function getUserByEmail(
@@ -45,13 +51,17 @@ export async function getUserByEmail(
   if (user.length === 0) {
     return err(GetUserErrors.UserNotFound);
   }
-  return ok({
+  const userParsed = userSchema.safeParse({
     id: user[0].id,
     label: user[0].label,
     email: user[0].email,
     password_hash: new Uint8Array(user[0].passwordHash),
     password_salt: user[0].passwordSalt,
   });
+  if (!userParsed.success) {
+    return err(GetUserErrors.UserInvalid);
+  }
+  return ok(userParsed.data);
 }
 
 export enum DeleteUserErrors {

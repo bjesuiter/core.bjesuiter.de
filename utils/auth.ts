@@ -1,12 +1,13 @@
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { err, ok, Result } from "neverthrow";
 import { Cookie } from "tough-cookie";
-import { userSchema } from "./user.type.ts";
+import { User, userSchema } from "./user.type.ts";
 import { db } from "../lib/db/index.ts";
 import { SessionsTable } from "../lib/db/schemas/sessions.table.ts";
 import { Buffer } from "node:buffer";
 import { eq } from "drizzle-orm";
 import { UsersTable } from "../lib/db/schemas/users.table.ts";
+import { getUserById, GetUserErrors } from "./user_utils.ts";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
@@ -159,23 +160,22 @@ export async function isRequestAuthenticated(
     return err(AuthErrors.SessionTokenInvalid);
   }
 
-  const userKvResult = await db.select().from(UsersTable).where(
-    eq(UsersTable.id, session.userId),
-  ).limit(1);
-  if (userKvResult.length === 0) {
-    console.error(`User ${session.userId} was not found`);
-    return err(AuthErrors.UserNotFoundInDb);
-  }
+  const userAndSession = (await getUserById(session.userId)).match(
+    (user) => ok({ session, user }),
+    (error) => {
+      if (error === GetUserErrors.UserNotFound) {
+        console.error(`User ${session.userId} was not found`);
+        return err(AuthErrors.UserNotFoundInDb);
+      }
+      if (error === GetUserErrors.UserInvalid) {
+        console.error(`User ${session.userId} was found in db, but is invalid`);
+        return err(AuthErrors.UserInvalidInDb);
+      }
+      return err(error);
+    },
+  );
 
-  const user = userSchema.safeParse(userKvResult[0]);
-  if (!user.success) {
-    console.error(
-      `User ${session.userId} was found in kv, but is invalid: ${user.error.message}`,
-    );
-    return err(AuthErrors.UserInvalidInDb);
-  }
-
-  return ok({ session, user: user.data });
+  return userAndSession;
 }
 
 /**
