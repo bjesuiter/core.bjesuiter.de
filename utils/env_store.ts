@@ -8,7 +8,7 @@ const envSchema = z.object({
   CORE_ROOT_USER_EMAIL: z.email(),
   CORE_DDNS_USERNAME: z.string(),
   CORE_DDNS_PASSWORD: z.string(),
-  TURSO_DATABASE_URL: z.string(),
+  CORE_DATABASE_URL: z.string(),
   TURSO_AUTH_TOKEN: z.string(),
 });
 
