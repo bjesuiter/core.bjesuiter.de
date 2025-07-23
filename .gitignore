@@ -13,3 +13,5 @@ node_modules/
 # runtime data
 .runtime/data/*
 !.runtime/data/.gitkeep
+
+!.cursor

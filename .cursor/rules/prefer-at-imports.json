@@ -1,0 +1,21 @@
+{
+    "name": "Prefer @/ alias for deep imports",
+    "description": "Enforce using the @/ alias for imports with more than one ../ in the path.",
+    "scope": "file",
+    "language": [
+        "typescript",
+        "javascript",
+        "tsx",
+        "jsx"
+    ],
+    "match": "import\\s+.*?from\\s+['\"]((?:\\.\\./){2,}[^'\"]+)['\"]",
+    "message": "Use the @/ alias instead of more than one ../ in import paths.",
+    "suggest": [
+        {
+            "replace": {
+                "pattern": "from\\s+['\"]((?:\\.\\./){2,}[^'\"]+)['\"]",
+                "replacement": "from \"@/$1\""
+            }
+        }
+    ]
+}
