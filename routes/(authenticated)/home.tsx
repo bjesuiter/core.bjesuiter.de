@@ -4,7 +4,7 @@ import { LogoutButton } from "../../islands/LogoutButton.tsx";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 
 export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
-  const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID");
+  const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID") ?? "unknown";
 
   return (
     <div class="p-4 h-screen">
