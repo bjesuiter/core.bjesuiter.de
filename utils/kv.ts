@@ -1,6 +1,8 @@
 /// <reference lib="deno.unstable" />
 export const kv = await Deno.openKv();
 
+// TODO: move this logging table to turso
+
 export async function logAuthorizedDDNSUpdateRequest(data: {
   url: string;
   authorized_user: string | undefined;
