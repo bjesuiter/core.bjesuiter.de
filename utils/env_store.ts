@@ -15,7 +15,7 @@ const envSchema = z.object({
 // bjesuiter: make sure, these envs are only loaded when running on deno deploy,
 // NOT when run in a github action build process!
 function initEnvStore() {
-  const stage = Deno.env.get("STAGE");
+  const stage = Deno.env.get("STAGE") ?? "github_actions";
 
   switch (stage) {
     case "deno_deploy":
