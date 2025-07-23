@@ -13,7 +13,7 @@ export function Toolbar(
     titleSlot?: JSX.Element | null;
     actionsSlotRight?: JSX.Element | null;
     actionsSlotLeft?: JSX.Element | null;
-    children?: JSX.Element | null;
+    children?: JSX.Element | JSX.Element[] | null;
   },
 ) {
   return (
