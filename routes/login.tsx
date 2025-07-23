@@ -3,10 +3,10 @@ import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
 import { decodeBase64 } from "@std/encoding/base64";
 import { Cookie } from "tough-cookie";
+import z from "zod/v4";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
-import { kv } from "../utils/kv.ts";
-import z from "zod/v4";
+import { getUserByEmail } from "../utils/user_utils.ts";
 
 export const handler: Handlers = {
   /**
@@ -45,23 +45,23 @@ export const handler: Handlers = {
       );
     }
 
-    const userKvResult = await kv.get(["users", parsedEmail.data]);
-    if (!userKvResult.value) {
-      console.error(`User ${email} was not found`);
+    const userDbResult = await getUserByEmail(parsedEmail.data);
+    if (userDbResult.isErr()) {
+      console.error(`User "${parsedEmail.data}" was not found`);
       // CAUTION: Returning 401 here instead of 404 to avoid leaking information about the existence of the user
       return new Response("User or password is incorrect", { status: 401 });
     }
-    const user = userSchema.safeParse(userKvResult.value);
+    const user = userSchema.safeParse(userDbResult.value);
     if (!user.success) {
       console.error(
-        `User ${email} was found in kv, but is invalid: ${user.error.message}`,
+        `User "${parsedEmail.data}" was found in db, but is invalid: ${user.error.message}`,
       );
       return new Response("User or password is incorrect", { status: 401 });
     }
 
     const passPlusSalt = parsedPassword.data + user.data.password_salt;
     const reqPasswordHash = await hashSecret(passPlusSalt);
-    const dbPasswordHash = decodeBase64(user.data.password_hash_b64);
+    const dbPasswordHash = user.data.password_hash;
     const valid = constantTimeEqual(reqPasswordHash, dbPasswordHash);
 
     if (!valid) {
@@ -69,7 +69,7 @@ export const handler: Handlers = {
       return new Response("User or password is incorrect", { status: 401 });
     }
 
-    const session = await createSession({ userEmail: parsedEmail.data });
+    const session = await createSession({ userId: user.data.id });
     // store cookie like this:
     // https://lucia-auth.com/sessions/basic#:~:text=0%3B%0A%7D-,Client%2Dside%20storage,-For%20most%20websites
     const cookie = new Cookie({

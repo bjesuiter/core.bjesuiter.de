@@ -1,8 +1,9 @@
 import { PageProps } from "$fresh/server.ts";
-import { kv } from "@/utils/kv.ts";
-import { User } from "../../../utils/user.type.ts";
-import { Toolbar } from "../../../components/Toolbar.tsx";
+import { asc } from "drizzle-orm";
 import { NavButton } from "../../../components/NavButton.tsx";
+import { Toolbar } from "../../../components/Toolbar.tsx";
+import { db } from "../../../lib/db/index.ts";
+import { UsersTable } from "../../../lib/db/schemas/users.table.ts";
 
 // TODO: merge with main users KV
 // interface User {
@@ -17,15 +18,10 @@ import { NavButton } from "../../../components/NavButton.tsx";
 
 // CAUTION: Cookie based auth needs to be implemented beforehand!
 export default async function UserPage(props: PageProps) {
-  const usersAsyncIterator = kv.list<User>({ prefix: ["users"] });
-
-  const users = (await Array.fromAsync(usersAsyncIterator)).map((user) => {
-    return {
-      email: user.value.email,
-      label: user.value.label,
-      id: user.value.id,
-    };
-  });
+  // TODO: Add pagination controls on the frontend
+  const users = await db.select().from(UsersTable).orderBy(
+    asc(UsersTable.email),
+  ).limit(100).offset(0);
 
   return (
     <div class="flex flex-col gap-4">

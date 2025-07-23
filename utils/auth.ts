@@ -1,8 +1,12 @@
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { err, ok, Result } from "neverthrow";
 import { Cookie } from "tough-cookie";
-import { kv } from "./kv.ts";
-import { User, userSchema } from "./user.type.ts";
+import { userSchema } from "./user.type.ts";
+import { db } from "../lib/db/index.ts";
+import { SessionsTable } from "../lib/db/schemas/sessions.table.ts";
+import { Buffer } from "node:buffer";
+import { eq } from "drizzle-orm";
+import { UsersTable } from "../lib/db/schemas/users.table.ts";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
@@ -10,7 +14,7 @@ import { User, userSchema } from "./user.type.ts";
 
 export interface Session {
   id: string;
-  userEmail: string;
+  userId: string;
   secretHash: Uint8Array; // Uint8Array is a byte array
   createdAt: Date;
 }
@@ -38,31 +42,29 @@ const sessionExpiresInSeconds = 60 * 60 * 24; // 1 day
  * uses deno KV to store the session
  */
 export async function createSession({
-  userEmail,
+  userId,
 }: {
-  userEmail: string;
+  userId: string;
 }): Promise<SessionWithToken> {
   const now = new Date();
-
   const id = generateSecureRandomString();
   const secret = generateSecureRandomString();
-  const secretHash = await hashSecret(secret);
 
   const token = id + "." + secret;
 
   const session: SessionWithToken = {
     id,
-    secretHash,
+    secretHash: await hashSecret(secret),
     createdAt: now,
     token,
-    userEmail,
+    userId,
   };
 
-  await kv.set(["sessions", session.id], {
-    id,
-    secretHash,
-    createdAt: now,
-    userEmail,
+  await db.insert(SessionsTable).values({
+    id: session.id,
+    secretHash: Buffer.from(session.secretHash),
+    createdAt: now.toISOString(),
+    userId,
   });
 
   return session;
@@ -71,12 +73,20 @@ export async function createSession({
 async function getSession(sessionId: string): Promise<Session | undefined> {
   const now = new Date();
 
-  const result = await kv.get(["sessions", sessionId]);
-  if (!result.value) {
+  const result = await db.select().from(SessionsTable).where(
+    eq(SessionsTable.id, sessionId),
+  ).limit(1);
+
+  if (result.length === 0) {
     return undefined;
   }
 
-  const session = result.value as Session;
+  const session: Session = {
+    id: result[0].id,
+    userId: result[0].userId,
+    secretHash: new Uint8Array(result[0].secretHash),
+    createdAt: new Date(result[0].createdAt),
+  };
 
   // Check expiration
   if (
@@ -115,7 +125,7 @@ export async function validateSessionToken(
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
-  await kv.delete(["sessions", sessionId]);
+  await db.delete(SessionsTable).where(eq(SessionsTable.id, sessionId));
 }
 
 /**
@@ -142,23 +152,25 @@ export async function isRequestAuthenticated(
   }
 
   const session = await validateSessionToken(sessionTokenCookie.value);
-  if (!session || !session.userEmail) {
+  if (!session || !session.userId) {
     console.log(
       "Session token is invalid, session expired or session not found - not authenticated",
     );
     return err(AuthErrors.SessionTokenInvalid);
   }
 
-  const userKvResult = await kv.get(["users", session.userEmail]);
-  if (!userKvResult.value) {
-    console.error(`User ${session.userEmail} was not found`);
+  const userKvResult = await db.select().from(UsersTable).where(
+    eq(UsersTable.id, session.userId),
+  ).limit(1);
+  if (userKvResult.length === 0) {
+    console.error(`User ${session.userId} was not found`);
     return err(AuthErrors.UserNotFoundInDb);
   }
 
-  const user = userSchema.safeParse(userKvResult.value);
+  const user = userSchema.safeParse(userKvResult[0]);
   if (!user.success) {
     console.error(
-      `User ${session.userEmail} was found in kv, but is invalid: ${user.error.message}`,
+      `User ${session.userId} was found in kv, but is invalid: ${user.error.message}`,
     );
     return err(AuthErrors.UserInvalidInDb);
   }

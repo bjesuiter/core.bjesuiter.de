@@ -5,7 +5,7 @@ export const userSchema = z.object({
   id: z.uuidv4(),
   label: z.string(),
   email: z.email(),
-  password_hash_b64: z.base64(),
+  password_hash: z.instanceof(Uint8Array<ArrayBufferLike>),
   password_salt: z.string(),
 });
 
