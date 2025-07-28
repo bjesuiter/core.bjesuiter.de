@@ -4,8 +4,6 @@ import Menu from "./(components)/menu.tsx";
 export default function Layout({ Component, state, url }: PageProps) {
   // do something with state here
   return (
-    // <div class="bg-[url('/img/cityofgoldcoast-AHOsCAuCnUU.jpg')] bg-cover bg-center h-screen">
-    // set height to 100dvh (instead of h-screen, because h-screen is 100vh and this clashes with mobile viewports)
     <div class="accent-teal-700 text-teal-700 bg-teal-100 h-[100dvh] grid grid-cols-[200px_1fr] gap-4 pl-4 pt-4">
       {/* Left Sidebar */}
       <div>

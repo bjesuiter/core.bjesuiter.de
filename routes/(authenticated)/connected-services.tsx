@@ -1,11 +1,10 @@
 import { FreshContext } from "$fresh/server.ts";
 import { desc, eq } from "drizzle-orm";
-import { Card } from "../../components/Card.tsx";
+import { NavButton } from "../../components/NavButton.tsx";
+import { Toolbar } from "../../components/Toolbar.tsx";
 import { db } from "../../lib/db/index.ts";
 import { ConnectedServicesTable } from "../../lib/db/schemas/connected_services.ts";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
-import { Toolbar } from "../../components/Toolbar.tsx";
-import { NavButton } from "../../components/NavButton.tsx";
 
 const itemsPerPage = 100;
 
@@ -21,7 +20,7 @@ export default async function ConnectedServicesPage(
     .offset(page * itemsPerPage);
 
   return (
-    <Card>
+    <>
       <Toolbar
         title="Connected Services"
         actionsSlotLeft={<NavButton href="/home">Back</NavButton>}
@@ -54,6 +53,6 @@ export default async function ConnectedServicesPage(
           ))}
         </tbody>
       </table>
-    </Card>
+    </>
   );
 }

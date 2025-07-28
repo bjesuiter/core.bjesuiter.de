@@ -27,7 +27,7 @@ export default async function SessionsPage(
   ).limit(itemsPerPage).offset(page * itemsPerPage);
 
   return (
-    <Card class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6">
       <Toolbar
         title="Sessions"
         actionsSlotLeft={<NavButton href="/">Back</NavButton>}
@@ -66,6 +66,6 @@ export default async function SessionsPage(
           ))}
         </tbody>
       </table>
-    </Card>
+    </div>
   );
 }

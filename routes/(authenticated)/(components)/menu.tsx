@@ -10,6 +10,11 @@ export default function Menu(props: { class?: string; currentPath: string }) {
 
   const links = [
     {
+      href: "/home",
+      label: "Home",
+      isActive: props.currentPath === "/home",
+    },
+    {
       href: "/users",
       label: "Manage Users",
       isActive: props.currentPath === "/users",

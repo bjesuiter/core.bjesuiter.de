@@ -9,6 +9,7 @@ import * as $_authenticated_connected_services from "./routes/(authenticated)/co
 import * as $_authenticated_ddns from "./routes/(authenticated)/ddns.tsx";
 import * as $_authenticated_home from "./routes/(authenticated)/home.tsx";
 import * as $_authenticated_logout from "./routes/(authenticated)/logout.ts";
+import * as $_authenticated_permissions from "./routes/(authenticated)/permissions.tsx";
 import * as $_authenticated_sessions from "./routes/(authenticated)/sessions.tsx";
 import * as $_authenticated_users from "./routes/(authenticated)/users.tsx";
 import * as $_authenticated_users_email_delete from "./routes/(authenticated)/users/[email]/delete.tsx";
@@ -41,6 +42,7 @@ const manifest = {
     "./routes/(authenticated)/ddns.tsx": $_authenticated_ddns,
     "./routes/(authenticated)/home.tsx": $_authenticated_home,
     "./routes/(authenticated)/logout.ts": $_authenticated_logout,
+    "./routes/(authenticated)/permissions.tsx": $_authenticated_permissions,
     "./routes/(authenticated)/sessions.tsx": $_authenticated_sessions,
     "./routes/(authenticated)/users.tsx": $_authenticated_users,
     "./routes/(authenticated)/users/[email]/delete.tsx":
