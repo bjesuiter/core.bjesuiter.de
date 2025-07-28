@@ -6,7 +6,7 @@ import { UsersTable } from "./users.table.ts";
  */
 export const DDNSProfilesTable = sqliteTable("ddns_profiles", {
   id: text("id").primaryKey(),
-  name: text("name").notNull(),
+  profile_name: text("profile_name").notNull(),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
   ownedBy: text("owned_by").references(() => UsersTable.id).notNull(),
