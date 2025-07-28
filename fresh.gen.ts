@@ -4,6 +4,7 @@
 
 import * as $_authenticated_layout from "./routes/(authenticated)/_layout.tsx";
 import * as $_authenticated_middleware from "./routes/(authenticated)/_middleware.ts";
+import * as $_authenticated_connected_services from "./routes/(authenticated)/connected-services.tsx";
 import * as $_authenticated_ddns from "./routes/(authenticated)/ddns.tsx";
 import * as $_authenticated_home from "./routes/(authenticated)/home.tsx";
 import * as $_authenticated_logout from "./routes/(authenticated)/logout.ts";
@@ -32,6 +33,8 @@ const manifest = {
   routes: {
     "./routes/(authenticated)/_layout.tsx": $_authenticated_layout,
     "./routes/(authenticated)/_middleware.ts": $_authenticated_middleware,
+    "./routes/(authenticated)/connected-services.tsx":
+      $_authenticated_connected_services,
     "./routes/(authenticated)/ddns.tsx": $_authenticated_ddns,
     "./routes/(authenticated)/home.tsx": $_authenticated_home,
     "./routes/(authenticated)/logout.ts": $_authenticated_logout,

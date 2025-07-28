@@ -23,6 +23,9 @@ export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
           <NavTextLink href="/permissions">
             Manage Permissions (TODO)
           </NavTextLink>
+          <NavTextLink href="/connected-services">
+            Manage Connected Services
+          </NavTextLink>
           <NavTextLink href="/ddns">Manage DDNS (TODO)</NavTextLink>
         </div>
 

@@ -1,18 +1,17 @@
 import { FreshContext } from "$fresh/server.ts";
 import { Card } from "@/components/Card.tsx";
+import { NavButton } from "@/components/NavButton.tsx";
+import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
 import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 import { desc, eq } from "drizzle-orm";
-import { Toolbar } from "@/components/Toolbar.tsx";
-import { envStore } from "@/utils/env_store.ts";
-import { NavButton } from "@/components/NavButton.tsx";
 import { UsersTable } from "../../lib/db/schemas/users.table.ts";
 
 const itemsPerPage = 100;
 
 export default async function SessionsPage(
-  req: Request,
+  _req: Request,
   ctx: FreshContext<FreshCtxState>,
 ) {
   // check permission
