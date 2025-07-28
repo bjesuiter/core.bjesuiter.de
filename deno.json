@@ -59,5 +59,5 @@
   "unstable": [
     "kv"
   ],
-  "nodeModulesDir": "auto"
+  "nodeModulesDir": "none"
 }
