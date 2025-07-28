@@ -98,9 +98,7 @@ export default function LoginPage() {
       {/* Card Container */}
       <div class="shadow-xl rounded-lg p-4 bg-white flex flex-col gap-4">
         <h1>Login</h1>
-        <p>
-          Login to core.bjesuiter.de to continue
-        </p>
+        <p>Login to coresvc to continue</p>
         <form class="flex flex-col gap-2" method="post">
           <input type="email" name="email" placeholder="Email" required />
           <input
