@@ -2,6 +2,7 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $_authenticated_components_menu from "./routes/(authenticated)/(components)/menu.tsx";
 import * as $_authenticated_layout from "./routes/(authenticated)/_layout.tsx";
 import * as $_authenticated_middleware from "./routes/(authenticated)/_middleware.ts";
 import * as $_authenticated_connected_services from "./routes/(authenticated)/connected-services.tsx";
@@ -31,6 +32,8 @@ import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
   routes: {
+    "./routes/(authenticated)/(components)/menu.tsx":
+      $_authenticated_components_menu,
     "./routes/(authenticated)/_layout.tsx": $_authenticated_layout,
     "./routes/(authenticated)/_middleware.ts": $_authenticated_middleware,
     "./routes/(authenticated)/connected-services.tsx":
