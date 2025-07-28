@@ -16,7 +16,7 @@ export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
           <p>User ID: {props.state.user.id}</p>
         </section>
 
-        <div class="flex flex-row gap-4">
+        <div class="flex flex-col gap-4">
           <NavTextLink href="/users">Manage Users</NavTextLink>
           <NavTextLink href="/sessions">Manage Sessions</NavTextLink>
           <NavTextLink href="/ddns">Manage DDNS</NavTextLink>
