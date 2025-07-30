@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* 
+  DOCS: https://iconify.design/docs/usage/css/tailwind/tailwind4/
+
+  NOTE: @iconify/tailwind4 needs either package to be installed: 
+  - @iconify/json - the full iconify collection as json data - might be bad for use with deno deploy, 
+                    since deno has no notion of dev dependencies in deno.jsonc
+  - @iconify-json/{iconPack} - the iconify collection for a specific icon pack, like mdi, ph, etc.
+  - @iconify-json/mynaui - the iconify collection for a specific icon pack, like mdi, ph, etc.
+
+  USAGE: 
+  <span class="icon-[mdi-light--home]"></span>
+ */
+@plugin "@iconify/tailwind4";
+
 @theme {
   --color-primary: var(--color-teal-700);
   --color-primary-light: var(--color-teal-50)
