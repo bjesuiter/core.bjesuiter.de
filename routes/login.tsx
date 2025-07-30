@@ -6,6 +6,7 @@ import { define } from "../lib/fresh/defineHelpers.ts";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
 import { getUserByEmail } from "../utils/user_utils.ts";
+import { Card } from "@/components/Card.tsx";
 
 export const handler = define.handlers({
   /**
@@ -92,9 +93,9 @@ export const handler = define.handlers({
 
 export default function LoginPage() {
   return (
-    <div class="flex flex-col items-center justify-center h-screen bg-primary-light">
+    <div class="flex flex-col items-center-safe justify-center-safe h-screen bg-primary-light">
       {/* Card Container */}
-      <div class="shadow-xl rounded-lg p-4 bg-white flex flex-col gap-4">
+      <Card class="flex flex-col gap-4 min-w-[200px] md:min-w-[280px]">
         <h1>Login</h1>
         <p>Login to coresvc to continue</p>
         <form class="flex flex-col gap-2" method="post">
@@ -109,7 +110,7 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }
