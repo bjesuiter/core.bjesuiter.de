@@ -1,25 +1,24 @@
-import { Handlers } from "$fresh/server.ts";
 import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
 import { Cookie } from "tough-cookie";
 import z from "zod/v4";
+import { define } from "../lib/fresh/defineHelpers.ts";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
 import { getUserByEmail } from "../utils/user_utils.ts";
+import { Card } from "@/components/Card.tsx";
 
-export const handler: Handlers = {
+export const handler = define.handlers({
   /**
    * When /login is requested with GET, simply render the page
    * @bjesuiter: if no GET handler is defined, the page will auto-render
    */
-  async GET(req, ctx) {
-    return await ctx.render();
-  },
 
   /**
    * When /login is requested with POST, validate the form data and redirect to /home page
    */
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
     const form = await req.formData();
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();
@@ -90,13 +89,13 @@ export const handler: Handlers = {
       headers,
     });
   },
-};
+});
 
 export default function LoginPage() {
   return (
-    <div class="flex flex-col items-center justify-center h-screen bg-teal-50">
+    <div class="flex flex-col items-center-safe justify-center-safe h-screen bg-primary-light">
       {/* Card Container */}
-      <div class="shadow-xl rounded-lg p-4 bg-white flex flex-col gap-4">
+      <Card class="flex flex-col gap-4 min-w-[200px] md:min-w-[280px]">
         <h1>Login</h1>
         <p>Login to coresvc to continue</p>
         <form class="flex flex-col gap-2" method="post">
@@ -111,7 +110,7 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }

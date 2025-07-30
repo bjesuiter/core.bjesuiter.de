@@ -1,4 +1,4 @@
-import { IS_BROWSER } from "$fresh/runtime.ts";
+import { IS_BROWSER } from "fresh/runtime";
 
 export default function Redirect(props: { href: string }) {
   if (!IS_BROWSER) {

@@ -1,9 +1,11 @@
-import { Handlers } from "$fresh/server.ts";
 import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 import { deleteSession } from "../../utils/auth.ts";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers<unknown, FreshCtxState> = {
-  POST: async (req, ctx) => {
+  POST: async (ctx) => {
+    const req = ctx.req;
+
     await deleteSession(ctx.state.session.id);
 
     // NOTE: no need to "delete" the session cookie, it will not be valid anyway,

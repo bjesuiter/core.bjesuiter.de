@@ -1,4 +1,4 @@
-import { FreshContext, PageProps } from "$fresh/server.ts";
+import { FreshContext, PageProps } from "fresh";
 import { Card } from "@/components/Card.tsx";
 import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
 import { NavButton } from "@/components/NavButton.tsx";
@@ -11,7 +11,8 @@ import {
 import { InitPasswordOption } from "./(_islands)/InitPasswordOption.tsx";
 
 export const handler = {
-  POST: async (req: Request, ctx: FreshContext) => {
+  POST: async (ctx: FreshContext) => {
+    const req = ctx.req;
     const formData = await req.formData();
 
     const initPasswordOption = formData.get("init_password_option");

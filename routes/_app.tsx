@@ -1,10 +1,21 @@
-import { type PageProps } from "$fresh/server.ts";
+import { type PageProps } from "fresh";
 import { envStore } from "../utils/env_store.ts";
-export default function App({ Component }: PageProps) {
+import { Context } from "fresh";
+import { FreshCtxState } from "../types/fresh_ctx_state.type.ts";
+
+export default function App(ctx: Context<FreshCtxState>) {
+  const { Component, state } = ctx;
+
   let title = "coresvc";
   if (envStore.STAGE !== "deno_deploy") {
     title = `${envStore.STAGE} ${title}`;
   }
+
+  // if a tabTitle is set in the ctx, use it instead of the default title
+  if (state.tabTitle) {
+    title = state.tabTitle;
+  }
+
   return (
     <html>
       <head>

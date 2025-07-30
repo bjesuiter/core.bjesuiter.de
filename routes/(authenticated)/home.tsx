@@ -1,4 +1,4 @@
-import { PageProps } from "$fresh/server.ts";
+import { PageProps } from "fresh";
 import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 
 export default function HomePage(props: PageProps<unknown, FreshCtxState>) {

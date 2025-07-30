@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { NavButton } from "@/components/NavButton.tsx";
 import { deleteUser, DeleteUserErrors } from "@/utils/user_utils.ts";
 import { Card } from "@/components/Card.tsx";
@@ -6,7 +6,6 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 
 export default async function DeleteUserPage(
-  _req: Request,
   ctx: FreshContext<FreshCtxState>,
 ) {
   const email = ctx.params.email;
