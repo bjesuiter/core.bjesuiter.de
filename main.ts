@@ -1,4 +1,5 @@
-import "$std/dotenv/load.ts";
+// Automatically load environment variables from a `.env` file
+import "@std/dotenv/load";
 
 import { App, staticFiles } from "fresh";
 
