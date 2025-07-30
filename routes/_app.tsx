@@ -24,7 +24,7 @@ export default function App(ctx: Context<FreshCtxState>) {
         <title>{title}</title>
         <link rel="stylesheet" href="/styles.css" />
       </head>
-      <body>
+      <body class="bg-teal-100">
         <Component />
       </body>
     </html>
