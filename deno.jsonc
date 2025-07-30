@@ -32,9 +32,7 @@
     "preact": "npm:preact@^10.26.6",
     "@preact/signals": "npm:@preact/signals@^2.0.4",
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",
-    "tailwindcss": "npm:tailwindcss@3.4.1",
-    "tailwindcss/": "npm:/tailwindcss@3.4.1/",
-    "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
+    "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
     "zod": "npm:zod@^3.25.67",
     "fresh": "jsr:@fresh/core@^2.0.0-alpha.34"
