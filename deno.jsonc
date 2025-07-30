@@ -16,49 +16,31 @@
     "db-studio-prod": "drizzle-kit --config .config/drizzle-prod.config.ts studio",
     "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns_playground.local.ts"
   },
-  "lint": {
-    "rules": {
-      "tags": [
-        "fresh",
-        "recommended"
-      ]
-    }
-  },
-  "deploy": {
-    "project": "core-bjesuiter",
-    "entrypoint": "./main.ts"
-  },
-  "exclude": [
-    "**/_fresh/*"
-  ],
+  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
+  "deploy": { "project": "core-bjesuiter", "entrypoint": "./main.ts" },
+  "exclude": ["**/_fresh/*"],
   "imports": {
     "@/": "./",
-    "$fresh/": "https://deno.land/x/fresh@1.7.3/",
+    "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@0.0.1-alpha.9",
     "@libsql/client": "npm:@libsql/client@^0.15.10",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
     "cloudflare": "npm:cloudflare@^4.4.1",
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
     "neverthrow": "npm:neverthrow@^8.2.0",
-    "preact": "https://esm.sh/preact@10.22.0",
+    "preact": "npm:preact@^10.26.6",
     "preact/": "https://esm.sh/preact@10.22.0/",
-    "@preact/signals": "https://esm.sh/*@preact/signals@1.2.2",
-    "@preact/signals-core": "https://esm.sh/*@preact/signals-core@1.5.1",
+    "@preact/signals": "npm:@preact/signals@^2.0.4",
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",
     "tailwindcss": "npm:tailwindcss@3.4.1",
     "tailwindcss/": "npm:/tailwindcss@3.4.1/",
     "tailwindcss/plugin": "npm:/tailwindcss@3.4.1/plugin.js",
     "$std/": "https://deno.land/std@0.216.0/",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
-    "zod": "npm:zod@^3.25.67"
+    "zod": "npm:zod@^3.25.67",
+    "fresh": "jsr:@fresh/core@^2.0.0-alpha.34"
   },
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact"
-  },
-  "unstable": [
-    "kv"
-  ],
-  // need "auto" here for now because of drizzle-kit
+  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
+  "unstable": ["kv"],
   "nodeModulesDir": "auto"
 }

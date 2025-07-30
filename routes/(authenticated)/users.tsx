@@ -1,4 +1,4 @@
-import { PageProps } from "$fresh/server.ts";
+import { PageProps } from "fresh";
 import { NavButton } from "@/components/NavButton.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";

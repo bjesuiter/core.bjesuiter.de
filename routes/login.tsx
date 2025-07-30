@@ -1,4 +1,3 @@
-import { Handlers } from "$fresh/server.ts";
 import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
 import { Cookie } from "tough-cookie";
@@ -6,20 +5,24 @@ import z from "zod/v4";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
 import { getUserByEmail } from "../utils/user_utils.ts";
+import { Handlers } from "fresh/compat";
 
 export const handler: Handlers = {
   /**
    * When /login is requested with GET, simply render the page
    * @bjesuiter: if no GET handler is defined, the page will auto-render
    */
-  async GET(req, ctx) {
+  async GET(ctx) {
+    const req = ctx.req;
+
     return await ctx.render();
   },
 
   /**
    * When /login is requested with POST, validate the form data and redirect to /home page
    */
-  async POST(req, ctx) {
+  async POST(ctx) {
+    const req = ctx.req;
     const form = await req.formData();
     const email = form.get("email")?.toString();
     const password = form.get("password")?.toString();

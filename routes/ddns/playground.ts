@@ -1,6 +1,8 @@
-import { defineRoute } from "$fresh/server.ts";
+import { defineRoute } from "fresh/compat";
 
-export default defineRoute(async (req, ctx) => {
+export default defineRoute(async (ctx) => {
+  const req = ctx.req;
+
   // const recordId = await findDnsRecordId({
   //   zoneId: envStore.CLOUDFLARE_ZONE_ID_HIBISK_DE,
   //   recordName: "synas.hibisk.de",

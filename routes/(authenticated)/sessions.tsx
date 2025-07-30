@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { Card } from "@/components/Card.tsx";
 import { NavButton } from "@/components/NavButton.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
@@ -11,7 +11,6 @@ import { UsersTable } from "../../lib/db/schemas/users.table.ts";
 const itemsPerPage = 100;
 
 export default async function SessionsPage(
-  _req: Request,
   ctx: FreshContext<FreshCtxState>,
 ) {
   // check permission

@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { decodeBase64 } from "@std/encoding";
 import { envStore } from "@/utils/env_store.ts";
 import {

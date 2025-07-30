@@ -1,4 +1,4 @@
-import { PageProps } from "$fresh/server.ts";
+import { PageProps } from "fresh";
 import Menu from "./(components)/menu.tsx";
 
 export default function Layout({ Component, state, url }: PageProps) {

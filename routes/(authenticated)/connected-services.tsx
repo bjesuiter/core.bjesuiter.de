@@ -1,4 +1,4 @@
-import { FreshContext } from "$fresh/server.ts";
+import { FreshContext } from "fresh";
 import { desc, eq } from "drizzle-orm";
 import { NavButton } from "../../components/NavButton.tsx";
 import { Toolbar } from "../../components/Toolbar.tsx";
@@ -9,7 +9,6 @@ import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
 const itemsPerPage = 100;
 
 export default async function ConnectedServicesPage(
-  _req: Request,
   ctx: FreshContext<FreshCtxState>,
 ) {
   const page = parseInt(ctx.url.searchParams.get("page") ?? "0");
