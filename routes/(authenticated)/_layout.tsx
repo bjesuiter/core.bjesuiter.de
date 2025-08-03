@@ -11,7 +11,7 @@ export default function Layout({ Component, state, url }: PageProps) {
       <Sidebar url={url} initialOpen />
 
       {/* Main Content */}
-      <div class="overflow-auto h-full bg-white p-4 rounded-tl-md border border-teal-400">
+      <div class="overflow-auto h-full bg-white p-4 mt-12 rounded-tl-md border border-teal-400">
         <Component />
       </div>
     </div>
