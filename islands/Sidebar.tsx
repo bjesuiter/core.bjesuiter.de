@@ -15,26 +15,36 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
   return (
     <>
       {/* Small floating toolbar */}
-      <div class="absolute top-8 left-5 p-1 bg-primary/20 rounded-md">
+      <div
+        class={twJoin(
+          "absolute top-4 left-5 p-1  rounded-md",
+          sidebarOpen ? "bg-transparent" : "bg-primary/20",
+        )}
+      >
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
         <button
           type="button"
-          class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8"
+          class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8 select-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          <span class="text-2xl icon-[mynaui--sidebar]"></span>
+          <span class="text-2xl icon-[mynaui--sidebar] select-none"></span>
         </button>
       </div>
 
       {/* Left Sidebar */}
       <div
         class={twJoin(
-          "transition-width duration-300",
+          "transition-all duration-300",
           sidebarOpen ? "w-[200px]" : "w-0",
           sidebarOpen ? "pl-4" : "pl-0",
         )}
       >
-        <h1 class="text-2xl font-bold mb-4 mt-4 text-center">
+        <h1
+          class={twJoin(
+            "text-2xl font-bold mb-4 mt-0 text-center",
+            sidebarOpen ? "opacity-100" : "opacity-0",
+          )}
+        >
           coresvc
         </h1>
         <Menu class="" currentPath={props.url.pathname} />
