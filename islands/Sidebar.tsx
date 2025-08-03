@@ -17,7 +17,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
       {/* Small floating toolbar */}
       <div
         class={twJoin(
-          "absolute top-4 left-5 p-1  rounded-md",
+          "absolute top-4 left-5 p-1 rounded-md",
           sidebarOpen ? "bg-transparent" : "bg-primary/20",
         )}
       >
@@ -27,7 +27,8 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
           class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8 select-none"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
-          <span class="text-2xl icon-[mynaui--sidebar] select-none"></span>
+          <span class="text-2xl icon-[mynaui--sidebar] select-none">
+          </span>
         </button>
       </div>
 
