@@ -38,7 +38,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         class={twJoin(
           "transition-all duration-300",
           sidebarOpen ? "w-[200px]" : "w-0",
-          sidebarOpen ? "pl-4" : "pl-0",
+          sidebarOpen ? "px-2" : "px-0",
         )}
       >
         <h1
