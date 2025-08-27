@@ -25,7 +25,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
         <button
           type="button"
-          class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8"
+          class="hover:rounded-md hover:bg-primary/20 p-1 aspect-square h-8 w-8"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <Icon class="text-2xl icon-[mynaui--sidebar] select-none">
@@ -43,7 +43,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
       >
         <h1
           class={twJoin(
-            "text-2xl font-bold mb-4 mt-0 text-center delay-110",
+            "text-2xl font-bold mb-4 mt-0 text-center delay-100",
             sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible",
           )}
         >
