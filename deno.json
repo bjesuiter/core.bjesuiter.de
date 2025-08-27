@@ -1,4 +1,9 @@
 {
+  "name": "coresvc",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./main.ts"
+  },
   "tasks": {
     "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
@@ -16,15 +21,28 @@
     "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns_playground.local.ts"
   },
   "lock": true,
-  "lint": { "rules": { "tags": ["fresh", "recommended"] } },
-  "deploy": { "project": "core-bjesuiter", "entrypoint": "./main.ts" },
-  "exclude": ["**/_fresh/*"],
+  "lint": {
+    "rules": {
+      "tags": [
+        "fresh",
+        "recommended"
+      ]
+    }
+  },
+  "deploy": {
+    "project": "core-bjesuiter",
+    "entrypoint": "./main.ts"
+  },
+  "exclude": [
+    "**/_fresh/*"
+  ],
   "imports": {
     "@/": "./",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@0.0.1-alpha.9",
     "@iconify-json/mynaui": "npm:@iconify-json/mynaui@^1.2.14",
     "@iconify/tailwind4": "npm:@iconify/tailwind4@^1.0.6",
     "@libsql/client": "npm:@libsql/client@^0.15.10",
+    "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
     "cloudflare": "npm:cloudflare@^4.4.1",
@@ -39,7 +57,12 @@
     "zod": "npm:zod@^3.25.67",
     "fresh": "jsr:@fresh/core@^2.0.0-alpha.34"
   },
-  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "preact" },
-  "unstable": ["kv"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
+  },
+  "unstable": [
+    "kv"
+  ],
   "nodeModulesDir": "auto"
 }
