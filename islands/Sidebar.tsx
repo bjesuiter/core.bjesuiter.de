@@ -1,6 +1,7 @@
 import { useState } from "preact/hooks";
 import Menu from "../components/menu.tsx";
 import { twJoin } from "tailwind-merge";
+import { Icon } from "../lib/fresh-iconify/Icon.tsx";
 
 /**
  * Contains the sidebar and the floating toolbar to toggle it
@@ -24,7 +25,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
         <button
           type="button"
-          class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8 select-none"
+          class="hover:rounded-md hover:bg-primary/20 p-1 hover:text-black aspect-square h-8 w-8"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
           <span class="text-2xl icon-[mynaui--sidebar] select-none">
@@ -42,8 +43,8 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
       >
         <h1
           class={twJoin(
-            "text-2xl font-bold mb-4 mt-0 text-center",
-            sidebarOpen ? "opacity-100" : "opacity-0",
+            "text-2xl font-bold mb-4 mt-0 text-center delay-110",
+            sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible",
           )}
         >
           coresvc
