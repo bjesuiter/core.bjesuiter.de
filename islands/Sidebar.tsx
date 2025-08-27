@@ -44,12 +44,20 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         <h1
           class={twJoin(
             "text-2xl font-bold mb-4 mt-0 text-center delay-100",
-            sidebarOpen ? "opacity-100 visible" : "opacity-0 invisible",
+            sidebarOpen
+              ? "motion-preset-blur-right motion-ease-in-quart visible"
+              : "motion-preset-blur-left motion-ease-in-quart invisible",
           )}
         >
           coresvc
         </h1>
-        <Menu class="" currentPath={props.url.pathname} />
+        {/* TODO: optimize text wrapping while animating */}
+        <Menu
+          class={twJoin(
+            sidebarOpen ? "" : "overflow-hidden text-nowrap",
+          )}
+          currentPath={props.url.pathname}
+        />
       </div>
     </>
   );
