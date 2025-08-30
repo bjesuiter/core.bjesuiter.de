@@ -15,6 +15,7 @@ export const ConnectedServicesTable = sqliteTable("connected_services", {
   // TODO: Later: make this service_type a custom drizzle type which checks for an enum via zod
   // currently allowed values: "cloudflare"
   service_type: text("service_type").notNull(),
+  service_label: text("service_label").notNull(),
   // for cloudflare, this is called "API TOKEN"
   api_key: text("api_key").notNull(),
 });
