@@ -16,7 +16,6 @@ import { asc } from "drizzle-orm";
 //   lastLoginIp: string;
 // }
 
-// CAUTION: Cookie based auth needs to be implemented beforehand!
 export default async function UserPage() {
   // TODO: Add pagination controls on the frontend
   const users = await db.select().from(UsersTable).orderBy(
