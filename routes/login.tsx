@@ -97,9 +97,11 @@ export default function LoginPage() {
     <div class="flex flex-col items-center-safe justify-center-safe h-screen bg-primary-light">
       {/* Card Container */}
       <Card class="flex flex-col gap-4 min-w-[200px] md:min-w-[280px]">
-        <h1 class="self-center text-primary tracking-wide">core.bjesuiter</h1>
-        <p class="self-center italic">Login to continue</p>
-        <form class="flex flex-col gap-2" method="post">
+        <header class="self-center text-center">
+          <h1 class="text-primary tracking-wide">core.bjesuiter</h1>
+          <p class="italic">Login to continue</p>
+        </header>
+        <form class="flex flex-col gap-4 mt-4" method="post">
           <label>
             <p>Email</p>
             <input
@@ -115,7 +117,7 @@ export default function LoginPage() {
             <p>Password</p>
             <PasswortInput />
           </label>
-          <button type="submit" class="button mt-2">
+          <button type="submit" class="primary-btn mt-4 cursor-pointer">
             Login
           </button>
         </form>

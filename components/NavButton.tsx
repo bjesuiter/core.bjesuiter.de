@@ -5,7 +5,7 @@ export function NavButton(props: {
 }) {
   return (
     <a href={props.href}>
-      <button type="button" class="button" disabled={props.disabled}>
+      <button type="button" class="primary-btn" disabled={props.disabled}>
         {props.children}
       </button>
     </a>

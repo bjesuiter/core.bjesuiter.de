@@ -56,7 +56,7 @@ export default async function EditUserPage(
         </FormFieldWithLabel>
 
         {/* <p>TODO: build a password change component</p> */}
-        <button type="submit" class="button">Save</button>
+        <button type="submit" class="primary-btn">Save</button>
       </form>
     </Card>
   );

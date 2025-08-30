@@ -5,7 +5,7 @@ export function BrowserBackButton(props: {
 }) {
   return (
     <button
-      class="button"
+      class="primary-btn"
       type="button"
       onClick={() => window.history.back()}
     >

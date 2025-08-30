@@ -149,7 +149,7 @@ export default function AddUserPage(props: PageProps) {
 
         <button
           type="submit"
-          class="button"
+          class="primary-btn"
         >
           Add User
         </button>
