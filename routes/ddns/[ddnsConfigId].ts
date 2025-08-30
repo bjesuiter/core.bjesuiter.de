@@ -1,9 +1,6 @@
-import { FreshContext } from "fresh";
+import { define } from "../../lib/fresh/defineHelpers.ts";
 
-export const handler = async (
-  req: Request,
-  ctx: FreshContext,
-): Promise<Response> => {
+export const handler = define.handlers((ctx) => {
   const configId = ctx.params.ddnsConfigId;
   switch (configId) {
     case "bjesuiter":
@@ -14,4 +11,4 @@ export const handler = async (
     default:
       return new Response("Not found", { status: 404 });
   }
-};
+});
