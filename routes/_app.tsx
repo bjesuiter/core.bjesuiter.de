@@ -1,8 +1,8 @@
 import { Context } from "fresh";
-import { FreshCtxState } from "../types/fresh_ctx_state.type.ts";
+import { CoreSvcContext } from "../types/fresh_ctx_state.type.ts";
 import { envStore } from "../utils/env_store.ts";
 
-export default function App(ctx: Context<FreshCtxState>) {
+export default function App(ctx: Context<CoreSvcContext>) {
   const { Component, state } = ctx;
 
   let title = "coresvc";

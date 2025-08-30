@@ -1,7 +1,7 @@
 import { PageProps } from "fresh";
-import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
+import { CoreSvcContext } from "@/types/fresh_ctx_state.type.ts";
 
-export default function HomePage(props: PageProps<unknown, FreshCtxState>) {
+export default function HomePage(props: PageProps<unknown, CoreSvcContext>) {
   const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID") ?? "unknown";
 
   return (

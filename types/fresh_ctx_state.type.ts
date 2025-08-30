@@ -2,7 +2,7 @@ import { Session } from "../utils/auth.ts";
 import { User } from "../utils/user.type.ts";
 
 // Todo: rename to CoresvcCtxState
-export interface FreshCtxState {
+export interface CoreSvcContext {
   session: Session;
   user: User;
 
