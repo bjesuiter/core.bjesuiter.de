@@ -1,7 +1,6 @@
-import { type PageProps } from "fresh";
-import { envStore } from "../utils/env_store.ts";
 import { Context } from "fresh";
 import { FreshCtxState } from "../types/fresh_ctx_state.type.ts";
+import { envStore } from "../utils/env_store.ts";
 
 export default function App(ctx: Context<FreshCtxState>) {
   const { Component, state } = ctx;
@@ -23,6 +22,16 @@ export default function App(ctx: Context<FreshCtxState>) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{title}</title>
         <link rel="stylesheet" href="/styles.css" />
+        {/* @bjesuiter: Full import of WebAwesome components and styles */}
+        <link
+          rel="stylesheet"
+          href="https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/webawesome.css"
+        />
+        <script
+          type="module"
+          src="https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/webawesome.loader.js"
+        >
+        </script>
       </head>
       <body class="bg-teal-100">
         <Component />
