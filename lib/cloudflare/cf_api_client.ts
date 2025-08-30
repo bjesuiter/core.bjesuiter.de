@@ -1,10 +1,10 @@
 import "cloudflare/shims/web";
 import Cloudflare, { APIError } from "cloudflare";
 import { envStore } from "@/utils/env_store.ts";
-import { err, ok } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 
 // init cf api client
-const cfApiClient = new Cloudflare({
+export const cfApiClient = new Cloudflare({
   apiToken: envStore.CLOUDFLARE_DDNS_API_TOKEN,
 });
 
@@ -27,7 +27,44 @@ export enum DDNSUpdateErrors {
   UncatchedCfApiError = "UncatchedCfApiError",
 }
 
+export enum GeneralCfApiErrors {
+  InvalidApiKey = "InvalidApiKey",
+  UnknownCfApiError = "UnknownCfApiError",
+}
+
 /*Main functions*/
+
+export function validateCloudflareApiKey(
+  apiKey: string,
+): ResultAsync<true, { type: GeneralCfApiErrors; innerError: unknown }> {
+  // 1. get promise
+  const cfResponsePromise = cfApiClient.user.tokens.verify({
+    headers: {
+      "X.Auth-Token": apiKey,
+    },
+  });
+
+  // 2. create mapping function for cf api errors
+  const mapCfErrors = (e: unknown) => {
+    if (isCfApiError(e)) {
+      return err({ type: GeneralCfApiErrors.InvalidApiKey, innerError: e });
+    }
+    return err({ type: GeneralCfApiErrors.UnknownCfApiError, innerError: e });
+  };
+
+  // 3. construct neverthrow ResultAsync
+  const cfResponseResult = ResultAsync.fromPromise(
+    cfResponsePromise,
+    mapCfErrors,
+  ).map(() => true as const)
+    .mapErr((e) => ({
+      type: GeneralCfApiErrors.UnknownCfApiError,
+      innerError: e,
+    }));
+
+  // return the result
+  return cfResponseResult;
+}
 
 /**
  * @param data
