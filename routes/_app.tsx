@@ -23,7 +23,8 @@ export default function App(ctx: Context<FreshCtxState>) {
         <title>{title}</title>
         <link rel="stylesheet" href="/styles.css" />
         {/* @bjesuiter: Full import of WebAwesome components and styles */}
-        <link
+        {
+          /* <link
           rel="stylesheet"
           href="https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/styles/webawesome.css"
         />
@@ -31,7 +32,8 @@ export default function App(ctx: Context<FreshCtxState>) {
           type="module"
           src="https://early.webawesome.com/webawesome@3.0.0-beta.4/dist/webawesome.loader.js"
         >
-        </script>
+        </script> */
+        }
       </head>
       <body class="bg-teal-100">
         <Component />
