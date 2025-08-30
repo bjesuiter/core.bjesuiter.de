@@ -1,12 +1,13 @@
+import { Card } from "@/components/Card.tsx";
 import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
 import { Cookie } from "tough-cookie";
 import z from "zod/v4";
+import { PasswortInput } from "../islands/ui/PasswortInputSignal.tsx";
 import { define } from "../lib/fresh/defineHelpers.ts";
 import { constantTimeEqual, createSession } from "../utils/auth.ts";
 import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
 import { getUserByEmail } from "../utils/user_utils.ts";
-import { Card } from "@/components/Card.tsx";
 
 export const handler = define.handlers({
   /**
@@ -96,16 +97,24 @@ export default function LoginPage() {
     <div class="flex flex-col items-center-safe justify-center-safe h-screen bg-primary-light">
       {/* Card Container */}
       <Card class="flex flex-col gap-4 min-w-[200px] md:min-w-[280px]">
-        <h1>Login</h1>
-        <p>Login to coresvc to continue</p>
+        <h1 class="self-center text-primary tracking-wide">core.bjesuiter</h1>
+        <p class="self-center italic">Login to continue</p>
         <form class="flex flex-col gap-2" method="post">
-          <input type="email" name="email" placeholder="Email" required />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
+          <label>
+            <p>Email</p>
+            <input
+              class="w-full"
+              autocomplete="email"
+              type="email"
+              name="email"
+              placeholder="me@example.com"
+              required
+            />
+          </label>
+          <label>
+            <p>Password</p>
+            <PasswortInput />
+          </label>
           <button type="submit" class="button mt-2">
             Login
           </button>
