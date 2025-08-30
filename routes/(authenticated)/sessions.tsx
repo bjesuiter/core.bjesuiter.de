@@ -1,11 +1,10 @@
-import { FreshContext } from "fresh";
-import { Card } from "@/components/Card.tsx";
 import { NavButton } from "@/components/NavButton.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
 import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 import { desc, eq } from "drizzle-orm";
+import { FreshContext } from "fresh";
 import { UsersTable } from "../../lib/db/schemas/users.table.ts";
 
 const itemsPerPage = 100;
@@ -27,10 +26,7 @@ export default async function SessionsPage(
 
   return (
     <div class="flex flex-col gap-6">
-      <Toolbar
-        title="Sessions"
-        actionsSlotLeft={<NavButton href="/">Back</NavButton>}
-      >
+      <Toolbar title="Sessions">
         <NavButton
           href={`?page=${page - 1}`}
           disabled={(page - 1) < 0}
