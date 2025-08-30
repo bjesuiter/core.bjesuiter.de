@@ -5,7 +5,7 @@ export default define.page((ctx) => {
   const { user } = ctx.state;
 
   return (
-    <div class="border-2 border-zinc-400 rounded-md p-4 shadow-sm bg-zinc-100/50 flex flex-col gap-4 mt-8">
+    <div class="flex flex-col gap-4">
       <h1>Authenticated Homepage</h1>
       <section>
         <p>Welcome, {user.label}</p>
@@ -15,7 +15,7 @@ export default define.page((ctx) => {
 
       <hr class="my-4 border-b border-gray-300" />
 
-      <footer class="text-sm text-gray-500 text-center">
+      <footer class="text-sm text-gray-500 text-center justify-self-end">
         <p>
           DENO_DEPLOYMENT_ID: {denoDeploymentId}
         </p>
