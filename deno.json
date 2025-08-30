@@ -8,8 +8,6 @@
     "fmt": "deno fmt",
     "type-check": "deno check main.ts",
     "check-all": "deno fmt --check && deno lint && deno check main.ts",
-    "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
-    "manifest": "deno task cli manifest $(pwd)",
     "dev": "deno run -A --unstable-kv --watch=static/,routes/ dev.ts",
     "build": "deno run -A --unstable-kv dev.ts build",
     "preview": "deno run -A --unstable-kv main.ts",
@@ -23,7 +21,6 @@
     "db-studio-prod": "drizzle-kit --config .config/drizzle-prod.config.ts studio",
     "playground-ddns": "deno run -A --unstable-kv --env-file --watch playground/ddns_playground.local.ts"
   },
-  "lock": true,
   "lint": {
     "rules": {
       "tags": [
@@ -55,13 +52,13 @@
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
     "neverthrow": "npm:neverthrow@^8.2.0",
-    "preact": "npm:preact@^10.26.6",
-    "@preact/signals": "npm:@preact/signals@^2.0.4",
+    "preact": "npm:preact@^10.27.1",
+    "@preact/signals": "npm:@preact/signals@^2.3.1",
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",
     "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
     "zod": "npm:zod@^3.25.67",
-    "fresh": "jsr:@fresh/core@^2.0.0-alpha.34"
+    "fresh": "jsr:@fresh/core@^2.0.0-beta.1"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
