@@ -1,14 +1,12 @@
-import { FreshContext } from "fresh";
-import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 import { isRequestAuthenticated } from "@/utils/auth.ts";
 import { redirectToLogin } from "@/utils/routing.ts";
+import { define } from "../../lib/fresh/defineHelpers.ts";
 
 /**
  * Authentication middleware
  */
-export async function handler(
-  ctx: FreshContext<FreshCtxState>,
-) {
+
+export default define.middleware(async (ctx) => {
   const req = ctx.req;
   const authResult = await isRequestAuthenticated(req);
   if (authResult.isErr()) {
@@ -23,4 +21,4 @@ export async function handler(
 
   // Step 3 - change response if needed
   return resp;
-}
+});
