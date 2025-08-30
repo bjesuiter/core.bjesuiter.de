@@ -39,6 +39,8 @@
   "imports": {
     "@/": "./",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@0.0.1-alpha.9",
+    "@iconify-json/mdi": "npm:@iconify-json/mdi@^1.2.3",
+    "@iconify-json/mdi-light": "npm:@iconify-json/mdi-light@^1.2.2",
     "@iconify-json/mynaui": "npm:@iconify-json/mynaui@^1.2.14",
     "@iconify/tailwind4": "npm:@iconify/tailwind4@^1.0.6",
     "@libsql/client": "npm:@libsql/client@^0.15.10",
