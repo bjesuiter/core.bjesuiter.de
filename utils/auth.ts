@@ -26,15 +26,6 @@ export interface SessionWithToken extends Session {
 
 // Token format for client: <SESSION_ID>.<SESSION_SECRET>
 
-// The error type enum for the auth module
-export enum AuthErrors {
-  NoSessionTokenCookie = "NoSessionTokenCookie",
-  SessionTokenInvalid = "SessionTokenInvalid",
-  SessionNotFoundInDb = "SessionNotFoundInDb",
-  UserNotFoundInDb = "UserNotFoundInDb",
-  UserInvalidInDb = "UserInvalidInDb",
-}
-
 // Settings for this module
 // -------------------------
 const sessionExpiresInSeconds = 60 * 60 * 24; // 1 day
@@ -132,6 +123,15 @@ export async function deleteSession(sessionId: string): Promise<void> {
 /**
  * High-level functions
  */
+
+// The error type enum for the auth module
+export enum AuthErrors {
+  NoSessionTokenCookie = "NoSessionTokenCookie",
+  SessionTokenInvalid = "SessionTokenInvalid",
+  SessionNotFoundInDb = "SessionNotFoundInDb",
+  UserNotFoundInDb = "UserNotFoundInDb",
+  UserInvalidInDb = "UserInvalidInDb",
+}
 
 export async function isRequestAuthenticated(
   req: Request,
