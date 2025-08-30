@@ -2,16 +2,13 @@ import { NavButton } from "@/components/NavButton.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
-import { FreshCtxState } from "@/types/fresh_ctx_state.type.ts";
 import { desc, eq } from "drizzle-orm";
-import { FreshContext } from "fresh";
 import { UsersTable } from "../../lib/db/schemas/users.table.ts";
+import { define } from "../../lib/fresh/defineHelpers.ts";
 
 const itemsPerPage = 100;
 
-export default async function SessionsPage(
-  ctx: FreshContext<FreshCtxState>,
-) {
+export default define.page(async (ctx) => {
   // check permission
   //   if (!ctx.state.user.email === envStore.CORE_ROOT_USER_EMAIL) {
   //   }
@@ -63,4 +60,4 @@ export default async function SessionsPage(
       </table>
     </div>
   );
-}
+});
