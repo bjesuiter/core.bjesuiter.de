@@ -1,6 +1,6 @@
 import { validateCloudflareApiKey } from "../../../../lib/cloudflare/cf_api_client.ts";
 import { db, dbSafeInsert, InsertErrors } from "../../../../lib/db/index.ts";
-import { ConnectedServicesTable } from "../../../../lib/db/schemas/connected_services.ts";
+import { ConnectedServicesTable } from "../../../../lib/db/schemas/connected_services.table.ts";
 
 /**
  * @param api_key the cloudflare api key to add
