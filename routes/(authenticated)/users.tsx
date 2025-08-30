@@ -3,7 +3,7 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { asc } from "drizzle-orm";
-import { define } from "../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 // TODO: merge with main users KV
 // interface User {

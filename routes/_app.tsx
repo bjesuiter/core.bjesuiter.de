@@ -1,5 +1,5 @@
-import { define } from "../lib/fresh/defineHelpers.ts";
-import { envStore } from "../utils/env_store.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
+import { envStore } from "@/utils/env_store.ts";
 
 export default define.page((ctx) => {
   const { Component, state } = ctx;

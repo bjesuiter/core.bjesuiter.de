@@ -1,6 +1,6 @@
 import { Context, createDefine } from "fresh";
-import { Session } from "../../utils/auth.ts";
-import { User } from "../../utils/user.type.ts";
+import { Session } from "@/utils/auth.ts";
+import { User } from "@/utils/user.type.ts";
 
 export interface CoreSvcContext {
   session: Session;

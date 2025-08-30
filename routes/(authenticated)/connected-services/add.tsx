@@ -1,9 +1,9 @@
 import z from "zod/v4";
-import { Card } from "../../../components/Card.tsx";
-import { FormFieldWithLabel } from "../../../components/FormFieldWithLabel.tsx";
-import { NavButton } from "../../../components/NavButton.tsx";
-import { Toolbar } from "../../../components/Toolbar.tsx";
-import { define } from "../../../lib/fresh/defineHelpers.ts";
+import { Card } from "@/components/Card.tsx";
+import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
+import { NavButton } from "@/components/NavButton.tsx";
+import { Toolbar } from "@/components/Toolbar.tsx";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 import { addCloudflareConnection } from "./(service-types)/addCloudflareConnection.ts";
 

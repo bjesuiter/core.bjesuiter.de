@@ -3,11 +3,11 @@ import { hashSecret } from "@/utils/auth.ts";
 import { userSchema } from "@/utils/user.type.ts";
 import { Cookie } from "tough-cookie";
 import z from "zod/v4";
-import { PasswortInput } from "../islands/ui/PasswortInputSignal.tsx";
-import { define } from "../lib/fresh/defineHelpers.ts";
-import { constantTimeEqual, createSession } from "../utils/auth.ts";
-import { isRunningOnDenoDeploy } from "../utils/env_store.ts";
-import { getUserByEmail } from "../utils/user_utils.ts";
+import { PasswortInput } from "@/islands/ui/PasswortInputSignal.tsx";
+import { define } from "@/lib/fresh/defineHelpers.ts";
+import { constantTimeEqual, createSession } from "@/utils/auth.ts";
+import { isRunningOnDenoDeploy } from "@/utils/env_store.ts";
+import { getUserByEmail } from "@/utils/user_utils.ts";
 
 export const handler = define.handlers({
   /**

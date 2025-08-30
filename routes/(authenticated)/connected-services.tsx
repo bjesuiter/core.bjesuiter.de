@@ -1,9 +1,9 @@
 import { desc, eq } from "drizzle-orm";
-import { NavButton } from "../../components/NavButton.tsx";
-import { Toolbar } from "../../components/Toolbar.tsx";
-import { db } from "../../lib/db/index.ts";
-import { ConnectedServicesTable } from "../../lib/db/schemas/connected_services.table.ts";
-import { define } from "../../lib/fresh/defineHelpers.ts";
+import { NavButton } from "@/components/NavButton.tsx";
+import { Toolbar } from "@/components/Toolbar.tsx";
+import { db } from "@/lib/db/index.ts";
+import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 const itemsPerPage = 100;
 

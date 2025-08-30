@@ -1,14 +1,14 @@
 import { envStore } from "@/utils/env_store.ts";
 import { Span, SpanStatusCode } from "@opentelemetry/api";
 import { decodeBase64 } from "@std/encoding";
-import { define } from "../../lib/fresh/defineHelpers.ts";
-import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
-import { CoresvcFreshContext } from "../../types/coresvc_fresh_context.type.ts";
-import { logAuthorizedDDNSUpdateRequest } from "../../utils/kv.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
+import { appTracer } from "@/lib/opentelemetry/app-tracer.ts";
+import { CoresvcFreshContext } from "@/types/coresvc_fresh_context.type.ts";
+import { logAuthorizedDDNSUpdateRequest } from "@/utils/kv.ts";
 import {
   DDNSUpdateErrors,
   updateOrCreateDnsRecord,
-} from "../../lib/cloudflare/cf_api_client.ts";
+} from "@/lib/cloudflare/cf_api_client.ts";
 
 async function updateCloudflare(
   req: Request,

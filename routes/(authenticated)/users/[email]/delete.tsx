@@ -2,7 +2,7 @@ import { NavButton } from "@/components/NavButton.tsx";
 import { deleteUser, DeleteUserErrors } from "@/utils/user_utils.ts";
 import { Card } from "@/components/Card.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
-import { define } from "../../../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export default define.page(async (ctx) => {
   const email = ctx.params.email;

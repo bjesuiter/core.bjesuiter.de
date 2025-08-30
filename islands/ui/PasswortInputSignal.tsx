@@ -1,5 +1,5 @@
 import { computed, signal } from "@preact/signals";
-import { Icon } from "../../lib/fresh-iconify/Icon.tsx";
+import { Icon } from "@/lib/fresh-iconify/Icon.tsx";
 
 const showPassword = signal(false);
 

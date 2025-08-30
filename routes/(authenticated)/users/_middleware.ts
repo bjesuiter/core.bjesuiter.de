@@ -1,5 +1,5 @@
 import { envStore } from "@/utils/env_store.ts";
-import { define } from "../../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 const _allowedUsers = [
   envStore.CORE_ROOT_USER_EMAIL,

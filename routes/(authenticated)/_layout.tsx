@@ -1,5 +1,5 @@
 import { PageProps } from "fresh";
-import { Sidebar } from "../../islands/Sidebar.tsx";
+import { Sidebar } from "@/islands/Sidebar.tsx";
 
 export default function Layout({ Component, state, url }: PageProps) {
   // do something with state here

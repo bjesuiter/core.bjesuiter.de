@@ -1,5 +1,5 @@
 import { NavTextLink } from "./NavTextLink.tsx";
-import { LogoutButton } from "../islands/LogoutButton.tsx";
+import { LogoutButton } from "@/islands/LogoutButton.tsx";
 import { twJoin } from "tailwind-merge";
 
 export default function Menu(props: { class?: string; currentPath: string }) {

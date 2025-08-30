@@ -1,4 +1,4 @@
-import { define } from "../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export default define.page((ctx) => {
   const denoDeploymentId = Deno.env.get("DENO_DEPLOYMENT_ID") ?? "unknown";

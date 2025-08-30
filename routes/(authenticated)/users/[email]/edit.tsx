@@ -3,7 +3,7 @@ import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
 import { NavButton } from "@/components/NavButton.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
 import { getUserByEmail, GetUserErrors } from "@/utils/user_utils.ts";
-import { define } from "../../../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export default define.page(async (ctx) => {
   const email = ctx.params.email;

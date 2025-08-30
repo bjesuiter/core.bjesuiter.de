@@ -1,5 +1,5 @@
-import { define } from "../../lib/fresh/defineHelpers.ts";
-import { deleteSession } from "../../utils/auth.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
+import { deleteSession } from "@/utils/auth.ts";
 
 export default define.page(async (ctx) => {
   if (ctx.req.method === "POST") {

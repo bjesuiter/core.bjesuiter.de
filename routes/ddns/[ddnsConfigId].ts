@@ -1,4 +1,4 @@
-import { define } from "../../lib/fresh/defineHelpers.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export const handler = define.handlers((ctx) => {
   const configId = ctx.params.ddnsConfigId;

@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
-import Menu from "../components/menu.tsx";
+import Menu from "@/components/menu.tsx";
 import { twJoin } from "tailwind-merge";
-import { Icon } from "../lib/fresh-iconify/Icon.tsx";
+import { Icon } from "@/lib/fresh-iconify/Icon.tsx";
 
 /**
  * Contains the sidebar and the floating toolbar to toggle it

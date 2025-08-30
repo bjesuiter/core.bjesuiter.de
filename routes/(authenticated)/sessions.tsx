@@ -3,8 +3,8 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
 import { desc, eq } from "drizzle-orm";
-import { UsersTable } from "../../lib/db/schemas/users.table.ts";
-import { define } from "../../lib/fresh/defineHelpers.ts";
+import { UsersTable } from "@/lib/db/schemas/users.table.ts";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 const itemsPerPage = 100;
 
