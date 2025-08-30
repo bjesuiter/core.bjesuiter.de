@@ -17,7 +17,6 @@ export default define.page(
       const formData = await ctx.req.formData();
 
       const initPasswordOption = formData.get("init_password_option");
-
       if (!initPasswordOption) {
         return new Response(
           "init_password_option is required: valid values: generate_password, custom_password",
@@ -34,6 +33,7 @@ export default define.page(
       const email = formData.get("email");
       const label = formData.get("label");
 
+      //NOTE: registerUser() will validate the input thoroughly, so we can skip the validation here
       const result = await registerUser(email, label, password);
 
       return result.match(
