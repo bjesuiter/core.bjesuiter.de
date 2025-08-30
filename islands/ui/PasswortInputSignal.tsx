@@ -1,11 +1,10 @@
 import { computed, signal } from "@preact/signals";
-import { useEffect } from "preact/hooks";
 import { Icon } from "../../lib/fresh-iconify/Icon.tsx";
 
 const showPassword = signal(false);
 
 export function PasswortInput(
-  props: { placeholder?: string; inputName?: string },
+  props: { placeholder?: string; inputName?: string; autocomplete?: string },
 ) {
   console.log("PasswortInput rendered");
 
@@ -14,16 +13,10 @@ export function PasswortInput(
     showPassword.value ? (props.placeholder ?? "myPassword") : "********"
   );
 
-  useEffect(() => {
-    console.log("PasswortInput - showPassword changed to:", showPassword.value);
-    console.log("PasswortInput - inputType:", inputType.value);
-    console.log("PasswortInput - inputPlaceholder:", inputPlaceholder.value);
-  }, [showPassword]);
-
   return (
     <div class="relative">
       <button
-        class="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 z-10 p-1"
+        class="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 z-10 p-1"
         type="button"
         onClick={() => showPassword.value = !showPassword.value}
       >
@@ -37,9 +30,10 @@ export function PasswortInput(
       </button>
       <input
         type={inputType.value}
+        autocomplete={props.autocomplete ?? "current-password"}
         name={props.inputName ?? "password"}
         placeholder={inputPlaceholder.value}
-        class="pr-12"
+        class="w-full pr-10"
         required
       />
     </div>

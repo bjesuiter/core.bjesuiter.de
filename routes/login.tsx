@@ -103,6 +103,8 @@ export default function LoginPage() {
           <label>
             <p>Email</p>
             <input
+              class="w-full"
+              autocomplete="email"
               type="email"
               name="email"
               placeholder="me@example.com"
