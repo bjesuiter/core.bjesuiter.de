@@ -1,7 +1,7 @@
-import { CoreSvcFreshContext } from "../lib/fresh/defineHelpers.ts";
+import { define } from "../lib/fresh/defineHelpers.ts";
 import { envStore } from "../utils/env_store.ts";
 
-export default function App(ctx: CoreSvcFreshContext) {
+export default define.page((ctx) => {
   const { Component, state } = ctx;
 
   let title = "coresvc";
@@ -39,4 +39,4 @@ export default function App(ctx: CoreSvcFreshContext) {
       </body>
     </html>
   );
-}
+});
