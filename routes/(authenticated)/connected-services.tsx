@@ -29,12 +29,14 @@ const ConnectedServicesPage = define.page(async (ctx) => {
         Here you can manage the services that you have connected to
         core.bjesuiter.
       </p>
-      <table class="min-w-full border border-gray-300">
+      <table class="min-w-full border border-gray-300 mt-4">
         <thead>
           <tr>
-            <th class="px-4 py-2 border-b">ID</th>
-            <th class="px-4 py-2 border-b">Service Type</th>
-            <th class="px-4 py-2 border-b">Created At</th>
+            <th class="px-4 py-2 border-b text-left">ID</th>
+            <th class="px-4 py-2 border-b text-left">Service Type</th>
+            <th class="px-4 py-2 border-b text-left">Service Label</th>
+            <th class="px-4 py-2 border-b text-left">Created At</th>
+            <th class="px-4 py-2 border-b text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -42,8 +44,14 @@ const ConnectedServicesPage = define.page(async (ctx) => {
             <tr key={service.id}>
               <td class="px-4 py-2 border-b">{service.id}</td>
               <td class="px-4 py-2 border-b">{service.service_type}</td>
+              <td class="px-4 py-2 border-b">{service.service_label}</td>
               <td class="px-4 py-2 border-b">
                 {service.created_at?.toString?.() ?? ""}
+              </td>
+              <td class="px-4 py-2 border-b">
+                <NavButton href={`/connected-services/${service.id}/delete`}>
+                  Delete
+                </NavButton>
               </td>
             </tr>
           ))}
