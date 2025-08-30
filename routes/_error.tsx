@@ -1,8 +1,5 @@
-import { Head } from "fresh/runtime";
-import { NavButton } from "../components/NavButton.tsx";
-import { BrowserBackButton } from "../islands/BrowserBackButton.tsx";
 import { HttpError, PageProps } from "fresh";
-import { CoreSvcContext } from "../types/fresh_ctx_state.type.ts";
+import { CoreSvcContext } from "../lib/fresh/defineHelpers.ts";
 
 export default function ErrorPage(props: PageProps<undefined, CoreSvcContext>) {
   const error = props.error; // Contains the thrown Error or HTTPError
