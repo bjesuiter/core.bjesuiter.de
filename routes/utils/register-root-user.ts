@@ -1,12 +1,11 @@
 import { registerUser } from "@/utils/user_utils.ts";
-import { defineRoute } from "fresh/compat";
+import { define } from "@/lib/fresh/defineHelpers.ts";
 
 /**
  * Utility function to register a user to the database.
  * CAUTION: everything in here MUST be hardcoded! It's a simple utility to get users into the deno kv in prod.
  */
-export default defineRoute(async (ctx) => {
-  const req = ctx.req;
+export default define.page((_ctx) => {
   const label = Deno.env.get("CORE_ROOT_USER_LABEL");
   if (!label) {
     return new Response("CORE_ROOT_USER_LABEL is not set", { status: 500 });

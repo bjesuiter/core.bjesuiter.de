@@ -16,7 +16,7 @@
 
 @theme {
   --color-primary: var(--color-teal-700);
-  --color-primary-light: var(--color-teal-50)
+  --color-primary-light: var(--color-teal-50);
 }
 
 @layer base {
@@ -40,15 +40,15 @@
     @apply border border-gray-300 rounded-md py-1 px-2 outline-teal-700;
   }
 
- button.primary-btn {
-    @apply hover:shadow-md rounded-md py-2 px-4 text-white bg-teal-600 shadow-teal-500/40;
+  button.primary-btn {
+    @apply hover:shadow-md rounded-md py-2 px-4 text-white bg-teal-600
+      shadow-teal-500/40;
   }
 
   button.primary-btn:disabled {
     @apply bg-gray-400 cursor-not-allowed hover:shadow-none;
   }
 }
-
 
 /* TODO: improve view transitions with https://nerdy.dev/6-css-snippets-every-front-end-developer-should-know-in-2025#incrementally-adopt */
 @view-transition {
@@ -61,6 +61,3 @@
   /* https://developer.mozilla.org/en-US/docs/Web/CSS/interpolate-size */
   interpolate-size: allow-keywords;
 }
-
-
-

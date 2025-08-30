@@ -1,12 +1,12 @@
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { err, ok, Result } from "neverthrow";
 import { Cookie } from "tough-cookie";
-import { User, userSchema } from "./user.type.ts";
+import { User } from "./user.type.ts";
 import { db } from "@/lib/db/index.ts";
 import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
 import { Buffer } from "node:buffer";
 import { eq } from "drizzle-orm";
-import { UsersTable } from "@/lib/db/schemas/users.table.ts";
+
 import { getUserById, GetUserErrors } from "./user_utils.ts";
 
 /**

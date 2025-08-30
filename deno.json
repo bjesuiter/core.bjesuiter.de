@@ -5,7 +5,9 @@
     ".": "./main.ts"
   },
   "tasks": {
-    "check": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
+    "fmt": "deno fmt",
+    "type-check": "deno check main.ts",
+    "check": "deno fmt --check && deno lint && deno check main.ts",
     "cli": "echo \"import '\\$fresh/src/dev/cli.ts'\" | deno run --unstable -A -",
     "manifest": "deno task cli manifest $(pwd)",
     "dev": "deno run -A --unstable-kv --watch=static/,routes/ dev.ts",

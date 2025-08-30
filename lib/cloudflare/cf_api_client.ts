@@ -1,7 +1,7 @@
 import "cloudflare/shims/web";
 import Cloudflare, { APIError } from "cloudflare";
 import { envStore } from "@/utils/env_store.ts";
-import { err, ok, Result, ResultAsync } from "neverthrow";
+import { err, ok, ResultAsync } from "neverthrow";
 
 // init cf api client
 export const cfApiClient = new Cloudflare({
