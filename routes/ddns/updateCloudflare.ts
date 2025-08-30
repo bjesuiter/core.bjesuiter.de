@@ -8,7 +8,7 @@ import { logAuthorizedDDNSUpdateRequest } from "../../utils/kv.ts";
 import {
   DDNSUpdateErrors,
   updateOrCreateDnsRecord,
-} from "./(_cloudflare)/cf_api_client.ts";
+} from "../../lib/cloudflare/cf_api_client.ts";
 
 async function updateCloudflare(
   req: Request,
