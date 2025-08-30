@@ -41,7 +41,7 @@
   }
 
   button.primary-btn:disabled {
-    @apply bg-gray-400 cursor-not-allowed;
+    @apply bg-gray-400 cursor-not-allowed hover:shadow-none;
   }
 }
 
