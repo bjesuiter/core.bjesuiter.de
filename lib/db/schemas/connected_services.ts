@@ -8,9 +8,9 @@ import { customIsoDate } from "../types/customIsoDate.ts";
 export const ConnectedServicesTable = sqliteTable("connected_services", {
   // standard fields
   id: text("id").primaryKey(),
-  ownedBy: text("owned_by").references(() => UsersTable.id).notNull(),
-  createdAt: customIsoDate().notNull(),
-  updatedAt: customIsoDate().notNull(),
+  owned_by: text("owned_by").references(() => UsersTable.id).notNull(),
+  created_at: customIsoDate().notNull(),
+  updated_at: customIsoDate().notNull(),
   //   custom table fields
   // TODO: Later: make this service_type a custom drizzle type which checks for an enum via zod
   // currently allowed values: "cloudflare"

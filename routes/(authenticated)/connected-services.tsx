@@ -10,8 +10,8 @@ const itemsPerPage = 100;
 const ConnectedServicesPage = define.page(async (ctx) => {
   const page = parseInt(ctx.url.searchParams.get("page") ?? "0");
   const services = await db.select().from(ConnectedServicesTable)
-    .orderBy(desc(ConnectedServicesTable.createdAt))
-    .where(eq(ConnectedServicesTable.ownedBy, ctx.state.user.id))
+    .orderBy(desc(ConnectedServicesTable.created_at))
+    .where(eq(ConnectedServicesTable.owned_by, ctx.state.user.id))
     .limit(itemsPerPage)
     .offset(page * itemsPerPage);
 
@@ -43,7 +43,7 @@ const ConnectedServicesPage = define.page(async (ctx) => {
               <td class="px-4 py-2 border-b">{service.id}</td>
               <td class="px-4 py-2 border-b">{service.service_type}</td>
               <td class="px-4 py-2 border-b">
-                {service.createdAt?.toString?.() ?? ""}
+                {service.created_at?.toString?.() ?? ""}
               </td>
             </tr>
           ))}
