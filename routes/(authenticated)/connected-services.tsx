@@ -1,16 +1,13 @@
-import { FreshContext } from "fresh";
 import { desc, eq } from "drizzle-orm";
 import { NavButton } from "../../components/NavButton.tsx";
 import { Toolbar } from "../../components/Toolbar.tsx";
 import { db } from "../../lib/db/index.ts";
 import { ConnectedServicesTable } from "../../lib/db/schemas/connected_services.ts";
-import { FreshCtxState } from "../../types/fresh_ctx_state.type.ts";
+import { define } from "../../lib/fresh/defineHelpers.ts";
 
 const itemsPerPage = 100;
 
-export default async function ConnectedServicesPage(
-  ctx: FreshContext<FreshCtxState>,
-) {
+const ConnectedServicesPage = define.page(async (ctx) => {
   const page = parseInt(ctx.url.searchParams.get("page") ?? "0");
   const services = await db.select().from(ConnectedServicesTable)
     .orderBy(desc(ConnectedServicesTable.createdAt))
@@ -22,7 +19,6 @@ export default async function ConnectedServicesPage(
     <>
       <Toolbar
         title="Connected Services"
-        actionsSlotLeft={<NavButton href="/home">Back</NavButton>}
         actionsSlotRight={
           <NavButton href="/connected-services/add">
             Add Service
@@ -30,7 +26,8 @@ export default async function ConnectedServicesPage(
         }
       />
       <p>
-        Here you can manage the services that you have connected to coresvc.
+        Here you can manage the services that you have connected to
+        core.bjesuiter.
       </p>
       <table class="min-w-full border border-gray-300">
         <thead>
@@ -54,4 +51,6 @@ export default async function ConnectedServicesPage(
       </table>
     </>
   );
-}
+});
+
+export default ConnectedServicesPage;
