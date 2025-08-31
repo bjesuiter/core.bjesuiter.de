@@ -16,6 +16,11 @@ export type DbExecutionError = {
   innerError: Error;
 };
 
+/**
+ * Wraps a promise in a neverthrow ResultAsync and returns a ResultAsync with the result of the promise
+ * @param promise - the promise to wrap
+ * @returns a ResultAsync with the result of the promise - NEEDS TO BE AWAITED!!!
+ */
 export function dbSafeExecute<T>(
   promise: PromiseLike<T>,
 ): ResultAsync<T, DbExecutionError> {
