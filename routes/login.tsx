@@ -1,13 +1,13 @@
 import { Card } from "@/components/Card.tsx";
-import { hashSecret } from "@/utils/auth.ts";
-import { userSchema } from "@/utils/user.type.ts";
-import { Cookie } from "tough-cookie";
-import z from "zod/v4";
 import { PasswortInput } from "@/islands/ui/PasswortInputSignal.tsx";
 import { define } from "@/lib/fresh/defineHelpers.ts";
-import { constantTimeEqual, createSession } from "@/utils/auth.ts";
+import { createSession } from "@/utils/auth.ts";
+import { constantTimeEqual, hashSecret } from "@/utils/auth_helpers.ts";
 import { isRunningOnDenoDeploy } from "@/utils/env_store.ts";
+import { userSchema } from "@/utils/user.type.ts";
 import { getUserByEmail } from "@/utils/user_utils.ts";
+import { Cookie } from "tough-cookie";
+import z from "zod/v4";
 
 export const handler = define.handlers({
   /**
