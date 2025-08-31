@@ -3,28 +3,28 @@
 import { ResultAsync } from "neverthrow";
 
 // -------------------
-export enum InsertErrors {
+export enum DbExecutionErrors {
   UnknownError = "UnknownError",
   ErrorWithMessage = "ErrorWithMessage",
 }
 
-export type InsertError = {
-  type: InsertErrors.UnknownError;
+export type DbExecutionError = {
+  type: DbExecutionErrors.UnknownError;
   innerError: unknown;
 } | {
-  type: InsertErrors.ErrorWithMessage;
+  type: DbExecutionErrors.ErrorWithMessage;
   innerError: Error;
 };
 
-export function dbSafeInsert<T>(
+export function dbSafeExecute<T>(
   promise: PromiseLike<T>,
-): ResultAsync<T, InsertError> {
+): ResultAsync<T, DbExecutionError> {
   return ResultAsync.fromPromise(promise, (e) => {
     if (e instanceof Error) {
-      return { type: InsertErrors.ErrorWithMessage, innerError: e };
+      return { type: DbExecutionErrors.ErrorWithMessage, innerError: e };
     }
 
-    // TODO: if more specific drizzle insert errors are known, add theme here
-    return { type: InsertErrors.UnknownError, innerError: e };
+    // TODO: if more specific drizzle errors are known, add them here
+    return { type: DbExecutionErrors.UnknownError, innerError: e };
   });
 }

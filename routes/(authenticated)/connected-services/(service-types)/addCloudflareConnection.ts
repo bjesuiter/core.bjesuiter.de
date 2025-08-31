@@ -1,6 +1,6 @@
 import { validateCloudflareApiKey } from "@/lib/cloudflare/cf_api_client.ts";
 import { db } from "@/lib/db/index.ts";
-import { dbSafeInsert, InsertErrors } from "@/lib/db/neverthrow/helpers.ts";
+import { dbSafeExecute, InsertErrors } from "@/lib/db/neverthrow/helpers.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 
 /**
@@ -33,7 +33,7 @@ export async function addCloudflareConnection(
     updated_at: new Date(),
   };
 
-  const dbResult = await dbSafeInsert(
+  const dbResult = await dbSafeExecute(
     db.insert(ConnectedServicesTable).values(newConnectedService)
       .execute(),
   );
