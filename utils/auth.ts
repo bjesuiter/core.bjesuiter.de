@@ -1,10 +1,9 @@
 import { db } from "@/lib/db/index.ts";
 import {
-  Session,
+  SessionDB,
   SessionFrontend,
   SessionsTable,
 } from "@/lib/db/schemas/sessions.table.ts";
-import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { eq } from "drizzle-orm";
 import { err, ok, Result, ResultAsync } from "neverthrow";
 import { Cookie } from "tough-cookie";
@@ -28,7 +27,7 @@ import {
 //   createdAt: Date;
 // }
 
-export interface SessionWithToken extends Session {
+export interface SessionWithToken extends SessionDB {
   token: string;
 }
 
@@ -85,7 +84,7 @@ export enum SessionWithUserErrors {
 async function getSessionWithUser(
   sessionId: string,
 ): Promise<
-  Result<{ session: Session; user: UserFrontend }, SessionWithUserErrors>
+  Result<{ session: SessionDB; user: UserFrontend }, SessionWithUserErrors>
 > {
   const now = new Date();
 
@@ -115,12 +114,12 @@ async function getSessionWithUser(
     return err(SessionWithUserErrors.SessionOrUserNotFound);
   }
 
-  const session: Session = {
+  const session: SessionDB = {
     id: result[0].sessions.id,
     userId: result[0].sessions.userId,
     createdAt: result[0].sessions.createdAt,
     secretHash: result[0].sessions.secretHash,
-  } satisfies Session;
+  } satisfies SessionDB;
 
   const user = {
     id: result[0].users.id,

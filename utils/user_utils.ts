@@ -1,12 +1,10 @@
 import { db } from "@/lib/db/index.ts";
-import { UsersTable } from "@/lib/db/schemas/users.table.ts";
+import { UserDB, UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { eq } from "drizzle-orm";
 import { err, ok, Result } from "neverthrow";
 import z from "zod/v4";
 import { generateSecureRandomString, hashSecret } from "./auth_helpers.ts";
 import { envStore } from "./env_store.ts";
-import { User, userSchema } from "./user.type.ts";
-
 export function generateStrongPassword() {
   const password = generateSecureRandomString();
   return password;
@@ -19,47 +17,39 @@ export enum GetUserErrors {
 
 export async function getUserById(
   id: string,
-): Promise<Result<User, GetUserErrors>> {
+): Promise<Result<UserDB, GetUserErrors>> {
   const user = await db.select().from(UsersTable).where(eq(UsersTable.id, id))
     .limit(1);
+
+  // TODO: handle db errors
+
   if (user.length === 0) {
     return err(GetUserErrors.UserNotFound);
   }
-  const userParsed = userSchema.safeParse({
-    id: user[0].id,
-    label: user[0].label,
-    email: user[0].email,
-    password_hash: user[0].passwordHash,
-    password_salt: user[0].passwordSalt,
-  });
-  if (!userParsed.success) {
+
+  if (!user[0]) {
     return err(GetUserErrors.UserInvalid);
   }
 
-  return ok(userParsed.data);
+  return ok(user[0]);
 }
 
 export async function getUserByEmail(
   email: string,
-): Promise<Result<User, GetUserErrors>> {
+): Promise<Result<UserDB, GetUserErrors>> {
   const user = await db.select().from(UsersTable).where(
     eq(UsersTable.email, email),
   )
     .limit(1);
+
   if (user.length === 0) {
     return err(GetUserErrors.UserNotFound);
   }
-  const userParsed = userSchema.safeParse({
-    id: user[0].id,
-    label: user[0].label,
-    email: user[0].email,
-    password_hash: user[0].passwordHash,
-    password_salt: user[0].passwordSalt,
-  });
-  if (!userParsed.success) {
+
+  if (!user[0]) {
     return err(GetUserErrors.UserInvalid);
   }
-  return ok(userParsed.data);
+  return ok(user[0]);
 }
 
 export enum DeleteUserErrors {
@@ -101,7 +91,7 @@ export async function registerUser(
   email: string | FormDataEntryValue | null,
   label: string | FormDataEntryValue | null,
   password: string | FormDataEntryValue | null,
-): Promise<Result<User, RegisterUserErrors>> {
+): Promise<Result<UserDB, RegisterUserErrors>> {
   // Step 1: validate email
   const parsedEmail = z.email().toLowerCase().trim().safeParse(email);
   if (parsedEmail.success === false) {
@@ -134,12 +124,12 @@ export async function registerUser(
   // https://docs.deno.com/deploy/manual/pricing-and-limits/#memory-allocation
   const passwordHash = await hashSecret(passwordPlusSalt);
 
-  const newUser: User = {
+  const newUser: UserDB = {
     id: crypto.randomUUID(),
     label: parsedLabel.data,
     email: parsedEmail.data,
-    password_hash: passwordHash,
-    password_salt: salt,
+    passwordHash: passwordHash,
+    passwordSalt: salt,
   };
 
   await db.insert(UsersTable).values({
@@ -147,7 +137,7 @@ export async function registerUser(
     email: newUser.email,
     label: newUser.label,
     passwordHash: passwordHash,
-    passwordSalt: newUser.password_salt,
+    passwordSalt: newUser.passwordSalt,
   });
 
   return ok(newUser);

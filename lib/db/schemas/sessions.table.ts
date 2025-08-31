@@ -9,5 +9,5 @@ export const SessionsTable = sqliteTable("sessions", {
   createdAt: customIsoDate().notNull(),
 });
 
-export type Session = typeof SessionsTable.$inferSelect;
-export type SessionFrontend = Omit<Session, "secretHash">;
+export type SessionDB = typeof SessionsTable.$inferSelect;
+export type SessionFrontend = Omit<SessionDB, "secretHash">;

@@ -4,7 +4,6 @@ import { define } from "@/lib/fresh/defineHelpers.ts";
 import { createSession } from "@/utils/auth.ts";
 import { constantTimeEqual, hashSecret } from "@/utils/auth_helpers.ts";
 import { isRunningOnDenoDeploy } from "@/utils/env_store.ts";
-import { userSchema } from "@/utils/user.type.ts";
 import { getUserByEmail } from "@/utils/user_utils.ts";
 import { Cookie } from "tough-cookie";
 import z from "zod/v4";
@@ -50,17 +49,10 @@ export const handler = define.handlers({
       // CAUTION: Returning 401 here instead of 404 to avoid leaking information about the existence of the user
       return new Response("User or password is incorrect", { status: 401 });
     }
-    const user = userSchema.safeParse(userDbResult.value);
-    if (!user.success) {
-      console.error(
-        `User "${parsedEmail.data}" was found in db, but is invalid: ${user.error.message}`,
-      );
-      return new Response("User or password is incorrect", { status: 401 });
-    }
-
-    const passPlusSalt = parsedPassword.data + user.data.password_salt;
+    const user = userDbResult.value;
+    const passPlusSalt = parsedPassword.data + user.passwordSalt;
     const reqPasswordHash = await hashSecret(passPlusSalt);
-    const dbPasswordHash = user.data.password_hash;
+    const dbPasswordHash = user.passwordHash;
     const valid = constantTimeEqual(reqPasswordHash, dbPasswordHash);
 
     if (!valid) {
@@ -68,7 +60,7 @@ export const handler = define.handlers({
       return new Response("User or password is incorrect", { status: 401 });
     }
 
-    const session = await createSession({ userId: user.data.id });
+    const session = await createSession({ userId: user.id });
     // store cookie like this:
     // https://lucia-auth.com/sessions/basic#:~:text=0%3B%0A%7D-,Client%2Dside%20storage,-For%20most%20websites
     const cookie = new Cookie({
