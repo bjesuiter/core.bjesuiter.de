@@ -6,3 +6,6 @@ export const SessionsTable = sqliteTable("sessions", {
   secretHash: blob("secret_hash", { mode: "buffer" }).notNull(),
   createdAt: text("created_at").notNull(),
 });
+
+export type Session = typeof SessionsTable.$inferSelect;
+export type SessionFrontend = Omit<Session, "secretHash">;

@@ -9,3 +9,6 @@ export const UsersTable = sqliteTable("users", {
   //   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   //   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type User = typeof UsersTable.$inferSelect;
+export type UserFrontend = Omit<User, "passwordHash" | "passwordSalt">;
