@@ -50,17 +50,17 @@ export function Sidebar(
       {/* Left Sidebar */}
       <div
         class={twJoin(
-          "transition-all duration-300",
+          "duration-400 transition-[padding,width]",
           props.openState.value ? "w-[200px]" : "w-0",
           props.openState.value ? "px-2" : "px-0",
         )}
       >
         <h1
           class={twJoin(
-            "text-2xl font-bold mb-4 mt-0 text-center delay-100",
+            "text-2xl font-bold mb-4 mt-0 text-center duration-200 transition-all",
             props.openState.value
-              ? "motion-preset-blur-right motion-ease-in-quart visible"
-              : "motion-preset-blur-left motion-ease-in-quart invisible",
+              ? "visible opacity-100"
+              : "invisible opacity-0",
           )}
         >
           coresvc
