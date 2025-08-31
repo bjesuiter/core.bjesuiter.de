@@ -10,8 +10,19 @@ import { twJoin } from "tailwind-merge";
  * @requires the surrounding component to have position: relative,
  * so the absolute toolbar can be positioned correctly
  */
-export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
+export function Sidebar(
+  props: {
+    url: URL;
+    initialOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  },
+) {
   const sidebarOpen = useSignal(props.initialOpen ?? true);
+
+  const handleOpenCloseButtonClick = () => {
+    sidebarOpen.value = !sidebarOpen.value;
+    props.onOpenChange?.(sidebarOpen.value);
+  };
 
   return (
     <>
@@ -26,7 +37,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         <button
           type="button"
           class="hover:rounded-md hover:bg-primary/20 p-1 aspect-square h-8 w-8"
-          onClick={() => sidebarOpen.value = !sidebarOpen.value}
+          onClick={handleOpenCloseButtonClick}
         >
           <Icon class="text-2xl icon-[mynaui--sidebar] select-none">
           </Icon>
