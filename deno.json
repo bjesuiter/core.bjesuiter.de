@@ -8,6 +8,7 @@
     "fmt": "deno fmt",
     "type-check": "deno check main.ts",
     "check-all": "deno fmt --check && deno lint && deno check main.ts",
+    "cache": "deno cache main.ts",
     "dev": "deno run -A --unstable-kv --watch=static/,routes/ dev.ts",
     "build": "deno run -A --unstable-kv dev.ts build",
     "preview": "deno run -A --unstable-kv main.ts",
