@@ -22,12 +22,18 @@ export function Sidebar(
   };
 
   return (
-    <>
+    <div
+      class={twJoin(
+        "transition-all duration-300 ease-in-out",
+        props.openState.value ? "pl-4 pt-4" : "pl-2 pt-2",
+      )}
+    >
       {/* Small floating toolbar */}
       <div
         class={twJoin(
-          "absolute top-4 left-5 p-1 rounded-md",
-          props.openState.value ? "bg-transparent" : "bg-primary/20",
+          "absolute top-4 left-5 p-1 rounded-md ",
+          // props.openState.value ? "bg-transparent" : "bg-primary/20",
+          props.openState.value ? "bg-transparent" : "bg-transparent",
         )}
       >
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
@@ -67,6 +73,6 @@ export function Sidebar(
           currentPath={props.url.pathname}
         />
       </div>
-    </>
+    </div>
   );
 }

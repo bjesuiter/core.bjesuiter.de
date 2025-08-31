@@ -11,10 +11,10 @@ export function MainContent(
   return (
     <div
       class={twJoin(
-        "overflow-auto h-full bg-white p-4 mt-12 rounded-tl-md border-l border-t border-teal-400",
+        "overflow-auto h-full bg-white pt-2.5 pl-4 mt-2 rounded-tl-md border-l border-t border-teal-400 transition-all duration-300 ease-in-out",
+        props.sidebarOpen.value ? "" : "pl-14",
       )}
     >
-      <p>Sidebar open: {props.sidebarOpen.value.toString()}</p>
       {props.children}
     </div>
   );
