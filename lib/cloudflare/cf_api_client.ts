@@ -3,10 +3,16 @@ import Cloudflare, { APIError } from "cloudflare";
 import { envStore } from "@/utils/env_store.ts";
 import { err, ok, ResultAsync } from "neverthrow";
 
-// init cf api client
-export const cfApiClient = new Cloudflare({
-  apiToken: envStore.CLOUDFLARE_DDNS_API_TOKEN,
-});
+let cfApiClientCache: Cloudflare | undefined;
+
+export function getCfApiClient(apiToken = envStore.CLOUDFLARE_DDNS_API_TOKEN) {
+  if (!cfApiClientCache) {
+    cfApiClientCache = new Cloudflare({
+      apiToken,
+    });
+  }
+  return cfApiClientCache;
+}
 
 /* Helper functions*/
 function isCfApiError(err: unknown): err is APIError {
@@ -38,7 +44,7 @@ export function validateCloudflareApiKey(
   apiKey: string,
 ): ResultAsync<true, { type: GeneralCfApiErrors; innerError: unknown }> {
   // 1. get promise
-  const cfResponsePromise = cfApiClient.user.tokens.verify({
+  const cfResponsePromise = getCfApiClient().user.tokens.verify({
     headers: {
       "X.Auth-Token": apiKey,
     },
@@ -93,7 +99,7 @@ export async function findDnsRecordId(data: {
 }) {
   const { zoneId, recordName } = data;
 
-  return await cfApiClient.dns.records.list({
+  return await getCfApiClient().dns.records.list({
     zone_id: zoneId,
     type: "A",
     name: {
@@ -136,7 +142,7 @@ export async function updateDnsRecord(data: {
     });
   }
 
-  return await cfApiClient.dns.records.update(recordIdResult.value, {
+  return await getCfApiClient().dns.records.update(recordIdResult.value, {
     zone_id: zoneId,
     name: recordName,
     ttl: 120,
@@ -180,7 +186,7 @@ export async function createDnsRecord(data: {
     });
   }
 
-  return await cfApiClient.dns.records.create({
+  return await getCfApiClient().dns.records.create({
     zone_id: zoneId,
     name: recordName,
     ttl: 120,
