@@ -1,10 +1,12 @@
-import { blob, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import customUint8Array from "../types/customUint8Array.ts";
+import { customIsoDate } from "../types/customIsoDate.ts";
 
 export const SessionsTable = sqliteTable("sessions", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),
-  secretHash: blob("secret_hash", { mode: "buffer" }).notNull(),
-  createdAt: text("created_at").notNull(),
+  secretHash: customUint8Array().notNull(),
+  createdAt: customIsoDate().notNull(),
 });
 
 export type Session = typeof SessionsTable.$inferSelect;
