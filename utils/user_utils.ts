@@ -1,15 +1,13 @@
-import { eq } from "drizzle-orm";
-import { err, ok, Result } from "neverthrow";
-import { Buffer } from "node:buffer";
-import z from "zod/v4";
 import { db } from "@/lib/db/index.ts";
 import { UsersTable } from "@/lib/db/schemas/users.table.ts";
-import { generateSecureRandomString, hashSecret } from "./auth.ts";
+import { eq } from "drizzle-orm";
+import { err, ok, Result } from "neverthrow";
+import z from "zod/v4";
+import { generateSecureRandomString, hashSecret } from "./auth_helpers.ts";
 import { envStore } from "./env_store.ts";
 import { User, userSchema } from "./user.type.ts";
 
 export function generateStrongPassword() {
-  // TODO: @bjesuiter: check if this is a good fit for the password generator!
   const password = generateSecureRandomString();
   return password;
 }
