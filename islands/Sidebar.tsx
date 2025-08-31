@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import Menu from "@/components/menu.tsx";
 import { twJoin } from "tailwind-merge";
 import { Icon } from "@/lib/fresh-iconify/Icon.tsx";
+import { signal, useSignal } from "@preact/signals";
 
 /**
  * Contains the sidebar and the floating toolbar to toggle it
@@ -11,7 +12,7 @@ import { Icon } from "@/lib/fresh-iconify/Icon.tsx";
  * so the absolute toolbar can be positioned correctly
  */
 export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
-  const [sidebarOpen, setSidebarOpen] = useState(props.initialOpen ?? true);
+  const sidebarOpen = useSignal(props.initialOpen ?? true);
 
   return (
     <>
@@ -19,14 +20,14 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
       <div
         class={twJoin(
           "absolute top-4 left-5 p-1 rounded-md",
-          sidebarOpen ? "bg-transparent" : "bg-primary/20",
+          sidebarOpen.value ? "bg-transparent" : "bg-primary/20",
         )}
       >
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
         <button
           type="button"
           class="hover:rounded-md hover:bg-primary/20 p-1 aspect-square h-8 w-8"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
+          onClick={() => sidebarOpen.value = !sidebarOpen.value}
         >
           <Icon class="text-2xl icon-[mynaui--sidebar] select-none">
           </Icon>
@@ -37,14 +38,14 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
       <div
         class={twJoin(
           "transition-all duration-300",
-          sidebarOpen ? "w-[200px]" : "w-0",
-          sidebarOpen ? "px-2" : "px-0",
+          sidebarOpen.value ? "w-[200px]" : "w-0",
+          sidebarOpen.value ? "px-2" : "px-0",
         )}
       >
         <h1
           class={twJoin(
             "text-2xl font-bold mb-4 mt-0 text-center delay-100",
-            sidebarOpen
+            sidebarOpen.value
               ? "motion-preset-blur-right motion-ease-in-quart visible"
               : "motion-preset-blur-left motion-ease-in-quart invisible",
           )}
@@ -54,7 +55,7 @@ export function Sidebar(props: { url: URL; initialOpen?: boolean }) {
         {/* TODO: optimize text wrapping while animating */}
         <Menu
           class={twJoin(
-            sidebarOpen ? "" : "overflow-hidden text-nowrap",
+            sidebarOpen.value ? "" : "overflow-hidden text-nowrap",
           )}
           currentPath={props.url.pathname}
         />
