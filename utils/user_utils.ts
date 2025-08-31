@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/index.ts";
 import { UserDB, UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { eq } from "drizzle-orm";
-import { err, errAsync, ok, Result, ResultAsync } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import z from "zod/v4";
 import { generateSecureRandomString, hashSecret } from "./auth_helpers.ts";
 import { envStore } from "./env_store.ts";
@@ -46,27 +46,50 @@ export enum DeleteUserErrors {
   UserIsCurrentUser = "UserIsCurrentUser",
 }
 
-export function deleteUser(
+export async function deleteUser(
   email: string,
   currentUserEmail: string,
-): ResultAsync<void, DeleteUserErrors | DbExecutionError> {
+): Promise<Result<void, DeleteUserErrors>> {
   if (email === envStore.CORE_ROOT_USER_EMAIL) {
-    return errAsync(DeleteUserErrors.UserIsProtected);
+    return err(DeleteUserErrors.UserIsProtected);
   }
 
   if (email === currentUserEmail) {
-    return errAsync(DeleteUserErrors.UserIsCurrentUser);
+    return err(DeleteUserErrors.UserIsCurrentUser);
   }
 
-  return dbSafeExecute(
-    db.select().from(UsersTable).where(
-      eq(UsersTable.email, email),
-    ).limit(1).execute(),
-  )
-    .andThen((users) =>
-      users.length === 0 ? err(DeleteUserErrors.UserNotFound) : ok(undefined)
-    );
+  const user = await db.select().from(UsersTable).where(
+    eq(UsersTable.email, email),
+  ).limit(1);
+  if (user.length === 0) {
+    return err(DeleteUserErrors.UserNotFound);
+  }
+  await db.delete(UsersTable).where(eq(UsersTable.email, email));
+  return ok(undefined);
 }
+
+// TODO: Debug why this new deleteUser variant does not work!
+// export function deleteUser(
+//   email: string,
+//   currentUserEmail: string,
+// ): ResultAsync<void, DeleteUserErrors | DbExecutionError> {
+//   if (email === envStore.CORE_ROOT_USER_EMAIL) {
+//     return errAsync(DeleteUserErrors.UserIsProtected);
+//   }
+
+//   if (email === currentUserEmail) {
+//     return errAsync(DeleteUserErrors.UserIsCurrentUser);
+//   }
+
+//   return dbSafeExecute(
+//     db.select().from(UsersTable).where(
+//       eq(UsersTable.email, email),
+//     ).limit(1).execute(),
+//   )
+//     .andThen((users) =>
+//       users.length === 0 ? err(DeleteUserErrors.UserNotFound) : ok(undefined)
+//     );
+// }
 
 export enum RegisterUserErrors {
   UserAlreadyExists = "UserAlreadyExists",
