@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/index.ts";
 import { UserDB, UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { eq } from "drizzle-orm";
-import { err, ok, Result, ResultAsync } from "neverthrow";
+import { err, errAsync, ok, Result, ResultAsync } from "neverthrow";
 import z from "zod/v4";
 import { generateSecureRandomString, hashSecret } from "./auth_helpers.ts";
 import { envStore } from "./env_store.ts";
@@ -23,30 +23,21 @@ export function getUserById(
     db.select().from(UsersTable).where(eq(UsersTable.id, id))
       .limit(1).execute(),
   )
-    .andThen((userResult) =>
-      userResult.length === 0
-        ? err(GetUserErrors.UserNotFound)
-        : ok(userResult[0])
+    .andThen((users) =>
+      users.length === 0 ? err(GetUserErrors.UserNotFound) : ok(users[0])
     );
 }
 
-export async function getUserByEmail(
+export function getUserByEmail(
   email: string,
-): Promise<Result<UserDB, GetUserErrors | DbExecutionError>> {
-  const userResult = await dbSafeExecute(
+): ResultAsync<UserDB, GetUserErrors | DbExecutionError> {
+  return dbSafeExecute(
     db.select().from(UsersTable).where(eq(UsersTable.email, email))
       .limit(1).execute(),
-  );
-
-  if (userResult.isErr()) {
-    return err(userResult.error);
-  }
-
-  if (userResult.value.length === 0) {
-    return err(GetUserErrors.UserNotFound);
-  }
-
-  return ok(userResult.value[0]);
+  )
+    .andThen((users) =>
+      users.length === 0 ? err(GetUserErrors.UserNotFound) : ok(users[0])
+    );
 }
 
 export enum DeleteUserErrors {
@@ -55,26 +46,26 @@ export enum DeleteUserErrors {
   UserIsCurrentUser = "UserIsCurrentUser",
 }
 
-export async function deleteUser(
+export function deleteUser(
   email: string,
   currentUserEmail: string,
-): Promise<Result<void, DeleteUserErrors>> {
+): ResultAsync<void, DeleteUserErrors | DbExecutionError> {
   if (email === envStore.CORE_ROOT_USER_EMAIL) {
-    return err(DeleteUserErrors.UserIsProtected);
+    return errAsync(DeleteUserErrors.UserIsProtected);
   }
 
   if (email === currentUserEmail) {
-    return err(DeleteUserErrors.UserIsCurrentUser);
+    return errAsync(DeleteUserErrors.UserIsCurrentUser);
   }
 
-  const user = await db.select().from(UsersTable).where(
-    eq(UsersTable.email, email),
-  ).limit(1);
-  if (user.length === 0) {
-    return err(DeleteUserErrors.UserNotFound);
-  }
-  await db.delete(UsersTable).where(eq(UsersTable.email, email));
-  return ok(undefined);
+  return dbSafeExecute(
+    db.select().from(UsersTable).where(
+      eq(UsersTable.email, email),
+    ).limit(1).execute(),
+  )
+    .andThen((users) =>
+      users.length === 0 ? err(DeleteUserErrors.UserNotFound) : ok(undefined)
+    );
 }
 
 export enum RegisterUserErrors {
