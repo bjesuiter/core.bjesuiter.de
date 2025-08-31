@@ -31,7 +31,7 @@ export async function getUserById(
     id: user[0].id,
     label: user[0].label,
     email: user[0].email,
-    password_hash: new Uint8Array(user[0].passwordHash),
+    password_hash: user[0].passwordHash,
     password_salt: user[0].passwordSalt,
   });
   if (!userParsed.success) {
@@ -55,7 +55,7 @@ export async function getUserByEmail(
     id: user[0].id,
     label: user[0].label,
     email: user[0].email,
-    password_hash: new Uint8Array(user[0].passwordHash),
+    password_hash: user[0].passwordHash,
     password_salt: user[0].passwordSalt,
   });
   if (!userParsed.success) {
@@ -148,7 +148,7 @@ export async function registerUser(
     id: newUser.id,
     email: newUser.email,
     label: newUser.label,
-    passwordHash: Buffer.from(passwordHash),
+    passwordHash: passwordHash,
     passwordSalt: newUser.password_salt,
   });
 

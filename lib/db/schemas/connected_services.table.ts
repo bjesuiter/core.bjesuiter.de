@@ -1,6 +1,6 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { UsersTable } from "./users.table.ts";
-import { customIsoDate } from "@/lib/db/types/customIsoDate.ts";
+import { customIsoDate } from "../types/customIsoDate.ts";
 
 /**
  * Services that the user has connected to the core.bjesuiter.de service.

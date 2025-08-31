@@ -1,24 +1,27 @@
+import { db } from "@/lib/db/index.ts";
+import {
+  Session,
+  SessionFrontend,
+  SessionsTable,
+} from "@/lib/db/schemas/sessions.table.ts";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
+import { eq } from "drizzle-orm";
 import { err, ok, Result } from "neverthrow";
 import { Cookie } from "tough-cookie";
-import { User } from "./user.type.ts";
-import { db } from "@/lib/db/index.ts";
-import { SessionsTable } from "@/lib/db/schemas/sessions.table.ts";
-import { Buffer } from "node:buffer";
-import { eq } from "drizzle-orm";
 
-import { getUserById, GetUserErrors } from "./user_utils.ts";
+import { UserFrontend, UsersTable } from "../lib/db/schemas/users.table.ts";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
  */
 
-export interface Session {
-  id: string;
-  userId: string;
-  secretHash: Uint8Array; // Uint8Array is a byte array
-  createdAt: Date;
-}
+// Not needed anymore, we use the Session type from the db schema - TODO: delete later
+// export interface Session {
+//   id: string;
+//   userId: string;
+//   secretHash: Uint8Array; // Uint8Array is a byte array
+//   createdAt: Date;
+// }
 
 export interface SessionWithToken extends Session {
   token: string;
@@ -54,31 +57,57 @@ export async function createSession({
 
   await db.insert(SessionsTable).values({
     id: session.id,
-    secretHash: Buffer.from(session.secretHash),
-    createdAt: now.toISOString(),
+    secretHash: session.secretHash,
+    createdAt: now,
     userId,
   });
 
   return session;
 }
 
-async function getSession(sessionId: string): Promise<Session | undefined> {
+export enum SessionWithUserErrors {
+  UnknownDbError = "UnknownDbError",
+  SessionOrUserNotFound = "SessionOrUserNotFound",
+  SessionExpired = "SessionExpired",
+}
+
+/**
+ * Gets a session from the db with the user that owns it
+ * - is an optimization to avoid getting the session first and needing another query to get the user
+ * @param sessionId
+ * @returns
+ */
+async function getSessionWithUser(
+  sessionId: string,
+): Promise<
+  Result<{ session: Session; user: UserFrontend }, SessionWithUserErrors>
+> {
   const now = new Date();
 
-  const result = await db.select().from(SessionsTable).where(
-    eq(SessionsTable.id, sessionId),
-  ).limit(1);
+  const result = await db.select().from(SessionsTable)
+    .where(eq(SessionsTable.id, sessionId))
+    .innerJoin(
+      UsersTable,
+      eq(SessionsTable.userId, UsersTable.id),
+    )
+    .limit(1);
 
   if (result.length === 0) {
-    return undefined;
+    return err(SessionWithUserErrors.SessionOrUserNotFound);
   }
 
   const session: Session = {
-    id: result[0].id,
-    userId: result[0].userId,
-    secretHash: new Uint8Array(result[0].secretHash),
-    createdAt: new Date(result[0].createdAt),
-  };
+    id: result[0].sessions.id,
+    userId: result[0].sessions.userId,
+    createdAt: result[0].sessions.createdAt,
+    secretHash: result[0].sessions.secretHash,
+  } satisfies Session;
+
+  const user = {
+    id: result[0].users.id,
+    label: result[0].users.label,
+    email: result[0].users.email,
+  } satisfies UserFrontend;
 
   // Check expiration
   if (
@@ -86,15 +115,15 @@ async function getSession(sessionId: string): Promise<Session | undefined> {
       sessionExpiresInSeconds * 1000
   ) {
     await deleteSession(sessionId);
-    return undefined;
+    return err(SessionWithUserErrors.SessionExpired);
   }
 
-  return session;
+  return ok({ session, user });
 }
 
 export async function validateSessionToken(
   token: string,
-): Promise<Session | false> {
+): Promise<{ session: SessionFrontend; user: UserFrontend } | false> {
   const tokenParts = token.split(".");
   if (tokenParts.length != 2) {
     return false;
@@ -102,10 +131,14 @@ export async function validateSessionToken(
   const sessionId = tokenParts[0];
   const sessionSecret = tokenParts[1];
 
-  const session = await getSession(sessionId);
-  if (!session) {
+  const sessionWithUserResult = await getSessionWithUser(sessionId);
+  if (sessionWithUserResult.isErr()) {
+    console.error(
+      `getSessionWithUser for sessionId '${sessionId}' failed: ${sessionWithUserResult.error}`,
+    );
     return false;
   }
+  const { session, user } = sessionWithUserResult.value;
 
   const tokenSecretHash = await hashSecret(sessionSecret);
   const validSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
@@ -113,7 +146,13 @@ export async function validateSessionToken(
     return false;
   }
 
-  return session;
+  const sessionFrontend: SessionFrontend = {
+    id: session.id,
+    userId: session.userId,
+    createdAt: session.createdAt,
+  };
+
+  return { session: sessionFrontend, user };
 }
 
 export async function deleteSession(sessionId: string): Promise<void> {
@@ -127,7 +166,7 @@ export async function deleteSession(sessionId: string): Promise<void> {
 // The error type enum for the auth module
 export enum AuthErrors {
   NoSessionTokenCookie = "NoSessionTokenCookie",
-  SessionTokenInvalid = "SessionTokenInvalid",
+  SessionInvalid = "SessionInvalid",
   SessionNotFoundInDb = "SessionNotFoundInDb",
   UserNotFoundInDb = "UserNotFoundInDb",
   UserInvalidInDb = "UserInvalidInDb",
@@ -135,7 +174,9 @@ export enum AuthErrors {
 
 export async function isRequestAuthenticated(
   req: Request,
-): Promise<Result<{ session: Session; user: User }, AuthErrors>> {
+): Promise<
+  Result<{ session: SessionFrontend; user: UserFrontend }, AuthErrors>
+> {
   // Step 1 - analyze the request
   const reqCookies = req.headers.get("cookie")?.split(";").map(
     (cookieString) => {
@@ -152,30 +193,15 @@ export async function isRequestAuthenticated(
     return err(AuthErrors.NoSessionTokenCookie);
   }
 
-  const session = await validateSessionToken(sessionTokenCookie.value);
-  if (!session || !session.userId) {
+  const userAndSession = await validateSessionToken(sessionTokenCookie.value);
+  if (!userAndSession) {
     console.log(
-      "Session token is invalid, session expired or session not found - not authenticated",
+      "Session not found, expired or invalid - not authenticated",
     );
-    return err(AuthErrors.SessionTokenInvalid);
+    return err(AuthErrors.SessionInvalid);
   }
 
-  const userAndSession = (await getUserById(session.userId)).match(
-    (user) => ok({ session, user }),
-    (error) => {
-      if (error === GetUserErrors.UserNotFound) {
-        console.error(`User ${session.userId} was not found`);
-        return err(AuthErrors.UserNotFoundInDb);
-      }
-      if (error === GetUserErrors.UserInvalid) {
-        console.error(`User ${session.userId} was found in db, but is invalid`);
-        return err(AuthErrors.UserInvalidInDb);
-      }
-      return err(error);
-    },
-  );
-
-  return userAndSession;
+  return ok(userAndSession);
 }
 
 /**
