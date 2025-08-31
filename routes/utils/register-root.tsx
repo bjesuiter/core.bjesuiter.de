@@ -1,5 +1,7 @@
 import { registerUser } from "@/utils/user_utils.ts";
 import { define } from "@/lib/fresh/defineHelpers.ts";
+import { Card } from "../../components/Card.tsx";
+import { Icon } from "../../lib/fresh-iconify/Icon.tsx";
 
 /**
  * Utility function to register a user to the database.
@@ -23,5 +25,11 @@ export default define.page((_ctx) => {
 
   registerUser(email, label, pass);
 
-  return new Response("User registered", { status: 200 });
+  return (
+    <Card class="max-w-md mx-auto my-4">
+      <p class="flex items-center gap-2 text-teal-500">
+        <Icon class="text-2xl icon-[mdi-light--check]"></Icon> User registered
+      </p>
+    </Card>
+  );
 });
