@@ -1,6 +1,6 @@
 import Menu from "@/components/menu.tsx";
 import { Icon } from "@/lib/fresh-iconify/Icon.tsx";
-import { useSignal } from "@preact/signals";
+import { Signal } from "@preact/signals";
 import { twJoin } from "tailwind-merge";
 
 /**
@@ -13,15 +13,12 @@ import { twJoin } from "tailwind-merge";
 export function Sidebar(
   props: {
     url: URL;
-    initialOpen?: boolean;
-    onOpenChange?: (open: boolean) => void;
+    openState: Signal<boolean>;
   },
 ) {
-  const sidebarOpen = useSignal(props.initialOpen ?? true);
-
   const handleOpenCloseButtonClick = () => {
-    sidebarOpen.value = !sidebarOpen.value;
-    props.onOpenChange?.(sidebarOpen.value);
+    props.openState.value = !props.openState.value;
+    // props.onOpenChange?.(sidebarOpen.value);
   };
 
   return (
@@ -30,7 +27,7 @@ export function Sidebar(
       <div
         class={twJoin(
           "absolute top-4 left-5 p-1 rounded-md",
-          sidebarOpen.value ? "bg-transparent" : "bg-primary/20",
+          props.openState.value ? "bg-transparent" : "bg-primary/20",
         )}
       >
         {/* This div below builds the frame around the icon, not around the toolbar itself */}
@@ -48,14 +45,14 @@ export function Sidebar(
       <div
         class={twJoin(
           "transition-all duration-300",
-          sidebarOpen.value ? "w-[200px]" : "w-0",
-          sidebarOpen.value ? "px-2" : "px-0",
+          props.openState.value ? "w-[200px]" : "w-0",
+          props.openState.value ? "px-2" : "px-0",
         )}
       >
         <h1
           class={twJoin(
             "text-2xl font-bold mb-4 mt-0 text-center delay-100",
-            sidebarOpen.value
+            props.openState.value
               ? "motion-preset-blur-right motion-ease-in-quart visible"
               : "motion-preset-blur-left motion-ease-in-quart invisible",
           )}
@@ -65,7 +62,7 @@ export function Sidebar(
         {/* TODO: optimize text wrapping while animating */}
         <Menu
           class={twJoin(
-            sidebarOpen.value ? "" : "overflow-hidden text-nowrap",
+            props.openState.value ? "" : "overflow-hidden text-nowrap",
           )}
           currentPath={props.url.pathname}
         />
