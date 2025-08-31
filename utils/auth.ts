@@ -6,7 +6,7 @@ import {
 } from "@/lib/db/schemas/sessions.table.ts";
 import { decodeBase64, encodeBase64 } from "@std/encoding/base64";
 import { eq } from "drizzle-orm";
-import { err, ok, Result } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import { Cookie } from "tough-cookie";
 
 import { UserFrontend, UsersTable } from "../lib/db/schemas/users.table.ts";
@@ -89,7 +89,7 @@ async function getSessionWithUser(
 > {
   const now = new Date();
 
-  const result = await db.select().from(SessionsTable)
+  const selectPromise = db.select().from(SessionsTable)
     .where(eq(SessionsTable.id, sessionId))
     .innerJoin(
       UsersTable,
@@ -97,7 +97,21 @@ async function getSessionWithUser(
     )
     .limit(1);
 
-  if (result.length === 0) {
+  const selectResult = await ResultAsync.fromPromise(
+    selectPromise,
+    (error: unknown) => {
+      console.error(
+        `getSessionWithUser for sessionId '${sessionId}' failed: ${error}`,
+      );
+      return SessionWithUserErrors.UnknownDbError;
+    },
+  );
+  if (selectResult.isErr()) {
+    return err(selectResult.error);
+  }
+
+  const result = selectResult.value;
+  if (selectResult.value.length === 0) {
     return err(SessionWithUserErrors.SessionOrUserNotFound);
   }
 
