@@ -1,10 +1,12 @@
 import { db } from "@/lib/db/index.ts";
 import { UserDB, UsersTable } from "@/lib/db/schemas/users.table.ts";
 import { eq } from "drizzle-orm";
-import { err, ok, Result } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import z from "zod/v4";
 import { generateSecureRandomString, hashSecret } from "./auth_helpers.ts";
 import { envStore } from "./env_store.ts";
+import { dbSafeExecute } from "../lib/db/neverthrow/helpers.ts";
+import { DbExecutionError } from "../lib/db/neverthrow/helpers.ts";
 export function generateStrongPassword() {
   const password = generateSecureRandomString();
   return password;
@@ -12,44 +14,39 @@ export function generateStrongPassword() {
 
 export enum GetUserErrors {
   UserNotFound = "UserNotFound",
-  UserInvalid = "UserInvalid",
 }
 
-export async function getUserById(
+export function getUserById(
   id: string,
-): Promise<Result<UserDB, GetUserErrors>> {
-  const user = await db.select().from(UsersTable).where(eq(UsersTable.id, id))
-    .limit(1);
-
-  // TODO: handle db errors
-
-  if (user.length === 0) {
-    return err(GetUserErrors.UserNotFound);
-  }
-
-  if (!user[0]) {
-    return err(GetUserErrors.UserInvalid);
-  }
-
-  return ok(user[0]);
+): ResultAsync<UserDB, GetUserErrors | DbExecutionError> {
+  return dbSafeExecute(
+    db.select().from(UsersTable).where(eq(UsersTable.id, id))
+      .limit(1).execute(),
+  )
+    .andThen((userResult) =>
+      userResult.length === 0
+        ? err(GetUserErrors.UserNotFound)
+        : ok(userResult[0])
+    );
 }
 
 export async function getUserByEmail(
   email: string,
-): Promise<Result<UserDB, GetUserErrors>> {
-  const user = await db.select().from(UsersTable).where(
-    eq(UsersTable.email, email),
-  )
-    .limit(1);
+): Promise<Result<UserDB, GetUserErrors | DbExecutionError>> {
+  const userResult = await dbSafeExecute(
+    db.select().from(UsersTable).where(eq(UsersTable.email, email))
+      .limit(1).execute(),
+  );
 
-  if (user.length === 0) {
+  if (userResult.isErr()) {
+    return err(userResult.error);
+  }
+
+  if (userResult.value.length === 0) {
     return err(GetUserErrors.UserNotFound);
   }
 
-  if (!user[0]) {
-    return err(GetUserErrors.UserInvalid);
-  }
-  return ok(user[0]);
+  return ok(userResult.value[0]);
 }
 
 export enum DeleteUserErrors {
