@@ -1,7 +1,6 @@
 import { envStore } from "@/utils/env_store.ts";
 import { createClient } from "@libsql/client/web";
 import { drizzle } from "drizzle-orm/libsql";
-import { UsersTable } from "./schemas/users.table.ts";
 import { ResultAsync } from "neverthrow";
 
 function initDb() {
@@ -11,7 +10,7 @@ function initDb() {
         url: envStore.CORE_DATABASE_URL,
         authToken: envStore.TURSO_AUTH_TOKEN,
       });
-      return drizzle(turso);
+      return drizzle(turso, { casing: "snake_case" });
     }
     case "local": {
       // https://docs.turso.tech/features/embedded-replicas/introduction#how-it-works
@@ -19,18 +18,9 @@ function initDb() {
         url: envStore.CORE_DATABASE_URL,
         authToken: envStore.TURSO_AUTH_TOKEN,
       });
-      return drizzle(turso);
+      return drizzle(turso, { casing: "snake_case" });
     }
-    case "github_actions": {
-      // TODO: Test if this breaks
-      const in_memory_sqlite = {
-        connection: ":memory:",
-        schema: {
-          users: UsersTable,
-        },
-      };
-      return drizzle(in_memory_sqlite);
-    }
+
     default:
       throw new Error(`Invalid or missing stage: ${envStore.STAGE}`);
   }
