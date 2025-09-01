@@ -10,7 +10,11 @@ import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
 export default define.middleware(async (ctx) => {
   const authResult = await appTracer.startActiveSpan(
     "isRequestAuthenticated",
-    (span) => isRequestAuthenticated(ctx.req, span),
+    async (span) => {
+      const result = await isRequestAuthenticated(ctx.req, span);
+      span.end();
+      return result;
+    },
   );
   if (authResult.isErr()) {
     return redirectToLogin();
