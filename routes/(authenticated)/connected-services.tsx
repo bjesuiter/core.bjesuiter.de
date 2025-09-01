@@ -4,6 +4,7 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { define } from "@/lib/fresh/defineHelpers.ts";
+import { preInitCfApiClient } from "../../lib/cloudflare/cf_api_client.ts";
 
 const itemsPerPage = 100;
 
@@ -14,6 +15,8 @@ const ConnectedServicesPage = define.page(async (ctx) => {
     .where(eq(ConnectedServicesTable.owned_by, ctx.state.user.id))
     .limit(itemsPerPage)
     .offset(page * itemsPerPage);
+
+  preInitCfApiClient();
 
   return (
     <>

@@ -2,9 +2,23 @@ import "cloudflare/shims/web";
 import Cloudflare, { APIError } from "cloudflare";
 import { envStore } from "@/utils/env_store.ts";
 import { err, ok, ResultAsync } from "neverthrow";
+import { appTracer } from "../opentelemetry/app-tracer.ts";
 
+// TODO: FIX: This api client is the one and only for ALL users
 let cfApiClientCache: Cloudflare | undefined;
 
+export function preInitCfApiClient(
+  apiToken = envStore.CLOUDFLARE_DDNS_API_TOKEN,
+) {
+  appTracer.startActiveSpan("preInitCfApiClient", (span) => {
+    span.addEvent("Start cf client init");
+    console.time("preInitCfApiClient");
+    getCfApiClient(apiToken);
+    span.addEvent("End cf client init");
+    console.timeEnd("preInitCfApiClient");
+    span.end();
+  });
+}
 export function getCfApiClient(apiToken = envStore.CLOUDFLARE_DDNS_API_TOKEN) {
   if (!cfApiClientCache) {
     cfApiClientCache = new Cloudflare({
