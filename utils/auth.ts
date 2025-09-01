@@ -212,13 +212,11 @@ export async function isRequestAuthenticated(
     return err(AuthErrors.NoSessionTokenCookie);
   }
   console.timeEnd("getSessionCookie");
-  span?.addEvent("getSessionCookie finished");
 
   // Validate the session and query the session data + user from db
   console.time("validateSessionToken");
   const userAndSession = await validateSessionToken(sessionTokenCookie.value);
   console.timeEnd("validateSessionToken");
-  span?.addEvent("validateSessionToken finished");
 
   if (!userAndSession) {
     console.log(
