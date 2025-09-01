@@ -14,6 +14,7 @@ import {
   generateSecureRandomString,
   hashSecret,
 } from "./auth_helpers.ts";
+import { Span } from "@opentelemetry/api";
 
 /**
  * This Session implementation is based on https://lucia-auth.com/sessions/basic
@@ -192,26 +193,33 @@ export enum AuthErrors {
 
 export async function isRequestAuthenticated(
   req: Request,
+  span?: Span,
 ): Promise<
   Result<{ session: SessionFrontend; user: UserFrontend }, AuthErrors>
 > {
   // Step 1 - analyze the request
+  console.time("getSessionCookie");
   const reqCookies = req.headers.get("cookie")?.split(";").map(
     (cookieString) => {
       return Cookie.parse(cookieString);
     },
   );
-
   const sessionTokenCookie = reqCookies?.find(
     (cookie) => cookie?.key === "session_token",
   );
-
   if (!sessionTokenCookie) {
     console.log("No session token cookie found - not authenticated");
     return err(AuthErrors.NoSessionTokenCookie);
   }
+  console.timeEnd("getSessionCookie");
+  span?.addEvent("getSessionCookie finished");
 
+  // Validate the session and query the session data + user from db
+  console.time("validateSessionToken");
   const userAndSession = await validateSessionToken(sessionTokenCookie.value);
+  console.timeEnd("validateSessionToken");
+  span?.addEvent("validateSessionToken finished");
+
   if (!userAndSession) {
     console.log(
       "Session not found, expired or invalid - not authenticated",

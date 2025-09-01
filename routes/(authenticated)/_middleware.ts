@@ -1,14 +1,17 @@
 import { isRequestAuthenticated } from "@/utils/auth.ts";
 import { redirectToLogin } from "@/utils/routing.ts";
 import { define } from "@/lib/fresh/defineHelpers.ts";
+import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
 
 /**
  * Authentication middleware
  */
 
 export default define.middleware(async (ctx) => {
-  const req = ctx.req;
-  const authResult = await isRequestAuthenticated(req);
+  const authResult = await appTracer.startActiveSpan(
+    "isRequestAuthenticated",
+    (span) => isRequestAuthenticated(ctx.req, span),
+  );
   if (authResult.isErr()) {
     return redirectToLogin();
   }
