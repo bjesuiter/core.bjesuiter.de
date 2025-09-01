@@ -14,15 +14,15 @@ const ConnectedServicesPage = define.page(async (ctx) => {
   const services = await appTracer.startActiveSpan(
     "loadConnectedServices",
     async (span) => {
-      console.time("loadConnectedServices");
-      const dbResult = db.select().from(ConnectedServicesTable)
+      console.time("loadConnectedServicesFromDb");
+      const dbResult = await db.select().from(ConnectedServicesTable)
         .orderBy(desc(ConnectedServicesTable.created_at))
         .where(eq(ConnectedServicesTable.owned_by, ctx.state.user.id))
         .limit(itemsPerPage)
         .offset(page * itemsPerPage);
-      console.timeEnd("loadConnectedServices");
+      console.timeEnd("loadConnectedServicesFromDb");
       span.end();
-      return await dbResult;
+      return dbResult;
     },
   );
 
