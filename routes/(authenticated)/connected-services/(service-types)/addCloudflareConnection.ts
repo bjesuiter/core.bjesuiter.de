@@ -1,6 +1,9 @@
 import { validateCloudflareApiKey } from "@/lib/cloudflare/cf_api_client.ts";
 import { db } from "@/lib/db/index.ts";
-import { dbSafeExecute, InsertErrors } from "@/lib/db/neverthrow/helpers.ts";
+import {
+  DbExecutionErrors,
+  dbSafeExecute,
+} from "@/lib/db/neverthrow/helpers.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 
 /**
@@ -48,11 +51,11 @@ export async function addCloudflareConnection(
     }),
     (error) => {
       switch (error.type) {
-        case InsertErrors.UnknownError:
+        case DbExecutionErrors.UnknownError:
           return new Response("An unknown error occurred", {
             status: 400,
           });
-        case InsertErrors.ErrorWithMessage:
+        case DbExecutionErrors.ErrorWithMessage:
           console.error(error.innerError);
           return new Response(error.innerError.message, { status: 400 });
       }
