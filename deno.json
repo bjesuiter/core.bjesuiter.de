@@ -14,7 +14,7 @@
     "preview": "deno run -A --unstable-kv main.ts",
     "deploy": "deno task build &&deployctl deploy --prod",
     "update": "deno run -A --unstable-kv -r https://fresh.deno.dev/update .",
-    "update-beta": "deno run -Ar jsr:@fresh/update@2.0.0-beta.1",
+    "update-beta": "deno run -Ar jsr:@fresh/update@2.0.0-beta.2",
     "update-alpha": "deno run -Ar jsr:@fresh/update@2.0.0-alpha.63",
     "db-push": "deno task db-push-dev && deno task db-push-prod",
     "db-push-dev": "drizzle-kit --config .config/drizzle-dev.config.ts push",
@@ -60,7 +60,7 @@
     "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
     "zod": "npm:zod@^3.25.67",
-    "fresh": "jsr:@fresh/core@^2.0.0-beta.1"
+    "fresh": "jsr:@fresh/core@^2.0.0-beta.2"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
