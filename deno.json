@@ -1,21 +1,20 @@
 {
+  "nodeModulesDir": "auto",
   "name": "coresvc",
   "version": "0.1.0",
   "exports": {
     ".": "./main.ts"
   },
   "tasks": {
-    "fmt": "deno fmt",
-    "type-check": "deno check main.ts",
-    "check-all": "deno fmt --check && deno lint && deno check main.ts",
+    "check": "deno fmt --check . && deno lint . && deno check",
     "cache": "deno cache main.ts",
-    "dev": "deno run -A --unstable-kv --watch=static/,routes/ dev.ts",
-    "build": "deno run -A --unstable-kv dev.ts build",
-    "preview": "deno run -A --unstable-kv main.ts",
-    "deploy": "deno task build &&deployctl deploy --prod",
+    "dev": "vite",
+    "build": "vite build",
+    "start": "deno serve -A _fresh/server.js",
+    "deploy": "deno task build && deployctl deploy --prod",
     "update": "deno run -A --unstable-kv -r https://fresh.deno.dev/update .",
-    "update-beta": "deno run -Ar jsr:@fresh/update@2.0.0-beta.2",
-    "update-alpha": "deno run -Ar jsr:@fresh/update@2.0.0-alpha.63",
+    "update-beta": "deno run -Ar jsr:@fresh/update@2.0.0-beta.3 .",
+    "update-alpha": "deno run -Ar jsr:@fresh/update@2.0.0-alpha.63 .",
     "db-push": "deno task db-push-dev && deno task db-push-prod",
     "db-push-dev": "drizzle-kit --config .config/drizzle-dev.config.ts push",
     "db-push-prod": "drizzle-kit --config .config/drizzle-prod.config.ts push",
@@ -41,7 +40,7 @@
   "imports": {
     "@/": "./",
     "@awesome.me/webawesome": "npm:@awesome.me/webawesome@^3.0.0-beta.4",
-    "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@0.0.1-alpha.9",
+    "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^0.9.10",
     "@iconify-json/mdi": "npm:@iconify-json/mdi@^1.2.3",
     "@iconify-json/mdi-light": "npm:@iconify-json/mdi-light@^1.2.2",
     "@iconify-json/mynaui": "npm:@iconify-json/mynaui@^1.2.14",
@@ -50,6 +49,7 @@
     "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
     "cloudflare": "npm:cloudflare@^4.4.1",
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
@@ -59,15 +59,40 @@
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",
     "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
+    "vite": "npm:vite@^7.1.4",
     "zod": "npm:zod@^3.25.67",
-    "fresh": "jsr:@fresh/core@^2.0.0-beta.2"
+    "fresh": "jsr:@fresh/core@^2.0.0-beta.3"
   },
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsx": "precompile",
+    "jsxImportSource": "preact",
+    "lib": [
+      "dom",
+      "dom.asynciterable",
+      "dom.iterable",
+      "deno.ns"
+    ],
+    "jsxPrecompileSkipElements": [
+      "a",
+      "img",
+      "source",
+      "body",
+      "html",
+      "head",
+      "title",
+      "meta",
+      "script",
+      "link",
+      "style",
+      "base",
+      "noscript",
+      "template"
+    ],
+    "types": [
+      "vite/client"
+    ]
   },
   "unstable": [
     "kv"
-  ],
-  "nodeModulesDir": "auto"
+  ]
 }
