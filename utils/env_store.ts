@@ -14,12 +14,14 @@ const envSchema = z.object({
 
 // bjesuiter: make sure, these envs are only loaded when running on deno deploy,
 // NOT when run in a github action build process!
-function initEnvStore() {
-  const stage = Deno.env.get("STAGE") ?? "github_actions";
+function initEnvStore(envs: ImportMetaEnv) {
+  // legacy: Deno.env.get("STAGE")
+  const stage = import.meta.env["STAGE"] ??
+    "github_actions";
 
   switch (stage) {
     case "deno_deploy":
-      return envSchema.parse(Deno.env.toObject());
+      return envSchema.parse(envs);
     case "github_actions":
       // return envSchema.parse({
       //   STAGE: "github_actions",
@@ -33,15 +35,17 @@ function initEnvStore() {
       //   TURSO_AUTH_TOKEN: "github_actions",
       // });
       // no special handling anymore, just use the envs from the github action
-      return envSchema.parse(Deno.env.toObject());
+      return envSchema.parse(envs);
     case "local":
-      return envSchema.parse(Deno.env.toObject());
+      return envSchema.parse(envs);
     default:
       throw new Error(`Invalid or missing stage: ${stage}`);
   }
 }
 
-export const envStore = initEnvStore();
+// legacy: Deno.env.toObject()
+console.log("import.meta.env", import.meta.env);
+export const envStore = initEnvStore(import.meta.env);
 
 // some shortcuts
 export const isRunningOnDenoDeploy = envStore.STAGE === "deno_deploy";

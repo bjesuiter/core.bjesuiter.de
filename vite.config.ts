@@ -3,6 +3,12 @@ import { fresh } from "@fresh/plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  define: {
+    "import.meta.env.STAGE": "Deno.env.get('STAGE')",
+    "import.meta.env.CLOUDFLARE_EMAIL": "Deno.env.get('CLOUDFLARE_EMAIL')",
+    "import.meta.env.CLOUDFLARE_DDNS_API_TOKEN":
+      "Deno.env.get('CLOUDFLARE_DDNS_API_TOKEN')",
+  },
   plugins: [
     fresh({
       // Path to main server entry file. Default: main.ts
