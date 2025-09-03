@@ -30,3 +30,14 @@ Reasons:
 - `turso db tokens create core-bjesuiter-db`
 - `turso db show --url core-bjesuiter-db-dev`
 - `turso db tokens create core-bjesuiter-db-dev`
+
+---
+
+# Repo Log
+
+## Switch to fresh + vite plugin - 2025-09-03
+
+- Migration guide: https://fresh.deno.dev/docs/canary/examples/migration-guide
+- https://deno.com/blog/fresh-and-vite
+- https://jsr.io/@fresh/plugin-vite
+- https://github.com/denoland/fresh/pull/3227/files#diff-a7673923b9d742bac378f2289f94277410a56288837c5cdda5ebb97184b9c156
