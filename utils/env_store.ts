@@ -19,9 +19,9 @@ const envSchema = z.object({
 
 // bjesuiter: make sure, these envs are only loaded when running on deno deploy,
 // NOT when run in a github action build process!
-function initEnvStore(envs: ImportMetaEnv) {
+function initEnvStore(envs: Record<string, string>) {
   // legacy: Deno.env.get("STAGE")
-  const stage = import.meta.env["STAGE"] ??
+  const stage = envs["STAGE"] ??
     "github_actions";
 
   switch (stage) {
@@ -48,9 +48,7 @@ function initEnvStore(envs: ImportMetaEnv) {
   }
 }
 
-// legacy: Deno.env.toObject()
-console.log("import.meta.env", import.meta.env);
-export const envStore = initEnvStore(import.meta.env);
+export const envStore = initEnvStore(Deno.env.toObject());
 
 // some shortcuts
 export const isRunningOnDenoDeploy = envStore.STAGE === "deno_deploy";
