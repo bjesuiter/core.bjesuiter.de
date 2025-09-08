@@ -1,5 +1,10 @@
 import { z } from "zod/v4";
 
+// This dotenv loader is needed (for now)
+// because the .env file is not loaded by default
+// in vite when running in deno, probavly due to being run with a wrong basepath
+import "jsr:@std/dotenv/load";
+
 const envSchema = z.object({
   STAGE: z.enum(["local", "github_actions", "deno_deploy"]),
   CLOUDFLARE_EMAIL: z.string(),
