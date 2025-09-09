@@ -1,0 +1,1 @@
+export const baseApiPath = "https://api.cloudflare.com/client/v4";
