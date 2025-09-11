@@ -17,3 +17,16 @@ export const cfApiMessage = v.object({
     pointer: v.exactOptional(v.string()),
   })),
 });
+
+export const cfTextFilterOptions = v.object({
+  contains: v.exactOptional(v.string()),
+  endswith: v.exactOptional(v.string()),
+  exact: v.exactOptional(v.string()),
+  startswith: v.exactOptional(v.string()),
+});
+
+export const cfEnvelope = v.object({
+  errors: v.array(cfApiError),
+  messages: v.array(cfApiMessage),
+  success: v.boolean()
+})

@@ -40,6 +40,7 @@
   ],
   "imports": {
     "@/": "./",
+    "@contracts/": "./contracts/",
     "@awesome.me/webawesome": "npm:@awesome.me/webawesome@^3.0.0-beta.4",
     "@fresh/plugin-tailwind": "jsr:@fresh/plugin-tailwind@0.0.1-alpha.9",
     "@iconify-json/mdi": "npm:@iconify-json/mdi@^1.2.3",
