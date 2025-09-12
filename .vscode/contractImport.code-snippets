@@ -18,7 +18,7 @@
 		"Quick shortcut to add the required imports for the contract": {
 		"prefix": "conImp",
 		"body": [
-			"import * as v from 'https://deno.land/x/valibot/mod.ts';",
+			"import * as v from '@valibot/valibot';",
 			"import { c } from \"@/contracts/_contractRouter.ts\";",
 			"\n$0\n"
 		],
