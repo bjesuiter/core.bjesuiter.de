@@ -1,4 +1,4 @@
-import * as v from 'https://deno.land/x/valibot/mod.ts';
+import * as v from "@valibot/valibot";
 import { c } from "@/contracts/_contractRouter.ts";
 
 import { cfTokenVerifyResponse } from "@/contracts/api.cloudflare.com/_schemas/tokenVerify.ts";
