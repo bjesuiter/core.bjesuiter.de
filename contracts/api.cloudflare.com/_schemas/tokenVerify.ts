@@ -1,5 +1,5 @@
+import * as v from "@valibot/valibot";
 import { cfEnvelope } from "./baseSchemas.ts";
-import * as v from "https://deno.land/x/valibot/mod.ts";
 
 export const cfTokenVerifyResponse = v.object({
   result: v.nullable(v.object({
@@ -20,5 +20,5 @@ export const cfTokenVerifyResponse = v.object({
       v.exactOptional(v.date()),
     ),
   })),
-  ...cfEnvelope.entries
+  ...cfEnvelope.entries,
 });
