@@ -61,9 +61,14 @@ const ConnectedServicesPage = define.page(async (ctx) => {
               <td class="px-4 py-2 border-b">
                 {service.created_at?.toString?.() ?? ""}
               </td>
-              <td class="px-4 py-2 border-b">
+              <td class="px-4 py-2 border-b flex gap-2 flex-wrap">
                 <NavButton href={`/connected-services/${service.id}/delete`}>
                   Delete
+                </NavButton>
+                <NavButton
+                  href={`/connected-services/${service.id}/revalidate`}
+                >
+                  Revalidate
                 </NavButton>
               </td>
             </tr>
