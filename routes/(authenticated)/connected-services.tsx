@@ -4,7 +4,7 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { db } from "@/lib/db/index.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { define } from "@/lib/fresh/defineHelpers.ts";
-import { preInitCfApiClient } from "../../lib/cloudflare/cf_api_client.ts";
+// import { preInitCfApiClient } from "../../lib/cloudflare/cf_api_client.ts";
 import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
 
 const itemsPerPage = 100;
@@ -26,7 +26,7 @@ const ConnectedServicesPage = define.page(async (ctx) => {
     },
   );
 
-  preInitCfApiClient();
+  // preInitCfApiClient();
 
   return (
     <>
