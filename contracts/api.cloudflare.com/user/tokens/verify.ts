@@ -1,4 +1,3 @@
-import * as v from 'https://deno.land/x/valibot/mod.ts';
 import { c } from "@/contracts/_contractRouter.ts";
 
 import { cfTokenVerifyResponse } from "@/contracts/api.cloudflare.com/_schemas/tokenVerify.ts";
@@ -8,7 +7,7 @@ export const verifyUserToken = c.router({
     method: "GET",
     path: "/user/tokens/verify",
     responses: {
-      200: cfTokenVerifyResponse
+      200: cfTokenVerifyResponse,
     },
-  }
-})
+  },
+});
