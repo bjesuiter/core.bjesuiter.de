@@ -1,19 +1,17 @@
-import { validateCloudflareApiKey } from "@/lib/cloudflare/cf_api_client.ts";
 import { db } from "@/lib/db/index.ts";
 import {
   DbExecutionErrors,
   dbSafeExecute,
 } from "@/lib/db/neverthrow/helpers.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
+import { validateCfToken } from "./validateCfToken.ts";
 
 /**
  * @param api_key the cloudflare api key to add
  * @param owned_by the user adding the connection, aka ctx.state.user.id
  * @returns a response to be passed to the client
- *
- * @deprecated use addCfConnection instead (uses ts-rest client instead of big cf client)
  */
-export async function addCloudflareConnection(
+export async function addCfConnection(
   api_key: string,
   owned_by: string,
   label: string,
@@ -22,9 +20,9 @@ export async function addCloudflareConnection(
     return new Response("API Key is required", { status: 400 });
   }
 
-  const cfResult = await validateCloudflareApiKey(api_key);
-  if (cfResult.isErr()) {
-    return new Response(cfResult.error.type, { status: 400 });
+  const cfResult = await validateCfToken(api_key);
+  if (!cfResult) {
+    return new Response("Invalid API Key", { status: 400 });
   }
 
   // Step 2 - store api key in db
