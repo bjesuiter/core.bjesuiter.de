@@ -12,20 +12,20 @@ import {
 export const apiCloudflareCom = c.router({
   user: {
     tokens: {
-      verify: verifyUserToken,
+      ...verifyUserToken,
     },
   },
   account: {
     account_id: {
-      verify: verifyAccountToken,
+      ...verifyAccountToken,
     },
   },
   zones: {
     zone_id: {
       dns_records: {
-        create: createDNSRecord,
-        list: listDNSRecords,
-        update: updateDNSRecord,
+        ...createDNSRecord,
+        ...listDNSRecords,
+        ...updateDNSRecord,
       },
     },
   },
