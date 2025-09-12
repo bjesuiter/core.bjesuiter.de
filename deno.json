@@ -51,6 +51,7 @@
     "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@std/encoding": "jsr:@std/encoding@^1.0.10",
     "@ts-rest/core": "npm:@ts-rest/core@3.53.0-rc.1",
+    "@valibot/valibot": "jsr:@valibot/valibot@^1.1.0",
     "cloudflare": "npm:cloudflare@^4.4.1",
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
