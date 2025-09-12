@@ -1,4 +1,4 @@
-import * as v from "https://deno.land/x/valibot/mod.ts";
+import * as v from "@valibot/valibot";
 
 export const cfApiError = v.object({
   code: v.pipe(v.number(), v.minValue(1000)),
@@ -28,5 +28,5 @@ export const cfTextFilterOptions = v.object({
 export const cfEnvelope = v.object({
   errors: v.array(cfApiError),
   messages: v.array(cfApiMessage),
-  success: v.boolean()
-})
+  success: v.boolean(),
+});
