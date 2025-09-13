@@ -19,6 +19,14 @@ export default define.middleware(async (ctx) => {
     },
   );
 
+  // TODO: experiment with this worker approach
+  // const newAuthPromise = new Promise((resolve, reject) => {
+  // start worker
+  // send message to fetch the auth data / check the auth data
+  // receive message with auth result or error
+  // resolve or reject the promise
+  // });
+
   ctx.state.authPromise = authPromise.then((authResult) => {
     if (authResult.isErr()) {
       return { type: "response", response: redirectToLogin() };
