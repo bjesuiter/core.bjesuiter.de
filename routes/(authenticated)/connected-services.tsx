@@ -11,13 +11,20 @@ const itemsPerPage = 100;
 
 const ConnectedServicesPage = define.page(async (ctx) => {
   const page = parseInt(ctx.url.searchParams.get("page") ?? "0");
+
+  const authResult = await ctx.state.authPromise;
+  if (authResult.type === "response") {
+    return authResult.response;
+  }
+  const { user } = authResult;
+
   const services = await appTracer.startActiveSpan(
     "loadConnectedServices",
     async (span) => {
       console.time("loadConnectedServicesFromDb");
       const dbResult = await db.select().from(ConnectedServicesTable)
         .orderBy(desc(ConnectedServicesTable.created_at))
-        .where(eq(ConnectedServicesTable.owned_by, ctx.state.user.id))
+        .where(eq(ConnectedServicesTable.owned_by, user.id))
         .limit(itemsPerPage)
         .offset(page * itemsPerPage);
       console.timeEnd("loadConnectedServicesFromDb");

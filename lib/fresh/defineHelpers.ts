@@ -5,12 +5,22 @@ import { UserFrontend } from "../db/schemas/users.table.ts";
 export interface CoreSvcContext {
   /**
    * Note: using SessionFrontend here because the session secret hash is not needed after successful authentication
+   * TODO: delete and replace with authPromise
    */
   session: SessionFrontend;
   /**
    * Note: using UserFrontend here because the password hash and salt are not needed after successful authentication
+   * TODO: delete and replace with authPromise
    */
   user: UserFrontend;
+
+  authPromise: Promise<
+    { type: "response"; response: Response } | {
+      type: "data";
+      session: SessionFrontend;
+      user: UserFrontend;
+    }
+  >;
 
   /**
    * Can be used to set the title of the tab in the browser.
