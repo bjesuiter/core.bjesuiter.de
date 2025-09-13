@@ -3,12 +3,6 @@ import { SessionFrontend } from "../db/schemas/sessions.table.ts";
 import { UserFrontend } from "../db/schemas/users.table.ts";
 
 export interface CoreSvcContext {
-  /**
-   * Note: using UserFrontend here because the password hash and salt are not needed after successful authentication
-   * TODO: delete and replace with authPromise
-   */
-  user: UserFrontend;
-
   authPromise: Promise<
     { type: "response"; response: Response } | {
       type: "data";

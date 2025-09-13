@@ -27,12 +27,18 @@ export default define.page(
       const apiKey = parsedInput.data.api_key;
       const serviceLabel = parsedInput.data.service_label;
 
+      const authResult = await ctx.state.authPromise;
+      if (authResult.type === "response") {
+        return authResult.response;
+      }
+      const { user } = authResult;
+
       switch (serviceType) {
         case "cloudflare": {
           // returns direct error responses to be passed to the client, or a {data: any} object to be passed to the page render function
           const cfResult = await addCloudflareConnection(
             apiKey,
-            ctx.state.user.id,
+            user.id,
             serviceLabel,
           );
 

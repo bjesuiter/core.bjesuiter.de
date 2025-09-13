@@ -6,7 +6,12 @@ import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export default define.page(async (ctx) => {
   const email = ctx.params.email;
-  const deleteResult = await deleteUser(email, ctx.state.user.email);
+  const authResult = await ctx.state.authPromise;
+  if (authResult.type === "response") {
+    return authResult.response;
+  }
+  const { user } = authResult;
+  const deleteResult = await deleteUser(email, user.email);
 
   let message = "User deleted";
 
