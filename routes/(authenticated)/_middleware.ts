@@ -1,8 +1,7 @@
+import { define } from "@/lib/fresh/defineHelpers.ts";
 import { isRequestAuthenticated } from "@/utils/auth.ts";
 import { redirectToLogin } from "@/utils/routing.ts";
-import { define } from "@/lib/fresh/defineHelpers.ts";
 import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
-import { cfTXTRecord } from "@contracts/api.cloudflare.com/_schemas/dnsSchemas.ts";
 
 /**
  * Authentication middleware
