@@ -4,11 +4,6 @@ import { UserFrontend } from "../db/schemas/users.table.ts";
 
 export interface CoreSvcContext {
   /**
-   * Note: using SessionFrontend here because the session secret hash is not needed after successful authentication
-   * TODO: delete and replace with authPromise
-   */
-  session: SessionFrontend;
-  /**
    * Note: using UserFrontend here because the password hash and salt are not needed after successful authentication
    * TODO: delete and replace with authPromise
    */
