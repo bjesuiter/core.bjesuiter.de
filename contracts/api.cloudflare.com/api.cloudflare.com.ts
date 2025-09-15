@@ -1,6 +1,8 @@
 import { c } from "@/contracts/_contractRouter.ts";
 import * as v from "@valibot/valibot";
 
+export const baseApiPath = "https://api.cloudflare.com/client/v4";
+
 import { verifyAccountToken } from "./account/account_id/verify.ts";
 import { verifyUserToken } from "./user/tokens/verify.ts";
 import {
