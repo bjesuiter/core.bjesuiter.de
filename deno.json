@@ -13,8 +13,7 @@
     "build": "deno run -A --unstable-kv dev.ts build",
     "preview": "deno run -A --unstable-kv main.ts",
     "deploy": "deno task build &&deployctl deploy --prod",
-    "update": "deno run -A --unstable-kv -r https://fresh.deno.dev/update .",
-    "update-2": "deno run -Ar jsr:@fresh/update@2.0.1",
+    "update": "deno run -Ar jsr:@fresh/update",
     "db-push": "deno task db-push-dev && deno task db-push-prod",
     "db-push-dev": "drizzle-kit --config .config/drizzle-dev.config.ts push",
     "db-push-prod": "drizzle-kit --config .config/drizzle-prod.config.ts push",
@@ -56,13 +55,13 @@
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
     "neverthrow": "npm:neverthrow@^8.2.0",
-    "preact": "npm:preact@^10.27.1",
+    "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",
     "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
     "zod": "npm:zod@^3.25.67",
-    "fresh": "jsr:@fresh/core@^2.0.1"
+    "fresh": "jsr:@fresh/core@^2.1.0"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
