@@ -1,4 +1,3 @@
-import {initContract} from "@ts-rest/core"
+import { initContract } from "@ts-rest/core";
 
 export const c = initContract();
-
