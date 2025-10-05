@@ -25,7 +25,7 @@ export default define.page(async (ctx) => {
     ddnsUsername: DDNSProfilesTable.ddnsUsername,
     connectedServiceId: DDNSProfilesTable.connectedServiceId,
     serviceLabel: ConnectedServicesTable.service_label,
-    lastUsed: DDNSProfilesTable.lastUsed,
+    lastUsed: DDNSProfilesTable.lastUsedAt,
     createdAt: DDNSProfilesTable.createdAt,
     updatedAt: DDNSProfilesTable.updatedAt,
   })
