@@ -90,6 +90,7 @@ export default define.page(async (ctx) => {
       ddnsUsername: ddnsUsername,
       ddnsPassword: ddnsPassword,
       allowedUserAgent: parsedInput.data.allowed_user_agent || null,
+      lastUsed: null,
       createdAt: now,
       updatedAt: now,
       ownedBy: user.id,
@@ -99,8 +100,12 @@ export default define.page(async (ctx) => {
       <Card class="flex flex-col gap-4 mx-auto w-125">
         <Toolbar
           title="DDNS Profile Created"
-          actionsSlotLeft={<NavButton href="/ddns-profiles">Back to List</NavButton>}
-          actionsSlotRight={<NavButton href="/ddns-profiles/add">Add Another</NavButton>}
+          actionsSlotLeft={
+            <NavButton href="/ddns-profiles">Back to List</NavButton>
+          }
+          actionsSlotRight={
+            <NavButton href="/ddns-profiles/add">Add Another</NavButton>
+          }
         />
         <h2 class="text-green-600">Profile Created Successfully!</h2>
 

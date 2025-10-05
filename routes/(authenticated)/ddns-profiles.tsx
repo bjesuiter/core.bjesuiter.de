@@ -25,6 +25,7 @@ export default define.page(async (ctx) => {
     ddnsUsername: DDNSProfilesTable.ddnsUsername,
     connectedServiceId: DDNSProfilesTable.connectedServiceId,
     serviceLabel: ConnectedServicesTable.service_label,
+    lastUsed: DDNSProfilesTable.lastUsed,
     createdAt: DDNSProfilesTable.createdAt,
     updatedAt: DDNSProfilesTable.updatedAt,
   })
@@ -73,6 +74,9 @@ export default define.page(async (ctx) => {
             <th class="border border-gray-300 px-2 py-1 text-left">
               Updated At
             </th>
+            <th class="border border-gray-300 px-2 py-1 text-left">
+              Last Used
+            </th>
             <th class="border border-gray-300 px-2 py-1 text-left">Actions</th>
           </tr>
         </thead>
@@ -102,6 +106,11 @@ export default define.page(async (ctx) => {
               </td>
               <td class="border border-gray-300 px-2 py-1 font-mono text-sm">
                 {format(profile.updatedAt, "yyyy-MM-dd HH:mm")}
+              </td>
+              <td class="border border-gray-300 px-2 py-1 font-mono text-sm">
+                {profile.lastUsed
+                  ? format(profile.lastUsed, "yyyy-MM-dd HH:mm")
+                  : <span class="italic text-gray-500">never used</span>}
               </td>
               <td class="px-2 py-2 flex gap-2 flex-wrap">
                 <NavButton href={`/ddns-profiles/${profile.id}/edit`}>

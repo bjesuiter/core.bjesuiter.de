@@ -17,6 +17,7 @@ export const DDNSProfilesTable = sqliteTable("ddns_profiles", {
   ddnsUsername: text("ddns_username").notNull(),
   ddnsPassword: text("ddns_password").notNull(),
   allowedUserAgent: text("allowed_user_agent"),
+  lastUsed: text("last_used"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
   ownedBy: text("owned_by").references(() => UsersTable.id).notNull(),
