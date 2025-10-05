@@ -103,9 +103,12 @@ export default define.page(async (ctx) => {
               <td class="border border-gray-300 px-2 py-1 font-mono text-sm">
                 {format(profile.updatedAt, "yyyy-MM-dd HH:mm")}
               </td>
-              <td class="px-2 py-2 flex gap-2">
+              <td class="px-2 py-2 flex gap-2 flex-wrap">
                 <NavButton href={`/ddns-profiles/${profile.id}/edit`}>
                   Edit
+                </NavButton>
+                <NavButton href={`/ddns-profiles/${profile.id}/duplicate`}>
+                  Duplicate
                 </NavButton>
                 <NavButton href={`/ddns-profiles/${profile.id}/delete`}>
                   Delete
