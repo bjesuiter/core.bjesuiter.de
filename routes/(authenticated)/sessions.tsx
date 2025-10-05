@@ -64,7 +64,7 @@ export default define.page(async (ctx) => {
         </thead>
         <tbody>
           {sessions.map((session) => (
-            <tr>
+            <tr class="">
               <td>{session.sessionId}</td>
               <td>{session.userEmail}</td>
               <td class="font-mono text-sm">
@@ -74,6 +74,13 @@ export default define.page(async (ctx) => {
                 {session.sessionId === currentSession.id
                   ? "Your current session"
                   : ""}
+              </td>
+              <td class="flex gap-2 p-2">
+                {session.sessionId !== currentSession.id && (
+                  <NavButton href={`/sessions/${session.sessionId}/delete`}>
+                    Delete
+                  </NavButton>
+                )}
               </td>
             </tr>
           ))}
