@@ -9,6 +9,8 @@ import { DDNSProfilesTable } from "@/lib/db/schemas/ddns_profiles.table.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { generateSecureRandomString } from "@/utils/auth_helpers.ts";
 import { eq } from "drizzle-orm";
+import { dbSafeExecute } from "../../../lib/db/neverthrow/helpers";
+import { MessageBlock } from "../../../components/subassemblies/MessageBlock.tsx";
 
 const DnsRecordSchema = z.object({
   record_name: z.string().min(1),
@@ -82,19 +84,35 @@ export default define.page(async (ctx) => {
     const now = new Date().toISOString();
 
     // Insert into DB
-    await db.insert(DDNSProfilesTable).values({
-      id: profileId,
-      profileName: parsedInput.data.profile_name,
-      dnsRecords: parsedInput.data.dns_records,
-      connectedServiceId: parsedInput.data.connected_service_id,
-      ddnsUsername: ddnsUsername,
-      ddnsPassword: ddnsPassword,
-      allowedUserAgent: parsedInput.data.allowed_user_agent || null,
-      lastUsedAt: null,
-      createdAt: now,
-      updatedAt: now,
-      ownedBy: user.id,
-    });
+    const dbResult = await dbSafeExecute(
+      db.insert(DDNSProfilesTable).values({
+        id: profileId,
+        profileName: parsedInput.data.profile_name,
+        dnsRecords: parsedInput.data.dns_records,
+        connectedServiceId: parsedInput.data.connected_service_id,
+        ddnsUsername: ddnsUsername,
+        ddnsPassword: ddnsPassword,
+        allowedUserAgent: parsedInput.data.allowed_user_agent || null,
+        lastUsedAt: null,
+        createdAt: now,
+        updatedAt: now,
+        ownedBy: user.id,
+      }),
+    );
+
+    if (dbResult.isErr()) {
+      return (
+        <MessageBlock
+          title="DDNS Profile Creation Failed"
+          backUrl="/ddns-profiles"
+        >
+          <p class="text-red-600">
+            Failed to create DDNS profile.
+          </p>
+          <pre>{JSON.stringify(dbResult.error, null, 2)}</pre>
+        </MessageBlock>
+      );
+    }
 
     return (
       <Card class="flex flex-col gap-4 mx-auto w-125">
