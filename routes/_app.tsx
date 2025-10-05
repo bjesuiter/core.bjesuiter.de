@@ -1,5 +1,7 @@
 import { define } from "@/lib/fresh/defineHelpers.ts";
 import { envStore } from "@/utils/env_store.ts";
+import { Partial } from "fresh/runtime";
+import { twJoin } from "tailwind-merge";
 
 export default define.page((ctx) => {
   const { Component, state } = ctx;
@@ -34,7 +36,12 @@ export default define.page((ctx) => {
         </script> */
         }
       </head>
-      <body class="bg-teal-100">
+      <body class="bg-teal-100" f-client-nav>
+        <div
+          class={twJoin("absolute top-8 right-8 min-w-sm min-h-20 bg-white")}
+        >
+          <Partial name="messages" mode="append" />
+        </div>
         <Component />
       </body>
     </html>
