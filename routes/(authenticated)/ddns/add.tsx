@@ -215,11 +215,17 @@ export default define.page(async (ctx) => {
           <textarea
             name="dns_records"
             id="dns_records"
-            rows={8}
+            rows={6}
             required
-            placeholder={`[\n  {\n    "record_name": "home.example.com",\n    "zone_id": "abc123..."\n  },\n  {\n    "record_name": "vpn.example.com",\n    "zone_id": "abc123..."\n  }\n]`}
-            class="font-mono text-sm"
-          />
+            class="font-mono text-sm border border-gray-300 shadow-inner p-2 rounded"
+          >
+            {`[
+  {
+    "record_name": "home.example.com",
+    "zone_id": "abc123..."
+  }
+]`}
+          </textarea>
         </FormFieldWithLabel>
 
         <FormFieldWithLabel
