@@ -25,19 +25,19 @@ export default function Menu(props: { class?: string; currentPath: string }) {
       isActive: props.currentPath === "/sessions",
     },
     {
-      href: "/ddns",
-      label: "Manage DDNS",
-      isActive: props.currentPath === "/ddns",
-    },
-    {
-      href: "/permissions",
-      label: "Manage Permissions (TODO)",
-      isActive: props.currentPath === "/permissions",
+      href: "/ddns-profiles",
+      label: "Manage DDNS Profiles",
+      isActive: props.currentPath === "/ddns-profiles",
     },
     {
       href: "/connected-services",
       label: "Manage Connected Services",
       isActive: props.currentPath === "/connected-services",
+    },
+    {
+      href: "/permissions",
+      label: "Manage Permissions (TODO)",
+      isActive: props.currentPath === "/permissions",
     },
   ];
 
