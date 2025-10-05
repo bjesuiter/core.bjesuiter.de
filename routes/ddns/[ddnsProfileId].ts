@@ -1,7 +1,7 @@
 import { define } from "@/lib/fresh/defineHelpers.ts";
 
 export const handler = define.handlers((ctx) => {
-  const configId = ctx.params.ddnsConfigId;
+  const configId = ctx.params.ddnsProfileId;
   switch (configId) {
     case "bjesuiter":
       //   return await updateCloudflare(req, ctx);
