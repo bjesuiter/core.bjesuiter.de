@@ -56,6 +56,7 @@
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.3",
     "neverthrow": "npm:neverthrow@^8.2.0",
+    "p-map": "npm:p-map@^7.0.3",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",
     "tailwind-merge": "npm:tailwind-merge@^3.3.1",

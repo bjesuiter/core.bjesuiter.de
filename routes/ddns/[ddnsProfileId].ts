@@ -8,6 +8,22 @@ import { Span, SpanStatusCode } from "@opentelemetry/api";
 import { decodeBase64 } from "@std/encoding";
 import { initClient } from "@ts-rest/core";
 import { eq } from "drizzle-orm";
+import pMap from "p-map";
+import { err, ok, Result } from "neverthrow";
+
+type UpdateOneRecordResult = Result<void, {
+  type: UpdateOneRecordErrorType;
+  innerError?: Error;
+}>;
+type UpdateOneRecordError = {
+  type: UpdateOneRecordErrorType;
+  innerError?: Error;
+};
+enum UpdateOneRecordErrorType {
+  FailedToListDNSRecords = "FailedToListDNSRecords",
+  FailedToUpdateRecord = "FailedToUpdateRecord",
+  FailedToCreateRecord = "FailedToCreateRecord",
+}
 
 async function updateDnsViaProfile(
   req: Request,
@@ -149,29 +165,43 @@ async function updateDnsViaProfile(
   }
 
   // Create Cloudflare client instance for this profile
-  const cfClient = initClient(apiCloudflareCom, {
+  const outerCfClient = initClient(apiCloudflareCom, {
     baseUrl: "https://api.cloudflare.com/client/v4",
     baseHeaders: {
       authorization: `Bearer ${profile.apiKey}`,
     },
   });
 
-  let allUpdatesOk = true;
-  for (const record of dnsRecords) {
+  const updateOneRecord = async ({
+    zoneId,
+    recordName,
+    newIP,
+    cfClient,
+  }: {
+    zoneId: string;
+    recordName: string;
+    newIP: string;
+    cfClient: typeof outerCfClient;
+  }): Promise<
+    Result<void, UpdateOneRecordError>
+  > => {
     try {
       // Find existing record
       const listResponse = await cfClient.zones.zone_id.dns_records.list({
-        params: { zone_id: record.zone_id },
+        params: { zone_id: zoneId },
         query: {
           type: "A",
-          name: { exact: record.record_name },
+          name: { exact: recordName },
         },
       });
 
       if (listResponse.status !== 200) {
-        throw new Error(
-          `Failed to list DNS records: ${listResponse.status}`,
-        );
+        return err({
+          type: UpdateOneRecordErrorType.FailedToListDNSRecords,
+          innerError: new Error(
+            `Failed to list DNS records: ${listResponse.status}`,
+          ),
+        });
       }
 
       const existingRecords = listResponse.body.result ?? [];
@@ -180,76 +210,81 @@ async function updateDnsViaProfile(
         // Update existing record
         const recordId = existingRecords[0].id;
         const updateResponse = await cfClient.zones.zone_id.dns_records.update({
-          params: { zone_id: record.zone_id, record_id: recordId },
+          params: { zone_id: zoneId, record_id: recordId },
           body: {
-            name: record.record_name,
+            name: recordName,
             ttl: 120,
             type: "A",
-            content: ip,
+            content: newIP,
           },
         });
 
         if (updateResponse.status === 200) {
           span.addEvent(
-            `Record ${record.record_name} updated successfully to IPv4: ${ip}`,
+            `Record ${recordName} updated successfully to IPv4: ${newIP}`,
           );
         } else {
-          throw new Error(
-            `Failed to update record: ${updateResponse.status}`,
-          );
+          return err({
+            type: UpdateOneRecordErrorType.FailedToUpdateRecord,
+            innerError: new Error(
+              `Failed to update record: ${updateResponse.status}`,
+            ),
+          });
         }
       } else {
         // Create new record
         const createResponse = await cfClient.zones.zone_id.dns_records.create({
-          params: { zone_id: record.zone_id },
+          params: { zone_id: zoneId },
           body: {
-            name: record.record_name,
+            name: recordName,
             ttl: 120,
             type: "A",
-            content: ip,
+            content: newIP,
           },
         });
 
         if (createResponse.status === 200) {
           span.addEvent(
-            `Record ${record.record_name} created successfully with IPv4: ${ip}`,
+            `Record ${recordName} created successfully with IPv4: ${newIP}`,
           );
         } else {
-          throw new Error(
-            `Failed to create record: ${createResponse.status}`,
-          );
+          return err({
+            type: UpdateOneRecordErrorType.FailedToCreateRecord,
+            innerError: new Error(
+              `Failed to create record: ${createResponse.status}`,
+            ),
+          });
         }
       }
     } catch (e) {
-      allUpdatesOk = false;
       const errorMsg = e instanceof Error ? e.message : String(e);
 
       console.error(
-        `Failed to update/create DNS record ${record.record_name}: ${errorMsg}`,
+        `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
       );
-      span.addEvent(
-        `Failed to update/create DNS record ${record.record_name}: ${errorMsg}`,
-      );
+      // These events are not shown in deno deploy ui at the moment
+      // span.addEvent(
+      //   `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
+      // );
+      return err({
+        type: UpdateOneRecordErrorType.FailedToUpdateRecord,
+        innerError: new Error(errorMsg),
+      });
     }
-  }
+    return ok();
+  };
 
-  // Step 6 - Update lastUsedAt timestamp
-  await db.update(DDNSProfilesTable)
-    .set({
-      lastUsedAt: new Date().toISOString(),
-    })
-    .where(eq(DDNSProfilesTable.id, profileId));
+  const updateResults = await pMap(dnsRecords, (record) =>
+    updateOneRecord({
+      zoneId: record.zone_id,
+      recordName: record.record_name,
+      newIP: ip,
+      cfClient: outerCfClient,
+    }), {
+    concurrency: 8,
+  });
 
-  if (allUpdatesOk) {
-    span.setStatus({
-      code: SpanStatusCode.OK,
-      message: "All updates successful",
-    });
-    span.end();
-    return new Response("OK", {
-      status: 200,
-    });
-  } else {
+  if (updateResults.some((result) => result.isErr())) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
       message: "Some record updates failed",
@@ -259,6 +294,24 @@ async function updateDnsViaProfile(
       status: 500,
     });
   }
+
+  // Updates have been successful
+
+  // Step 6 - Update lastUsedAt timestamp
+  await db.update(DDNSProfilesTable)
+    .set({
+      lastUsedAt: new Date().toISOString(),
+    })
+    .where(eq(DDNSProfilesTable.id, profileId));
+
+  span.setStatus({
+    code: SpanStatusCode.OK,
+    message: "All updates successful",
+  });
+  span.end();
+  return new Response("OK", {
+    status: 200,
+  });
 }
 
 /**
