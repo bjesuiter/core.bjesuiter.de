@@ -95,7 +95,7 @@ export default define.page(async (ctx) => {
               <td class="border border-gray-300 px-2 py-1 font-mono text-sm">
                 {format(profile.createdAt, "yyyy-MM-dd HH:mm")}
               </td>
-              <td class="border border-gray-300 px-2 py-2 flex gap-2">
+              <td class="px-2 py-2 flex gap-2">
                 <NavButton href={`/ddns/${profile.id}/edit`}>Edit</NavButton>
                 <NavButton href={`/ddns/${profile.id}/delete`}>
                   Delete
