@@ -217,6 +217,7 @@ export default define.page(async (ctx) => {
             id="dns_records"
             rows={6}
             required
+            spellcheck={false}
             class="font-mono text-sm border border-gray-300 shadow-inner p-2 rounded"
           >
             {`[
