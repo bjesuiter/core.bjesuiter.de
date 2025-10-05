@@ -7,16 +7,16 @@ import { UsersTable } from "./users.table.ts";
  */
 export const DDNSProfilesTable = sqliteTable("ddns_profiles", {
   id: text("id").primaryKey(),
-  profile_name: text("profile_name").notNull(),
-  dns_records: text("dns_records", { mode: "json" })
+  profileName: text("profile_name").notNull(),
+  dnsRecords: text("dns_records", { mode: "json" })
     .$type<Array<{ record_name: string; zone_id: string }>>()
     .notNull(),
-  connected_service_id: text("connected_service_id")
+  connectedServiceId: text("connected_service_id")
     .references(() => ConnectedServicesTable.id)
     .notNull(),
-  ddns_username: text("ddns_username").notNull(),
-  ddns_password: text("ddns_password").notNull(),
-  allowed_user_agent: text("allowed_user_agent"),
+  ddnsUsername: text("ddns_username").notNull(),
+  ddnsPassword: text("ddns_password").notNull(),
+  allowedUserAgent: text("allowed_user_agent"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
   ownedBy: text("owned_by").references(() => UsersTable.id).notNull(),
