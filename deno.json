@@ -61,7 +61,7 @@
     "tailwindcss": "npm:tailwindcss@4.1.11",
     "tough-cookie": "npm:tough-cookie@^5.1.2",
     "zod": "npm:zod@^3.25.67",
-    "fresh": "jsr:@fresh/core@^2.1.0"
+    "fresh": "jsr:@fresh/core@^2.1.1"
   },
   "compilerOptions": {
     "jsx": "react-jsx",
