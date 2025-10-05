@@ -20,6 +20,13 @@ export function preInitCfApiClient(
   });
 }
 export function getCfApiClient(apiToken = envStore.CLOUDFLARE_DDNS_API_TOKEN) {
+  // Don't use cache if custom apiToken provided (for multi-user support)
+  if (apiToken !== envStore.CLOUDFLARE_DDNS_API_TOKEN) {
+    return new Cloudflare({
+      apiToken,
+    });
+  }
+
   if (!cfApiClientCache) {
     cfApiClientCache = new Cloudflare({
       apiToken,
@@ -110,10 +117,11 @@ export function validateCloudflareApiKey(
 export async function findDnsRecordId(data: {
   zoneId: string;
   recordName: string;
+  apiToken?: string;
 }) {
-  const { zoneId, recordName } = data;
+  const { zoneId, recordName, apiToken } = data;
 
-  return await getCfApiClient().dns.records.list({
+  return await getCfApiClient(apiToken).dns.records.list({
     zone_id: zoneId,
     type: "A",
     name: {
@@ -140,10 +148,15 @@ export async function updateDnsRecord(data: {
   zoneId: string;
   recordName: string;
   newIP: string;
+  apiToken?: string;
 }) {
-  const { zoneId, recordName, newIP } = data;
+  const { zoneId, recordName, newIP, apiToken } = data;
 
-  const recordIdResult = await findDnsRecordId({ zoneId, recordName });
+  const recordIdResult = await findDnsRecordId({
+    zoneId,
+    recordName,
+    apiToken,
+  });
 
   if (recordIdResult.isErr()) {
     return recordIdResult;
@@ -156,13 +169,16 @@ export async function updateDnsRecord(data: {
     });
   }
 
-  return await getCfApiClient().dns.records.update(recordIdResult.value, {
-    zone_id: zoneId,
-    name: recordName,
-    ttl: 120,
-    type: "A",
-    content: newIP,
-  }).then(() => {
+  return await getCfApiClient(apiToken).dns.records.update(
+    recordIdResult.value,
+    {
+      zone_id: zoneId,
+      name: recordName,
+      ttl: 120,
+      type: "A",
+      content: newIP,
+    },
+  ).then(() => {
     return ok(`Record ${recordName} updated successfully to IPv4: ${newIP}`);
   })
     .catch((e) => {
@@ -188,10 +204,15 @@ export async function createDnsRecord(data: {
   zoneId: string;
   recordName: string;
   newIP: string;
+  apiToken?: string;
 }) {
-  const { zoneId, recordName, newIP } = data;
+  const { zoneId, recordName, newIP, apiToken } = data;
 
-  const recordIdResult = await findDnsRecordId({ zoneId, recordName });
+  const recordIdResult = await findDnsRecordId({
+    zoneId,
+    recordName,
+    apiToken,
+  });
 
   if (recordIdResult.isOk()) {
     return err({
@@ -200,7 +221,7 @@ export async function createDnsRecord(data: {
     });
   }
 
-  return await getCfApiClient().dns.records.create({
+  return await getCfApiClient(apiToken).dns.records.create({
     zone_id: zoneId,
     name: recordName,
     ttl: 120,
@@ -227,10 +248,11 @@ export async function updateOrCreateDnsRecord(data: {
   zoneId: string;
   recordName: string;
   newIP: string;
+  apiToken?: string;
 }) {
-  const { zoneId, recordName, newIP } = data;
+  const { zoneId, recordName, newIP, apiToken } = data;
 
-  const result = await updateDnsRecord({ zoneId, recordName, newIP });
+  const result = await updateDnsRecord({ zoneId, recordName, newIP, apiToken });
 
   if (result.isOk()) {
     return result;
@@ -241,7 +263,7 @@ export async function updateOrCreateDnsRecord(data: {
       `Record ${recordName} does not exist, creating...`,
       result.error.innerError,
     );
-    return await createDnsRecord({ zoneId, recordName, newIP });
+    return await createDnsRecord({ zoneId, recordName, newIP, apiToken });
   }
 
   return result;
