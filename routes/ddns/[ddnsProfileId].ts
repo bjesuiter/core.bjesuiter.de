@@ -1,14 +1,12 @@
-import {
-  DDNSUpdateErrors,
-  updateOrCreateDnsRecord,
-} from "@/lib/cloudflare/cf_api_client.ts";
 import { db } from "@/lib/db/index.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { DDNSProfilesTable } from "@/lib/db/schemas/ddns_profiles.table.ts";
 import { CoreSvcFreshContext, define } from "@/lib/fresh/defineHelpers.ts";
 import { appTracer } from "@/lib/opentelemetry/app-tracer.ts";
+import { apiCloudflareCom } from "@contracts/api.cloudflare.com/api.cloudflare.com.ts";
 import { Span, SpanStatusCode } from "@opentelemetry/api";
 import { decodeBase64 } from "@std/encoding";
+import { initClient } from "@ts-rest/core";
 import { eq } from "drizzle-orm";
 
 async function updateDnsViaProfile(
@@ -150,48 +148,89 @@ async function updateDnsViaProfile(
     });
   }
 
+  // Create Cloudflare client instance for this profile
+  const cfClient = initClient(apiCloudflareCom, {
+    baseUrl: "https://api.cloudflare.com/client/v4",
+    baseHeaders: {
+      authorization: `Bearer ${profile.apiKey}`,
+    },
+  });
+
   let allUpdatesOk = true;
   for (const record of dnsRecords) {
-    const result = await updateOrCreateDnsRecord({
-      zoneId: record.zone_id,
-      recordName: record.record_name,
-      newIP: ip,
-      apiToken: profile.apiKey,
-    });
+    try {
+      // Find existing record
+      const listResponse = await cfClient.zones.zone_id.dns_records.list({
+        params: { zone_id: record.zone_id },
+        query: {
+          type: "A",
+          name: { exact: record.record_name },
+        },
+      });
 
-    result.match(
-      (message) => {
-        span.addEvent(message);
-      },
-      (e) => {
-        allUpdatesOk = false;
-        switch (e.type) {
-          case DDNSUpdateErrors.RecordCreationFailed:
-            console.error(
-              `Failed to create DNS record ${record.record_name} - ${e.innerError}`,
-            );
-            span.addEvent(
-              `Failed to create DNS record ${record.record_name} - ${e.innerError}`,
-            );
-            break;
-          case DDNSUpdateErrors.UncatchedCfApiError:
-            console.error(
-              `Failed to update DNS record ${record.record_name} - ${e.innerError}`,
-            );
-            span.addEvent(
-              `Failed to update DNS record ${record.record_name} - ${e.innerError}`,
-            );
-            break;
-          default:
-            console.error(
-              `Failed to update DNS record ${record.record_name} - ${e}`,
-            );
-            span.addEvent(
-              `Failed to update DNS record ${record.record_name} - ${e}`,
-            );
+      if (listResponse.status !== 200) {
+        throw new Error(
+          `Failed to list DNS records: ${listResponse.status}`,
+        );
+      }
+
+      const existingRecords = listResponse.body.result ?? [];
+
+      if (existingRecords.length > 0) {
+        // Update existing record
+        const recordId = existingRecords[0].id;
+        const updateResponse = await cfClient.zones.zone_id.dns_records.update({
+          params: { zone_id: record.zone_id, record_id: recordId },
+          body: {
+            name: record.record_name,
+            ttl: 120,
+            type: "A",
+            content: ip,
+          },
+        });
+
+        if (updateResponse.status === 200) {
+          span.addEvent(
+            `Record ${record.record_name} updated successfully to IPv4: ${ip}`,
+          );
+        } else {
+          throw new Error(
+            `Failed to update record: ${updateResponse.status}`,
+          );
         }
-      },
-    );
+      } else {
+        // Create new record
+        const createResponse = await cfClient.zones.zone_id.dns_records.create({
+          params: { zone_id: record.zone_id },
+          body: {
+            name: record.record_name,
+            ttl: 120,
+            type: "A",
+            content: ip,
+          },
+        });
+
+        if (createResponse.status === 200) {
+          span.addEvent(
+            `Record ${record.record_name} created successfully with IPv4: ${ip}`,
+          );
+        } else {
+          throw new Error(
+            `Failed to create record: ${createResponse.status}`,
+          );
+        }
+      }
+    } catch (e) {
+      allUpdatesOk = false;
+      const errorMsg = e instanceof Error ? e.message : String(e);
+
+      console.error(
+        `Failed to update/create DNS record ${record.record_name}: ${errorMsg}`,
+      );
+      span.addEvent(
+        `Failed to update/create DNS record ${record.record_name}: ${errorMsg}`,
+      );
+    }
   }
 
   // Step 6 - Update lastUsedAt timestamp
