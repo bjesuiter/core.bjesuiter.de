@@ -18,26 +18,32 @@ export default define.page(async (ctx) => {
   }
   const { user } = authResult;
 
-  const profiles = await db.select({
-    id: DDNSProfilesTable.id,
-    profileName: DDNSProfilesTable.profileName,
-    dnsRecords: DDNSProfilesTable.dnsRecords,
-    ddnsUsername: DDNSProfilesTable.ddnsUsername,
-    connectedServiceId: DDNSProfilesTable.connectedServiceId,
-    serviceLabel: ConnectedServicesTable.service_label,
-    lastUsed: DDNSProfilesTable.lastUsedAt,
-    createdAt: DDNSProfilesTable.createdAt,
-    updatedAt: DDNSProfilesTable.updatedAt,
-  })
-    .from(DDNSProfilesTable)
-    .leftJoin(
-      ConnectedServicesTable,
-      eq(DDNSProfilesTable.connectedServiceId, ConnectedServicesTable.id),
-    )
-    .where(eq(DDNSProfilesTable.ownedBy, user.id))
-    .orderBy(desc(DDNSProfilesTable.createdAt))
-    .limit(itemsPerPage)
-    .offset(page * itemsPerPage);
+  let profiles = [];
+  try {
+    profiles = await db.select({
+      id: DDNSProfilesTable.id,
+      profileName: DDNSProfilesTable.profileName,
+      dnsRecords: DDNSProfilesTable.dnsRecords,
+      ddnsUsername: DDNSProfilesTable.ddnsUsername,
+      connectedServiceId: DDNSProfilesTable.connectedServiceId,
+      serviceLabel: ConnectedServicesTable.service_label,
+      lastUsed: DDNSProfilesTable.lastUsedAt,
+      createdAt: DDNSProfilesTable.createdAt,
+      updatedAt: DDNSProfilesTable.updatedAt,
+    })
+      .from(DDNSProfilesTable)
+      .leftJoin(
+        ConnectedServicesTable,
+        eq(DDNSProfilesTable.connectedServiceId, ConnectedServicesTable.id),
+      )
+      .where(eq(DDNSProfilesTable.ownedBy, user.id))
+      .orderBy(desc(DDNSProfilesTable.createdAt))
+      .limit(itemsPerPage)
+      .offset(page * itemsPerPage);
+  } catch (error) {
+    console.error("Failed to fetch DDNS profiles:", error);
+    profiles = [];
+  }
 
   return (
     <div class="flex flex-col gap-4">
