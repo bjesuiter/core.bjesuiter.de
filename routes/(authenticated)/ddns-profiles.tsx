@@ -42,7 +42,9 @@ export default define.page(async (ctx) => {
     <div class="flex flex-col gap-4">
       <Toolbar
         title="DDNS Profiles"
-        actionsSlotRight={<NavButton href="/ddns/add">Add Profile</NavButton>}
+        actionsSlotRight={
+          <NavButton href="/ddns-profiles/add">Add Profile</NavButton>
+        }
       />
 
       <p>
@@ -96,8 +98,10 @@ export default define.page(async (ctx) => {
                 {format(profile.createdAt, "yyyy-MM-dd HH:mm")}
               </td>
               <td class="px-2 py-2 flex gap-2">
-                <NavButton href={`/ddns/${profile.id}/edit`}>Edit</NavButton>
-                <NavButton href={`/ddns/${profile.id}/delete`}>
+                <NavButton href={`/ddns-profiles/${profile.id}/edit`}>
+                  Edit
+                </NavButton>
+                <NavButton href={`/ddns-profiles/${profile.id}/delete`}>
                   Delete
                 </NavButton>
               </td>

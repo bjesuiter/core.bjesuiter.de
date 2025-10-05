@@ -2,20 +2,20 @@ import z from "zod/v4";
 import { Card } from "@/components/Card.tsx";
 import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
 import { NavButton } from "@/components/NavButton.tsx";
+import { MessageBlock } from "@/components/subassemblies/MessageBlock.tsx";
 import { Toolbar } from "@/components/Toolbar.tsx";
 import { define } from "@/lib/fresh/defineHelpers.ts";
 import { db } from "@/lib/db/index.ts";
 import { DDNSProfilesTable } from "@/lib/db/schemas/ddns_profiles.table.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
-import { generateSecureRandomString } from "@/utils/auth_helpers.ts";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const DnsRecordSchema = z.object({
   record_name: z.string().min(1),
   zone_id: z.string().min(1),
 });
 
-const DDNSProfileFormSchema = z.object({
+const EditDDNSProfileSchema = z.object({
   profile_name: z.string().min(1),
   connected_service_id: z.uuid(),
   dns_records: z.string().transform((str, ctx) => {
@@ -48,6 +48,32 @@ export default define.page(async (ctx) => {
   }
   const { user } = authResult;
 
+  // Fetch the existing DDNS profile
+  const profileSqlCondition = and(
+    eq(DDNSProfilesTable.ownedBy, user.id),
+    eq(DDNSProfilesTable.id, ctx.params.id),
+  );
+
+  const profileResponse = await db.select()
+    .from(DDNSProfilesTable)
+    .where(profileSqlCondition);
+
+  if (profileResponse.length === 0) {
+    return (
+      <MessageBlock
+        title="Edit DDNS Profile"
+        backUrl="/ddns-profiles"
+      >
+        <p>
+          DDNS profile with id {ctx.params.id}{" "}
+          not found or you don't have access to it.
+        </p>
+      </MessageBlock>
+    );
+  }
+
+  const profile = profileResponse[0];
+
   // Load user's connected services for dropdown
   const connectedServices = await db.select()
     .from(ConnectedServicesTable)
@@ -56,7 +82,7 @@ export default define.page(async (ctx) => {
   // HANDLE POST REQUEST
   if (ctx.req.method === "POST") {
     const formData = await ctx.req.formData();
-    const parsedInput = DDNSProfileFormSchema.safeParse(
+    const parsedInput = EditDDNSProfileSchema.safeParse(
       Object.fromEntries(formData),
     );
 
@@ -64,7 +90,7 @@ export default define.page(async (ctx) => {
       return (
         <Card class="flex flex-col gap-4 mx-auto w-125">
           <Toolbar
-            title="Add DDNS Profile"
+            title="Edit DDNS Profile"
             actionsSlotLeft={<NavButton href="/ddns-profiles">Back</NavButton>}
           />
           <div class="text-red-600">
@@ -75,106 +101,66 @@ export default define.page(async (ctx) => {
       );
     }
 
-    // Generate credentials
-    const ddnsUsername = generateSecureRandomString();
-    const ddnsPassword = generateSecureRandomString();
-    const profileId = crypto.randomUUID();
-    const now = new Date().toISOString();
-
-    // Insert into DB
-    await db.insert(DDNSProfilesTable).values({
-      id: profileId,
-      profileName: parsedInput.data.profile_name,
-      dnsRecords: parsedInput.data.dns_records,
-      connectedServiceId: parsedInput.data.connected_service_id,
-      ddnsUsername: ddnsUsername,
-      ddnsPassword: ddnsPassword,
-      allowedUserAgent: parsedInput.data.allowed_user_agent || null,
-      createdAt: now,
-      updatedAt: now,
-      ownedBy: user.id,
-    });
+    // Update the profile
+    await db.update(DDNSProfilesTable)
+      .set({
+        profileName: parsedInput.data.profile_name,
+        dnsRecords: parsedInput.data.dns_records,
+        connectedServiceId: parsedInput.data.connected_service_id,
+        allowedUserAgent: parsedInput.data.allowed_user_agent || null,
+        updatedAt: new Date().toISOString(),
+      })
+      .where(profileSqlCondition);
 
     return (
-      <Card class="flex flex-col gap-4 mx-auto w-125">
-        <Toolbar
-          title="DDNS Profile Created"
-          actionsSlotLeft={
-            <NavButton href="/ddns-profiles">Back to List</NavButton>
-          }
-          actionsSlotRight={
-            <NavButton href="/ddns-profiles/add">Add Another</NavButton>
-          }
-        />
-        <h2 class="text-green-600">Profile Created Successfully!</h2>
-
-        <div class="flex flex-col gap-2">
-          <h3 class="font-bold">Profile Details:</h3>
+      <MessageBlock
+        title="DDNS Profile Updated"
+        backUrl="/ddns-profiles"
+      >
+        <p class="text-green-600">
+          DDNS profile{" "}
+          <span class="font-bold">{parsedInput.data.profile_name}</span>{" "}
+          has been successfully updated.
+        </p>
+        <div class="mt-4 p-4 bg-blue-50 border border-blue-300 rounded">
+          <h4 class="font-bold mb-2">Updated DNS Records:</h4>
           <ul class="list-disc list-inside">
-            <li>Profile Name: {parsedInput.data.profile_name}</li>
-            <li>Profile ID: {profileId}</li>
-            <li>
-              DNS Records:{" "}
-              {parsedInput.data.dns_records.map((r) => r.record_name).join(
-                ", ",
-              )}
-            </li>
+            {parsedInput.data.dns_records.map((record) => (
+              <li key={record.record_name}>{record.record_name}</li>
+            ))}
           </ul>
         </div>
-
-        <div class="flex flex-col gap-2 p-4 bg-yellow-50 border border-yellow-300 rounded">
-          <h3 class="font-bold text-yellow-800">
-            ⚠️ Save these credentials - they won't be shown again!
-          </h3>
-          <div class="font-mono text-sm">
-            <div>
-              <strong>Username:</strong> {ddnsUsername}
-            </div>
-            <div>
-              <strong>Password:</strong> {ddnsPassword}
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-2 p-4 bg-blue-50 border border-blue-300 rounded">
-          <h3 class="font-bold">DDNS Update Endpoint:</h3>
-          <code class="text-sm break-all">
-            POST {ctx.url.origin}/ddns/{profileId}?ip=YOUR_IP
-          </code>
-          <p class="text-sm text-gray-600">
-            Use Basic Auth with the credentials above
-          </p>
-        </div>
-      </Card>
+      </MessageBlock>
     );
   }
 
-  // RENDER FORM
+  // RENDER FORM with pre-populated data
   return (
     <Card class="flex flex-col gap-4 mx-auto w-125">
       <Toolbar
-        title="Add DDNS Profile"
+        title="Edit DDNS Profile"
         actionsSlotLeft={<NavButton href="/ddns-profiles">Back</NavButton>}
       />
 
-      {connectedServices.length === 0
-        ? (
-          <div class="p-4 bg-yellow-50 border border-yellow-300 rounded">
-            <p class="text-yellow-800">
-              You need to add a Connected Service (Cloudflare) first!
-            </p>
-            <NavButton href="/connected-services/add">
-              Add Connected Service
-            </NavButton>
+      <div class="p-4 bg-gray-50 border border-gray-300 rounded">
+        <h4 class="font-bold mb-2">Profile Information:</h4>
+        <div class="text-sm space-y-1">
+          <div>
+            <strong>Profile ID:</strong>{" "}
+            <span class="font-mono">{profile.id}</span>
           </div>
-        )
-        : (
-          <>
-          </>
-        )}
+          <div>
+            <strong>Username:</strong>{" "}
+            <span class="font-mono">{profile.ddnsUsername}</span>
+          </div>
+          <div class="text-gray-600 italic">
+            Note: Credentials cannot be changed. Delete and recreate the profile
+            if needed.
+          </div>
+        </div>
+      </div>
 
       <form
-        action="/ddns-profiles/add"
         method="POST"
         class="flex flex-col gap-6 max-w-2xl"
       >
@@ -186,6 +172,7 @@ export default define.page(async (ctx) => {
             type="text"
             name="profile_name"
             id="profile_name"
+            value={profile.profileName}
             required
           />
         </FormFieldWithLabel>
@@ -201,11 +188,13 @@ export default define.page(async (ctx) => {
             name="connected_service_id"
             id="connected_service_id"
             required
-            disabled={connectedServices.length === 0}
           >
-            <option value="">-- Select Service --</option>
             {connectedServices.map((service) => (
-              <option key={service.id} value={service.id}>
+              <option
+                key={service.id}
+                value={service.id}
+                selected={service.id === profile.connectedServiceId}
+              >
                 {service.service_label} ({service.service_type})
               </option>
             ))}
@@ -219,17 +208,12 @@ export default define.page(async (ctx) => {
           <textarea
             name="dns_records"
             id="dns_records"
-            rows={6}
+            rows={10}
             required
             spellcheck={false}
             class="font-mono text-sm border border-gray-300 shadow-inner p-2 rounded"
           >
-            {`[
-  {
-    "record_name": "home.example.com",
-    "zone_id": "abc123..."
-  }
-]`}
+            {JSON.stringify(profile.dnsRecords, null, 2)}
           </textarea>
         </FormFieldWithLabel>
 
@@ -244,29 +228,25 @@ export default define.page(async (ctx) => {
             type="text"
             name="allowed_user_agent"
             id="allowed_user_agent"
+            value={profile.allowedUserAgent ?? ""}
             placeholder="Synology DDNS Updater/72806 support@synology.com"
           />
         </FormFieldWithLabel>
 
-        <button
-          type="submit"
-          class="primary-btn"
-          disabled={connectedServices.length === 0}
-        >
-          Create DDNS Profile
+        <button type="submit" class="primary-btn">
+          Save Changes
         </button>
       </form>
 
-      <div class="p-4 bg-gray-50 border border-gray-300 rounded text-sm">
-        <h4 class="font-bold mb-2">ℹ️ How it works:</h4>
-        <ol class="list-decimal list-inside space-y-1">
-          <li>Create a profile with DNS records you want to update</li>
-          <li>Unique username/password will be auto-generated</li>
-          <li>
-            Use the endpoint with Basic Auth to update all records at once
-          </li>
-          <li>All records in the profile will be updated to the same IP</li>
-        </ol>
+      <div class="p-4 bg-blue-50 border border-blue-300 rounded text-sm">
+        <h4 class="font-bold mb-2">ℹ️ Current DDNS Endpoint:</h4>
+        <code class="text-sm break-all">
+          POST {ctx.url.origin}/ddns/{profile.id}?ip=YOUR_IP
+        </code>
+        <p class="text-gray-600 mt-2">
+          Use Basic Auth with username:{" "}
+          <span class="font-mono">{profile.ddnsUsername}</span>
+        </p>
       </div>
     </Card>
   );
