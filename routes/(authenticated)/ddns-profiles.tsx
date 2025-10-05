@@ -83,7 +83,7 @@ export default define.page(async (ctx) => {
                 {profile.profileName}
               </td>
               <td class="border border-gray-300 px-2 py-1">
-                <ul class="list-disc list-inside text-sm">
+                <ul class="list-inside text-sm">
                   {(profile.dnsRecords as Array<
                     { record_name: string; zone_id: string }
                   >)?.map((record) => (
