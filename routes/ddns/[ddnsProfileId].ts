@@ -30,7 +30,7 @@ async function updateDnsViaProfile(
   ctx: CoreSvcFreshContext,
   span: Span,
 ): Promise<Response> {
-  span.addEvent("Request received", {
+  console.log("Request received", {
     method: req.method,
     url: req.url,
   });
@@ -200,6 +200,9 @@ async function updateDnsViaProfile(
           type: UpdateOneRecordErrorType.FailedToListDNSRecords,
           innerError: new Error(
             `Failed to list DNS records: ${listResponse.status}`,
+            {
+              cause: listResponse.body,
+            },
           ),
         });
       }
@@ -220,7 +223,7 @@ async function updateDnsViaProfile(
         });
 
         if (updateResponse.status === 200) {
-          span.addEvent(
+          console.log(
             `Record ${recordName} updated successfully to IPv4: ${newIP}`,
           );
         } else {
@@ -228,6 +231,9 @@ async function updateDnsViaProfile(
             type: UpdateOneRecordErrorType.FailedToUpdateRecord,
             innerError: new Error(
               `Failed to update record: ${updateResponse.status}`,
+              {
+                cause: updateResponse.body,
+              },
             ),
           });
         }
@@ -244,7 +250,7 @@ async function updateDnsViaProfile(
         });
 
         if (createResponse.status === 200) {
-          span.addEvent(
+          console.log(
             `Record ${recordName} created successfully with IPv4: ${newIP}`,
           );
         } else {
@@ -252,6 +258,9 @@ async function updateDnsViaProfile(
             type: UpdateOneRecordErrorType.FailedToCreateRecord,
             innerError: new Error(
               `Failed to create record: ${createResponse.status}`,
+              {
+                cause: createResponse.body,
+              },
             ),
           });
         }
@@ -289,6 +298,14 @@ async function updateDnsViaProfile(
       code: SpanStatusCode.ERROR,
       message: "Some record updates failed",
     });
+
+    // log all errors
+    updateResults
+      .filter((result) => result.isErr())
+      .forEach((result) => {
+        console.error(result.error);
+      });
+
     span.end();
     return new Response("Internal Server Error", {
       status: 500,
