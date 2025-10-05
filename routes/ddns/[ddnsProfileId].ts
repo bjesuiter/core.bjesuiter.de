@@ -209,7 +209,15 @@ async function updateDnsViaProfile(
 
       const existingRecords = listResponse.body.result ?? [];
 
-      if (existingRecords.length > 0) {
+      // Record is already up to date
+      if (existingRecords.length > 0 && existingRecords[0].content === newIP) {
+        console.log(
+          `Record ${recordName} already up to date with IPv4: ${newIP}`,
+        );
+        return ok();
+      }
+
+      if (existingRecords.length > 0 && existingRecords[0].content !== newIP) {
         // Update existing record
         const recordId = existingRecords[0].id;
         const updateResponse = await cfClient.zones.zone_id.dns_records.update({
