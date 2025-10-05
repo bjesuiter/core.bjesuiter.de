@@ -108,6 +108,7 @@ export default define.page(async (ctx) => {
         dnsRecords: parsedInput.data.dns_records,
         connectedServiceId: parsedInput.data.connected_service_id,
         allowedUserAgent: parsedInput.data.allowed_user_agent || null,
+        lastUsedAt: null,
         updatedAt: new Date().toISOString(),
       })
       .where(profileSqlCondition);

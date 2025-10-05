@@ -149,7 +149,7 @@ export default define.page(async (ctx) => {
       ddnsUsername: ddnsUsername,
       ddnsPassword: ddnsPassword,
       allowedUserAgent: parsedInput.data.allowed_user_agent || null,
-      lastUsed: null,
+      lastUsedAt: null,
       createdAt: now,
       updatedAt: now,
       ownedBy: user.id,
