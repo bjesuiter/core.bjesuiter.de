@@ -6,9 +6,10 @@ import { Toolbar } from "@/components/Toolbar.tsx";
 import { define } from "@/lib/fresh/defineHelpers.ts";
 
 import { addCloudflareConnection } from "./(service-types)/addCloudflareConnection.ts";
+import { addClockifyConnection } from "./(service-types)/addClockifyConnection.ts";
 
 const ConnectedServiceSchema = z.object({
-  service_type: z.enum(["cloudflare"]),
+  service_type: z.enum(["cloudflare", "clockify"]),
   api_key: z.string(),
   service_label: z.string(),
 });
@@ -74,6 +75,45 @@ export default define.page(
           }
           break;
         }
+        case "clockify": {
+          const clockifyResult = await addClockifyConnection(
+            apiKey,
+            user.id,
+            serviceLabel,
+          );
+
+          if (typeof clockifyResult === "object" && "data" in clockifyResult) {
+            const status = clockifyResult.data?.status;
+            const serviceType = clockifyResult.data?.service_type;
+            const serviceLabel = clockifyResult.data?.service_label;
+
+            if (status === "service_added") {
+              return (
+                <Card class="flex flex-col gap-4 mx-auto w-125">
+                  <Toolbar
+                    title="Add Connected Service"
+                    actionsSlotLeft={
+                      <NavButton href="/connected-services">Back</NavButton>
+                    }
+                    actionsSlotRight={
+                      <NavButton href="/connected-services/add">
+                        Add Another Service
+                      </NavButton>
+                    }
+                  />
+                  <h2>Service added</h2>
+                  <ul>
+                    <li>Service Type: {serviceType}</li>
+                    <li>Service Label: {serviceLabel}</li>
+                  </ul>
+                </Card>
+              );
+            }
+          } else {
+            return clockifyResult;
+          }
+          break;
+        }
         default:
           return new Response(`Unknown service type: ${serviceType}`, {
             status: 400,
@@ -98,6 +138,7 @@ export default define.page(
           <FormFieldWithLabel label="Service Type" forId="service_type">
             <select name="service_type" id="service_type" required>
               <option value="cloudflare">Cloudflare</option>
+              <option value="clockify">Clockify</option>
             </select>
           </FormFieldWithLabel>
           <FormFieldWithLabel
