@@ -3,6 +3,7 @@ import { db } from "@/lib/db/index.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { and, eq } from "drizzle-orm";
 import { validateCfToken } from "../(service-types)/validateCfToken.ts";
+import { validateClockifyApiKey } from "../(service-types)/validateClockifyApiKey.ts";
 import { MessageBlock } from "@/components/subassemblies/MessageBlock.tsx";
 
 export default define.page(async (ctx) => {
@@ -29,10 +30,41 @@ export default define.page(async (ctx) => {
 
   switch (connectedService.service_type) {
     case "cloudflare": {
-      const cfResult = await validateCfToken(
+      const cfResult = await validateCfToken(connectedService.api_key);
+      if (!cfResult) {
+        return (
+          <MessageBlock
+            title="Revalidate Connected Service"
+            backUrl="/connected-services"
+          >
+            <p>
+              Token of type{" "}
+              <span class="font-bold">{connectedService.service_type}</span>
+              {" "}
+              stored for ID {ctx.params.id} is invalid
+            </p>
+          </MessageBlock>
+        );
+      }
+      return (
+        <MessageBlock
+          title="Revalidate Connected Service"
+          backUrl="/connected-services"
+        >
+          <p>
+            Token of type{" "}
+            <span class="font-bold">{connectedService.service_type}</span>{" "}
+            stored for ID {ctx.params.id}{" "}
+            <span class="font-bold">is valid</span>
+          </p>
+        </MessageBlock>
+      );
+    }
+    case "clockify": {
+      const clockifyResult = await validateClockifyApiKey(
         connectedService.api_key,
       );
-      if (!cfResult) {
+      if (!clockifyResult) {
         return (
           <MessageBlock
             title="Revalidate Connected Service"

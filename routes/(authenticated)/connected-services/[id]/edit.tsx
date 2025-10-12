@@ -9,6 +9,7 @@ import { define } from "@/lib/fresh/defineHelpers.ts";
 import { and, eq } from "drizzle-orm";
 import z from "zod/v4";
 import { validateCfToken } from "../(service-types)/validateCfToken.ts";
+import { validateClockifyApiKey } from "../(service-types)/validateClockifyApiKey.ts";
 
 const EditConnectedServiceSchema = z.object({
   api_key: z.string().optional(),
@@ -102,6 +103,24 @@ export default define.page(async (ctx) => {
             >
               <p>
                 No changes where saved:{" "}
+                <br></br>The provided API key is invalid for service type{" "}
+                <span class="font-bold">{connectedService.service_type}</span>
+              </p>
+            </MessageBlock>
+          );
+        }
+        break;
+      }
+      case "clockify": {
+        const clockifyResult = await validateClockifyApiKey(apiKey);
+        if (!clockifyResult) {
+          return (
+            <MessageBlock
+              title="Edit Connected Service"
+              backUrl="/connected-services"
+            >
+              <p>
+                No changes were saved:{" "}
                 <br></br>The provided API key is invalid for service type{" "}
                 <span class="font-bold">{connectedService.service_type}</span>
               </p>
