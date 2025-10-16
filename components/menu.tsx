@@ -2,7 +2,9 @@ import { NavTextLink } from "./NavTextLink.tsx";
 import { LogoutButton } from "@/islands/LogoutButton.tsx";
 import { twJoin } from "tailwind-merge";
 
-export default function Menu(props: { class?: string; currentPath: string }) {
+export default function Menu(
+  props: { class?: string; currentPath: string; isRootUser?: boolean },
+) {
   const classes = twJoin(
     "flex flex-col gap-4",
     props.class ?? "",
@@ -39,6 +41,14 @@ export default function Menu(props: { class?: string; currentPath: string }) {
       label: "Manage Permissions (TODO)",
       isActive: props.currentPath === "/permissions",
     },
+    // Only show Secunet Overtime to root user
+    ...(props.isRootUser
+      ? [{
+        href: "/secunet-overtime",
+        label: "Secunet Overtime",
+        isActive: props.currentPath === "/secunet-overtime",
+      }]
+      : []),
   ];
 
   return (

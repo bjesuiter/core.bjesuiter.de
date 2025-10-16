@@ -8,6 +8,7 @@ export interface CoreSvcContext {
       type: "data";
       session: SessionFrontend;
       user: UserFrontend;
+      isRootUser?: boolean;
     }
   >;
 

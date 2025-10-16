@@ -14,6 +14,7 @@ export function Sidebar(
   props: {
     url: URL;
     openState: Signal<boolean>;
+    isRootUser?: boolean;
   },
 ) {
   const handleOpenCloseButtonClick = () => {
@@ -71,6 +72,7 @@ export function Sidebar(
             props.openState.value ? "" : "overflow-hidden text-nowrap",
           )}
           currentPath={props.url.pathname}
+          isRootUser={props.isRootUser}
         />
       </div>
     </div>

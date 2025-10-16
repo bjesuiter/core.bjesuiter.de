@@ -2,6 +2,7 @@ import { define } from "@/lib/fresh/defineHelpers.ts";
 import { isRequestAuthenticated } from "@/utils/auth.ts";
 import { redirectToLogin } from "@/utils/routing.ts";
 import { appTracer } from "../../lib/opentelemetry/app-tracer.ts";
+import { envStore } from "@/utils/env_store.ts";
 
 /**
  * Authentication middleware
@@ -31,10 +32,16 @@ export default define.middleware(async (ctx) => {
     if (authResult.isErr()) {
       return { type: "response", response: redirectToLogin() };
     } else {
+      // Calculate isRootUser here and add to state
+      // TODO: Add full permission management adjacent to the user db table!
+      const isRootUser =
+        authResult.value.user.email === envStore.CORE_ROOT_USER_EMAIL;
+
       return {
         type: "data",
         session: authResult.value.session,
         user: authResult.value.user,
+        isRootUser,
       };
     }
   });
