@@ -11,7 +11,7 @@ export default function Menu(
   },
 ) {
   const classes = twJoin(
-    "flex flex-col gap-4",
+    "flex flex-col h-full",
     props.class ?? "",
   );
 
@@ -58,17 +58,35 @@ export default function Menu(
 
   return (
     <div class={classes}>
+      {/* Scrollable menu links */}
+      <div class="flex flex-col gap-4 flex-grow overflow-y-auto">
+        {links.map((link) => (
+          <NavTextLink
+            href={link.href}
+            isActive={link.isActive}
+            key={link.href}
+          >
+            {link.label}
+          </NavTextLink>
+        ))}
+        <LogoutButton class="tw-stretch" />
+      </div>
+
+      {
+        /* TODO: add an indicator that the menu is scrollable,
+      if some parts of it are not visible.
+      Use &#x2304; (unicode chevron down)
+      and a tailwind-motion bounce animation */
+      }
+
+      {/* Fixed user info at bottom */}
       {props.userEmail && (
-        <p class="text-sm text-gray-600 pb-2 pt-1 border-b border-gray-300">
-          Logged in as: {props.userEmail}
-        </p>
+        <div class="mt-4 pt-3 border-t border-gray-300">
+          <p class="text-sm text-gray-600">
+            Logged in as: {props.userEmail}
+          </p>
+        </div>
       )}
-      {links.map((link) => (
-        <NavTextLink href={link.href} isActive={link.isActive} key={link.href}>
-          {link.label}
-        </NavTextLink>
-      ))}
-      <LogoutButton class="tw-stretch" />
     </div>
   );
 }

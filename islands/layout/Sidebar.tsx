@@ -52,14 +52,14 @@ export function Sidebar(
       {/* Left Sidebar */}
       <div
         class={twJoin(
-          "duration-400 transition-[padding,width]",
+          "duration-400 transition-[padding,width] flex flex-col h-[calc(100vh-2rem)]",
           props.openState.value ? "w-[200px]" : "w-0",
           props.openState.value ? "px-2" : "px-0",
         )}
       >
         <h1
           class={twJoin(
-            "text-2xl font-bold mb-4 mt-0 text-center duration-200 transition-all",
+            "text-2xl font-bold mb-4 mt-0 text-center duration-200 transition-all flex-shrink-0",
             props.openState.value
               ? "visible opacity-100"
               : "invisible opacity-0",
@@ -68,14 +68,16 @@ export function Sidebar(
           coresvc
         </h1>
         {/* TODO: optimize text wrapping while animating */}
-        <Menu
-          class={twJoin(
-            props.openState.value ? "" : "overflow-hidden text-nowrap",
-          )}
-          currentPath={props.url.pathname}
-          isRootUser={props.isRootUser}
-          userEmail={props.userEmail}
-        />
+        <div class="flex-1 min-h-0">
+          <Menu
+            class={twJoin(
+              props.openState.value ? "" : "overflow-hidden text-nowrap",
+            )}
+            currentPath={props.url.pathname}
+            isRootUser={props.isRootUser}
+            userEmail={props.userEmail}
+          />
+        </div>
       </div>
     </div>
   );
