@@ -1,4 +1,3 @@
-import { useState } from "preact/hooks";
 import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
 import { WorkspaceSelector } from "./WorkspaceSelector.tsx";
 
@@ -11,16 +10,22 @@ type Props = {
   clockifyServices: Service[];
   currentServiceId?: string;
   currentWorkspaceId?: string;
+  selectedAccountId?: string;
 };
 
 export function SettingsForm(
-  { clockifyServices, currentServiceId, currentWorkspaceId }: Props,
+  { clockifyServices, currentServiceId, currentWorkspaceId, selectedAccountId }:
+    Props,
 ) {
-  const [selectedServiceId, setSelectedServiceId] = useState<
-    string | undefined
-  >(
-    currentServiceId,
-  );
+  const handleAccountChange = (e: Event) => {
+    console.log("handleAccountChange called");
+    const target = e.target as HTMLSelectElement;
+    const serviceId = target.value;
+    if (serviceId) {
+      // Reload page with account query param
+      globalThis.location.href = `/secutime/settings?account=${serviceId}`;
+    }
+  };
 
   return (
     <form
@@ -34,17 +39,14 @@ export function SettingsForm(
           id="connected_service"
           required
           class="border border-gray-300 rounded-md p-2"
-          onChange={(e) => {
-            const target = e.target as HTMLSelectElement;
-            setSelectedServiceId(target.value || undefined);
-          }}
+          onChange={handleAccountChange}
         >
           <option value="">Select a Clockify account</option>
           {clockifyServices.map((service) => (
             <option
               key={service.id}
               value={service.id}
-              selected={service.id === currentServiceId}
+              selected={service.id === (selectedAccountId || currentServiceId)}
             >
               {service.service_label}
             </option>
@@ -52,10 +54,10 @@ export function SettingsForm(
         </select>
       </FormFieldWithLabel>
 
-      {selectedServiceId && (
+      {selectedAccountId && (
         <FormFieldWithLabel label="Workspace" forId="workspace_id">
           <WorkspaceSelector
-            connectedServiceId={selectedServiceId}
+            connectedServiceId={selectedAccountId}
             currentWorkspaceId={currentWorkspaceId}
           />
         </FormFieldWithLabel>

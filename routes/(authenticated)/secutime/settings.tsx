@@ -103,6 +103,9 @@ export default define.page(async (ctx) => {
   }
 
   // GET REQUEST - Show form
+  // Read selected account from query params
+  const selectedAccountId = ctx.url.searchParams.get("account") || undefined;
+
   // Fetch all clockify connected services for this user
   const clockifyServices = await db.select().from(ConnectedServicesTable)
     .where(
@@ -158,6 +161,7 @@ export default define.page(async (ctx) => {
           clockifyServices={clockifyServices}
           currentServiceId={currentServiceId}
           currentWorkspaceId={currentWorkspaceId}
+          selectedAccountId={selectedAccountId}
         />
       </section>
     </div>
