@@ -15,6 +15,7 @@ export function Sidebar(
     url: URL;
     openState: Signal<boolean>;
     isRootUser?: boolean;
+    userEmail?: string;
   },
 ) {
   const handleOpenCloseButtonClick = () => {
@@ -73,6 +74,7 @@ export function Sidebar(
           )}
           currentPath={props.url.pathname}
           isRootUser={props.isRootUser}
+          userEmail={props.userEmail}
         />
       </div>
     </div>

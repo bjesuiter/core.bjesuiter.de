@@ -40,6 +40,7 @@ export default define.layout(
           url={url}
           openState={sidebarOpen}
           isRootUser={isRootUser}
+          userEmail={user.email}
           // onOpenChange={(isOpen) => sidebarOpen.value = isOpen}
         />
 

@@ -3,7 +3,12 @@ import { LogoutButton } from "@/islands/LogoutButton.tsx";
 import { twJoin } from "tailwind-merge";
 
 export default function Menu(
-  props: { class?: string; currentPath: string; isRootUser?: boolean },
+  props: {
+    class?: string;
+    currentPath: string;
+    isRootUser?: boolean;
+    userEmail?: string;
+  },
 ) {
   const classes = twJoin(
     "flex flex-col gap-4",
@@ -53,6 +58,11 @@ export default function Menu(
 
   return (
     <div class={classes}>
+      {props.userEmail && (
+        <p class="text-sm text-gray-600 pb-2 pt-1 border-b border-gray-300">
+          Logged in as: {props.userEmail}
+        </p>
+      )}
       {links.map((link) => (
         <NavTextLink href={link.href} isActive={link.isActive} key={link.href}>
           {link.label}

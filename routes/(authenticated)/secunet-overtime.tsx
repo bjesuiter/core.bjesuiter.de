@@ -33,9 +33,6 @@ export default define.page(async (ctx) => {
           This is the Secunet Overtime tracking page. Only accessible to the
           root user.
         </p>
-        <div class="mt-4">
-          <p class="text-sm text-gray-500">Logged in as: {user.email}</p>
-        </div>
       </section>
 
       <section class="bg-white p-6 rounded-lg shadow">
