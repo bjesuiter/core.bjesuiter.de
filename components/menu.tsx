@@ -49,9 +49,9 @@ export default function Menu(
     // Only show Secunet Overtime to root user
     ...(props.isRootUser
       ? [{
-        href: "/secunet-overtime",
-        label: "Secunet Overtime",
-        isActive: props.currentPath === "/secunet-overtime",
+        href: "/secutime",
+        label: "SecuTime",
+        isActive: props.currentPath === "/secutime",
       }]
       : []),
   ];
