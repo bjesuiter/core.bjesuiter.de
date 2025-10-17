@@ -7,7 +7,7 @@ import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.tabl
 import { SecutimeReportsTable } from "@/lib/db/schemas/secutime_reports.table.ts";
 import { and, eq } from "drizzle-orm";
 import { MessageBlock } from "@/components/subassemblies/MessageBlock.tsx";
-import { FormFieldWithLabel } from "@/components/FormFieldWithLabel.tsx";
+import { SettingsForm } from "./(_islands)/SettingsForm.tsx";
 
 export default define.page(async (ctx) => {
   const authResult = await ctx.state.authPromise;
@@ -35,11 +35,20 @@ export default define.page(async (ctx) => {
   if (ctx.req.method === "POST") {
     const formData = await ctx.req.formData();
     const connectedServiceId = formData.get("connected_service");
+    const workspaceId = formData.get("workspace_id");
 
     if (!connectedServiceId || typeof connectedServiceId !== "string") {
       return (
         <MessageBlock title="Error" backUrl="/secutime/settings">
           <p class="text-red-600">Please select a Clockify account.</p>
+        </MessageBlock>
+      );
+    }
+
+    if (!workspaceId || typeof workspaceId !== "string") {
+      return (
+        <MessageBlock title="Error" backUrl="/secutime/settings">
+          <p class="text-red-600">Please select a workspace.</p>
         </MessageBlock>
       );
     }
@@ -69,7 +78,10 @@ export default define.page(async (ctx) => {
     if (existingReport.length > 0) {
       // Update existing report
       await db.update(SecutimeReportsTable)
-        .set({ connectedServiceId: connectedServiceId })
+        .set({
+          connectedServiceId: connectedServiceId,
+          workspaceId: workspaceId,
+        })
         .where(eq(SecutimeReportsTable.ownedBy, user.id));
     } else {
       // Create new report
@@ -77,13 +89,14 @@ export default define.page(async (ctx) => {
         id: crypto.randomUUID(),
         ownedBy: user.id,
         connectedServiceId: connectedServiceId,
+        workspaceId: workspaceId,
       });
     }
 
     return (
       <MessageBlock title="Success" backUrl="/secutime/settings">
         <p class="text-green-600">
-          Clockify account saved successfully!
+          Clockify account and workspace saved successfully!
         </p>
       </MessageBlock>
     );
@@ -105,6 +118,10 @@ export default define.page(async (ctx) => {
 
   const currentServiceId = existingReport.length > 0
     ? existingReport[0].connectedServiceId
+    : undefined;
+
+  const currentWorkspaceId = existingReport.length > 0
+    ? existingReport[0].workspaceId
     : undefined;
 
   if (clockifyServices.length === 0) {
@@ -136,38 +153,12 @@ export default define.page(async (ctx) => {
       />
 
       <section class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-xl font-semibold mb-4">Clockify Account</h2>
-        <form
-          method="POST"
-          class="flex flex-col gap-4"
-          id="settings-form"
-        >
-          <FormFieldWithLabel label="Account" forId="connected_service">
-            <select
-              name="connected_service"
-              id="connected_service"
-              required
-              class="border border-gray-300 rounded-md p-2"
-            >
-              <option value="">Select a Clockify account</option>
-              {clockifyServices.map((service) => (
-                <option
-                  value={service.id}
-                  selected={service.id === currentServiceId}
-                >
-                  {service.service_label}
-                </option>
-              ))}
-            </select>
-          </FormFieldWithLabel>
-
-          <button
-            type="submit"
-            class="primary-btn"
-          >
-            Save
-          </button>
-        </form>
+        <h2 class="text-xl font-semibold mb-4">Clockify Configuration</h2>
+        <SettingsForm
+          clockifyServices={clockifyServices}
+          currentServiceId={currentServiceId}
+          currentWorkspaceId={currentWorkspaceId}
+        />
       </section>
     </div>
   );

@@ -8,6 +8,7 @@ export const SecutimeReportsTable = sqliteTable("secutime_reports", {
   connectedServiceId: text("connected_service").references(() =>
     ConnectedServicesTable.id
   ).notNull(),
+  workspaceId: text("workspace_id").notNull(),
 });
 
 export type SecutimeReportDB = typeof SecutimeReportsTable.$inferSelect;

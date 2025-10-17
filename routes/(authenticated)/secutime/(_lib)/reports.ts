@@ -5,8 +5,6 @@ import { err, ok, Result } from "neverthrow";
 // ============================================================================
 
 export enum ClockifySummaryErrorType {
-  FailedToFetchWorkspace = "FailedToFetchWorkspace",
-  WorkspaceNotFound = "WorkspaceNotFound",
   FailedToFetchClients = "FailedToFetchClients",
   SecunetClientNotFound = "SecunetClientNotFound",
   FailedToFetchSummary = "FailedToFetchSummary",
@@ -21,14 +19,6 @@ export type ClockifySummaryError = {
 // ============================================================================
 // TypeScript Types for Clockify API
 // ============================================================================
-
-type ClockifyUserResponse = {
-  id: string;
-  email: string;
-  name: string;
-  defaultWorkspace: string;
-  activeWorkspace: string;
-};
 
 type ClockifyClient = {
   id: string;
@@ -93,30 +83,25 @@ export type SummaryResult = {
  * Fetches work time summary from Clockify for the Secunet client
  *
  * @param apiKey - Clockify API key
+ * @param workspaceId - Clockify workspace ID
  * @param fromDate - Start date for the report
  * @param toDate - End date for the report
  * @returns Result with summary data or error
  */
 export async function getWorkTimeSummary(
   apiKey: string,
+  workspaceId: string,
   fromDate: Date,
   toDate: Date,
 ): Promise<Result<SummaryResult, ClockifySummaryError>> {
-  // Step 1: Fetch workspace ID
-  const workspaceResult = await fetchWorkspaceId(apiKey);
-  if (workspaceResult.isErr()) {
-    return err(workspaceResult.error);
-  }
-  const workspaceId = workspaceResult.value;
-
-  // Step 2: Fetch Secunet client ID
+  // Step 1: Fetch Secunet client ID
   const clientResult = await fetchSecunetClientId(apiKey, workspaceId);
   if (clientResult.isErr()) {
     return err(clientResult.error);
   }
   const secunetClientId = clientResult.value;
 
-  // Step 3: Fetch summary report
+  // Step 2: Fetch summary report
   const summaryResult = await fetchSummaryReport(
     apiKey,
     workspaceId,
@@ -134,49 +119,6 @@ export async function getWorkTimeSummary(
 // ============================================================================
 // Helper Functions
 // ============================================================================
-
-/**
- * Fetches the default workspace ID from Clockify user profile
- */
-async function fetchWorkspaceId(
-  apiKey: string,
-): Promise<Result<string, ClockifySummaryError>> {
-  try {
-    const response = await fetch("https://api.clockify.me/api/v1/user", {
-      method: "GET",
-      headers: {
-        "X-Api-Key": apiKey,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        return err({
-          type: ClockifySummaryErrorType.InvalidApiKey,
-        });
-      }
-      return err({
-        type: ClockifySummaryErrorType.FailedToFetchWorkspace,
-      });
-    }
-
-    const userData: ClockifyUserResponse = await response.json();
-
-    if (!userData.defaultWorkspace) {
-      return err({
-        type: ClockifySummaryErrorType.WorkspaceNotFound,
-      });
-    }
-
-    return ok(userData.defaultWorkspace);
-  } catch (error) {
-    return err({
-      type: ClockifySummaryErrorType.FailedToFetchWorkspace,
-      innerError: error as Error,
-    });
-  }
-}
 
 /**
  * Fetches the Secunet client ID from the workspace
