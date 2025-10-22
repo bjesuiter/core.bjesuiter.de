@@ -1,5 +1,5 @@
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
-import customUint8Array from "../types/customUint8Array.ts";
+import { customUint8Array } from "../types/customUint8Array.ts";
 
 export const UsersTable = sqliteTable("users", {
   id: text("id").primaryKey(),
