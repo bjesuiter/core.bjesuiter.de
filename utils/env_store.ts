@@ -3,8 +3,8 @@ import { z } from "zod/v4";
 const envSchema = z.object({
   STAGE: z.enum(["local", "github_actions", "deno_deploy"]),
   CORE_ROOT_USER_EMAIL: z.email(),
-  CORE_DDNS_USERNAME: z.string(),
-  CORE_DDNS_PASSWORD: z.string(),
+  CORE_ROOT_USER_LABEL: z.string(),
+  CORE_ROOT_USER_PASSWORD: z.string(),
   CORE_DATABASE_URL: z.string(),
   TURSO_AUTH_TOKEN: z.string(),
 });
