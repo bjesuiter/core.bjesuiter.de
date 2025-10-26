@@ -2,12 +2,9 @@ import { z } from "zod/v4";
 
 const envSchema = z.object({
   STAGE: z.enum(["local", "github_actions", "deno_deploy"]),
-  CLOUDFLARE_EMAIL: z.string(),
-  CLOUDFLARE_DDNS_API_TOKEN: z.string(),
-  CLOUDFLARE_ZONE_ID_HIBISK_DE: z.string(),
   CORE_ROOT_USER_EMAIL: z.email(),
-  CORE_DDNS_USERNAME: z.string(),
-  CORE_DDNS_PASSWORD: z.string(),
+  CORE_ROOT_USER_LABEL: z.string(),
+  CORE_ROOT_USER_PASSWORD: z.string(),
   CORE_DATABASE_URL: z.string(),
   TURSO_AUTH_TOKEN: z.string(),
 });
@@ -21,17 +18,6 @@ function initEnvStore() {
     case "deno_deploy":
       return envSchema.parse(Deno.env.toObject());
     case "github_actions":
-      // return envSchema.parse({
-      //   STAGE: "github_actions",
-      //   CLOUDFLARE_EMAIL: "github_actions",
-      //   CLOUDFLARE_DDNS_API_TOKEN: "github_actions",
-      //   CLOUDFLARE_ZONE_ID_HIBISK_DE: "github_actions",
-      //   CORE_ROOT_USER_EMAIL: "github_actions@bjesuiter.de",
-      //   CORE_DDNS_USERNAME: "github_actions",
-      //   CORE_DDNS_PASSWORD: "github_actions",
-      //   CORE_DATABASE_URL: "github_actions",
-      //   TURSO_AUTH_TOKEN: "github_actions",
-      // });
       // no special handling anymore, just use the envs from the github action
       return envSchema.parse(Deno.env.toObject());
     case "local":
