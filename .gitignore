@@ -9,6 +9,7 @@
 _fresh/
 # npm dependencies
 node_modules/
+.vite
 
 # runtime data
 .runtime/data/*
