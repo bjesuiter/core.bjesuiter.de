@@ -8,6 +8,11 @@ Web-Frontend Helpers for IT infrastructure & daily tasks
 - TODO: offer endpoint to update IPs on Cloudflare => ddns for synology /
   hibisk.us network via cloudflare
 
+## TODO
+
+- Try this for local sqlite:
+  https://orm.drizzle.team/docs/get-started-sqlite#step-2---initialize-the-driver
+
 ---
 
 # Repo Log
