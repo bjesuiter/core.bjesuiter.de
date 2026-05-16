@@ -97,6 +97,8 @@ export default define.page(async (ctx) => {
         createdAt: now,
         updatedAt: now,
         ownedBy: user.id,
+        ipv4Enabled: formData.get("ipv4_enabled") === "on",
+        ipv6Enabled: formData.get("ipv6_enabled") === "on",
       }),
     );
 
@@ -264,6 +266,31 @@ export default define.page(async (ctx) => {
             name="allowed_user_agent"
             id="allowed_user_agent"
             placeholder="Synology DDNS Updater/72806 support@synology.com"
+          />
+        </FormFieldWithLabel>
+
+        <FormFieldWithLabel
+          label="Enable IPv4 Updates"
+          forId="ipv4_enabled"
+          inline
+        >
+          <input
+            type="checkbox"
+            name="ipv4_enabled"
+            id="ipv4_enabled"
+            defaultChecked
+          />
+        </FormFieldWithLabel>
+
+        <FormFieldWithLabel
+          label="Enable IPv6 Updates"
+          forId="ipv6_enabled"
+          inline
+        >
+          <input
+            type="checkbox"
+            name="ipv6_enabled"
+            id="ipv6_enabled"
           />
         </FormFieldWithLabel>
 

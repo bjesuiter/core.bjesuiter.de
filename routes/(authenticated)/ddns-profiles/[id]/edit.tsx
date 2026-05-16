@@ -234,6 +234,32 @@ export default define.page(async (ctx) => {
           />
         </FormFieldWithLabel>
 
+        <FormFieldWithLabel
+          label="Enable IPv4 Updates"
+          forId="ipv4_enabled"
+          inline
+        >
+          <input
+            type="checkbox"
+            name="ipv4_enabled"
+            id="ipv4_enabled"
+            defaultChecked={profile.ipv4Enabled}
+          />
+        </FormFieldWithLabel>
+
+        <FormFieldWithLabel
+          label="Enable IPv6 Updates"
+          forId="ipv6_enabled"
+          inline
+        >
+          <input
+            type="checkbox"
+            name="ipv6_enabled"
+            id="ipv6_enabled"
+            defaultChecked={profile.ipv6Enabled}
+          />
+        </FormFieldWithLabel>
+
         <button type="submit" class="primary-btn">
           Save Changes
         </button>

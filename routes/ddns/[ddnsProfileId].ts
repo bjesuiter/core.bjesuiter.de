@@ -10,6 +10,7 @@ import { initClient } from "@ts-rest/core";
 import { eq } from "drizzle-orm";
 import pMap from "p-map";
 import { err, ok, Result } from "neverthrow";
+import type { cfClient } from "@/types/restClients.ts";
 
 type UpdateOneRecordResult = Result<void, {
   type: UpdateOneRecordErrorType;
@@ -23,6 +24,133 @@ enum UpdateOneRecordErrorType {
   FailedToListDNSRecords = "FailedToListDNSRecords",
   FailedToUpdateRecord = "FailedToUpdateRecord",
   FailedToCreateRecord = "FailedToCreateRecord",
+}
+
+const IP_RECORD_TYPE = {
+  ipv4: "A",
+  ipv6: "AAAA",
+} as const;
+
+// todo, move to seperate file other clients may join which requires ajusting the function
+async function updateOneRecord({
+  zoneId,
+  recordName,
+  newIP,
+  type,
+  cfClient,
+}: {
+  zoneId: string;
+  recordName: string;
+  newIP: string;
+  type: keyof typeof IP_RECORD_TYPE;
+  cfClient: cfClient;
+}): Promise<
+  Result<void, UpdateOneRecordError>
+> {
+  try {
+    // Find existing record
+    const listResponse = await cfClient.zones.zone_id.dns_records.list({
+      params: { zone_id: zoneId },
+      query: {
+        type: IP_RECORD_TYPE[type],
+        name: { exact: recordName },
+      },
+    });
+
+    if (listResponse.status !== 200) {
+      return err({
+        type: UpdateOneRecordErrorType.FailedToListDNSRecords,
+        innerError: new Error(
+          `Failed to list DNS records: ${listResponse.status}`,
+          {
+            cause: listResponse.body,
+          },
+        ),
+      });
+    }
+
+    const existingRecords = listResponse.body.result ?? [];
+
+    // Record is already up to date
+    if (existingRecords.length > 0 && existingRecords[0].content === newIP) {
+      console.log(
+        `Record ${recordName} already up to date with ip${type}: ${newIP}`,
+      );
+      return ok();
+    }
+
+    if (existingRecords.length > 0 && existingRecords[0].content !== newIP) {
+      // Update existing record
+      const recordId = existingRecords[0].id;
+      const updateResponse = await cfClient.zones.zone_id.dns_records.update({
+        params: { zone_id: zoneId, record_id: recordId },
+        body: {
+          name: recordName,
+          ttl: 120,
+          type: IP_RECORD_TYPE[type],
+          content: newIP,
+        },
+      });
+
+      if (updateResponse.status === 200) {
+        console.log(
+          `Record ${recordName} updated successfully to ip${type}: ${newIP}`,
+        );
+      } else {
+        return err({
+          type: UpdateOneRecordErrorType.FailedToUpdateRecord,
+          innerError: new Error(
+            `Failed to update record: ${updateResponse.status}`,
+            {
+              cause: updateResponse.body,
+            },
+          ),
+        });
+      }
+    } else {
+      // Create new record
+      const createResponse = await cfClient.zones.zone_id.dns_records.create({
+        params: { zone_id: zoneId },
+        body: {
+          name: recordName,
+          ttl: 120,
+          type: IP_RECORD_TYPE[type],
+          content: newIP,
+        },
+      });
+
+      if (createResponse.status === 200) {
+        console.log(
+          `Record ${recordName} created successfully with ip${type}: ${newIP}`,
+        );
+      } else {
+        return err({
+          type: UpdateOneRecordErrorType.FailedToCreateRecord,
+          innerError: new Error(
+            `Failed to create record: ${createResponse.status}`,
+            {
+              cause: createResponse.body,
+            },
+          ),
+        });
+      }
+    }
+  } catch (e) {
+    const errorMsg = e instanceof Error ? e.message : String(e);
+
+    console.error(
+      `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
+    );
+    // These events are not shown in deno deploy ui at the moment
+    // span.addEvent(
+    //   `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
+    // );
+    return err({
+      type: UpdateOneRecordErrorType.FailedToUpdateRecord,
+      innerError: new Error(errorMsg),
+    });
+  }
+  return ok();
 }
 
 async function updateDnsViaProfile(
@@ -48,6 +176,8 @@ async function updateDnsViaProfile(
     allowedUserAgent: DDNSProfilesTable.allowedUserAgent,
     connectedServiceId: DDNSProfilesTable.connectedServiceId,
     apiKey: ConnectedServicesTable.api_key,
+    ipv4Enabled: DDNSProfilesTable.ipv4Enabled,
+    ipv6Enabled: DDNSProfilesTable.ipv6Enabled,
   })
     .from(DDNSProfilesTable)
     .leftJoin(
@@ -119,18 +249,37 @@ async function updateDnsViaProfile(
   }
 
   // Step 4 - Get the IP from the request
-  const ip = new URL(req.url).searchParams.get("ip");
-  if (!ip) {
+  const requestUrlParams = new URL(req.url).searchParams;
+  const ip = {
+    ipv4: requestUrlParams.get("ip") ?? requestUrlParams.get("ip4"),
+    ipv6: requestUrlParams.get("ip6"),
+  };
+  if (ip.ipv4 == null && profile.ipv4Enabled) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
-      message: "Bad Request - missing ip parameter",
+      message: "Bad Request - missing ipv4 parameter",
     });
     span.end();
-    return new Response("Bad Request - missing ip parameter", {
+    return new Response("Bad Request - missing ipv4 parameter", {
       status: 400,
     });
   }
-  span.setAttribute("targetIp", ip);
+
+  if (ip.ipv6 == null && profile.ipv6Enabled) {
+    span.setStatus({
+      code: SpanStatusCode.ERROR,
+      message: "Bad Request - missing ipv6 parameter",
+    });
+    span.end();
+    return new Response("Bad Request - missing ipv6 parameter", {
+      status: 400,
+    });
+  }
+
+  profile.ipv4Enabled &&
+    span.setAttribute("ddnsIpV4", ip.ipv4 ?? "none - you should not see this.");
+  profile.ipv6Enabled &&
+    span.setAttribute("ddnsIpV6", ip.ipv6 ?? "none - you should not see this.");
 
   const sourceIp = (ctx.info.remoteAddr as Deno.NetAddr).hostname;
   span.setAttribute("sourceIp", sourceIp);
@@ -172,135 +321,50 @@ async function updateDnsViaProfile(
     },
   });
 
-  const updateOneRecord = async ({
-    zoneId,
-    recordName,
-    newIP,
-    cfClient,
+  // Helper to run updates for a given IP type. Captures the checked IP value
+  // into a local constant so TypeScript knows it's non-null inside callbacks.
+  async function runUpdatesForType({
+    enabled,
+    ipValue,
+    type,
+    concurrency = 8,
   }: {
-    zoneId: string;
-    recordName: string;
-    newIP: string;
-    cfClient: typeof outerCfClient;
-  }): Promise<
-    Result<void, UpdateOneRecordError>
-  > => {
-    try {
-      // Find existing record
-      const listResponse = await cfClient.zones.zone_id.dns_records.list({
-        params: { zone_id: zoneId },
-        query: {
-          type: "A",
-          name: { exact: recordName },
-        },
+    enabled: boolean | null | undefined;
+    ipValue: string | null | undefined;
+    type: keyof typeof IP_RECORD_TYPE;
+    concurrency?: number;
+  }): Promise<Array<UpdateOneRecordResult>> {
+    if (!enabled || ipValue == null) return [];
+    const newIP = ipValue;
+    return await pMap(dnsRecords, (record) => {
+      return updateOneRecord({
+        zoneId: record.zone_id,
+        recordName: record.record_name,
+        newIP,
+        type,
+        cfClient: outerCfClient,
       });
+    }, {
+      concurrency,
+    });
+  }
 
-      if (listResponse.status !== 200) {
-        return err({
-          type: UpdateOneRecordErrorType.FailedToListDNSRecords,
-          innerError: new Error(
-            `Failed to list DNS records: ${listResponse.status}`,
-            {
-              cause: listResponse.body,
-            },
-          ),
-        });
-      }
-
-      const existingRecords = listResponse.body.result ?? [];
-
-      // Record is already up to date
-      if (existingRecords.length > 0 && existingRecords[0].content === newIP) {
-        console.log(
-          `Record ${recordName} already up to date with IPv4: ${newIP}`,
-        );
-        return ok();
-      }
-
-      if (existingRecords.length > 0 && existingRecords[0].content !== newIP) {
-        // Update existing record
-        const recordId = existingRecords[0].id;
-        const updateResponse = await cfClient.zones.zone_id.dns_records.update({
-          params: { zone_id: zoneId, record_id: recordId },
-          body: {
-            name: recordName,
-            ttl: 120,
-            type: "A",
-            content: newIP,
-          },
-        });
-
-        if (updateResponse.status === 200) {
-          console.log(
-            `Record ${recordName} updated successfully to IPv4: ${newIP}`,
-          );
-        } else {
-          return err({
-            type: UpdateOneRecordErrorType.FailedToUpdateRecord,
-            innerError: new Error(
-              `Failed to update record: ${updateResponse.status}`,
-              {
-                cause: updateResponse.body,
-              },
-            ),
-          });
-        }
-      } else {
-        // Create new record
-        const createResponse = await cfClient.zones.zone_id.dns_records.create({
-          params: { zone_id: zoneId },
-          body: {
-            name: recordName,
-            ttl: 120,
-            type: "A",
-            content: newIP,
-          },
-        });
-
-        if (createResponse.status === 200) {
-          console.log(
-            `Record ${recordName} created successfully with IPv4: ${newIP}`,
-          );
-        } else {
-          return err({
-            type: UpdateOneRecordErrorType.FailedToCreateRecord,
-            innerError: new Error(
-              `Failed to create record: ${createResponse.status}`,
-              {
-                cause: createResponse.body,
-              },
-            ),
-          });
-        }
-      }
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : String(e);
-
-      console.error(
-        `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
-      );
-      // These events are not shown in deno deploy ui at the moment
-      // span.addEvent(
-      //   `Failed to update/create DNS record ${recordName}: ${errorMsg}`,
-      // );
-      return err({
-        type: UpdateOneRecordErrorType.FailedToUpdateRecord,
-        innerError: new Error(errorMsg),
-      });
-    }
-    return ok();
-  };
-
-  const updateResults = await pMap(dnsRecords, (record) =>
-    updateOneRecord({
-      zoneId: record.zone_id,
-      recordName: record.record_name,
-      newIP: ip,
-      cfClient: outerCfClient,
-    }), {
+  const updateResultsIPv4 = await runUpdatesForType({
+    enabled: profile.ipv4Enabled,
+    ipValue: ip.ipv4,
+    type: "ipv4",
     concurrency: 8,
   });
 
+  const updateResultsIPv6 = await runUpdatesForType({
+    enabled: profile.ipv6Enabled,
+    ipValue: ip.ipv6,
+    type: "ipv6",
+    concurrency: 8,
+  });
+  // Updates have been successful
+
+  const updateResults = [...updateResultsIPv4, ...updateResultsIPv6];
   if (updateResults.some((result) => result.isErr())) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
@@ -319,8 +383,6 @@ async function updateDnsViaProfile(
       status: 500,
     });
   }
-
-  // Updates have been successful
 
   // Step 6 - Update lastUsedAt timestamp
   await db.update(DDNSProfilesTable)
