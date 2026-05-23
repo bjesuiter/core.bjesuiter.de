@@ -1,0 +1,22 @@
+routes/(authenticated)/ddns-profiles/[id]/edit.tsx
+  s_66e360b4a3e57b::t_d1002e995c8a19 18-21,46-47,117-118
+lib/db/schemas/ddns_profiles.table.ts
+  ai_agent 2
+  s_66e360b4a3e57b::t_6a87497ce5846d 1,25-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.4",
+  "base_commit_sha": "21b704d63becfbdd73c83042e2f6903e176901e0",
+  "prompts": {},
+  "sessions": {
+    "s_66e360b4a3e57b": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019e5493-e135-761f-9542-63fe71901d55",
+        "model": "gpt-5.5"
+      },
+      "human_author": "Benjamin Jesuiter <bjesuiter@gmail.com>"
+    }
+  }
+}
