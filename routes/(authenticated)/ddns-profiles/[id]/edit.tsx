@@ -15,6 +15,10 @@ const DnsRecordSchema = z.object({
   zone_id: z.string().min(1),
 });
 
+const CheckboxSchema = z.literal("on").optional().transform((value) =>
+  value === "on"
+);
+
 const EditDDNSProfileSchema = z.object({
   profile_name: z.string().min(1),
   connected_service_id: z.uuid(),
@@ -39,6 +43,8 @@ const EditDDNSProfileSchema = z.object({
     }
   }),
   allowed_user_agent: z.string().optional(),
+  ipv4_enabled: CheckboxSchema,
+  ipv6_enabled: CheckboxSchema,
 });
 
 export default define.page(async (ctx) => {
@@ -108,6 +114,8 @@ export default define.page(async (ctx) => {
         dnsRecords: parsedInput.data.dns_records,
         connectedServiceId: parsedInput.data.connected_service_id,
         allowedUserAgent: parsedInput.data.allowed_user_agent || null,
+        ipv4Enabled: parsedInput.data.ipv4_enabled,
+        ipv6Enabled: parsedInput.data.ipv6_enabled,
         lastUsedAt: null,
         updatedAt: new Date().toISOString(),
       })
