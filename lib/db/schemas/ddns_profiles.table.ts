@@ -1,4 +1,5 @@
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { ConnectedServicesTable } from "./connected_services.table.ts";
 import { UsersTable } from "./users.table.ts";
 
@@ -21,4 +22,10 @@ export const DDNSProfilesTable = sqliteTable("ddns_profiles", {
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
   ownedBy: text("owned_by").references(() => UsersTable.id).notNull(),
+  ipv4Enabled: integer("ipv4_enabled", { mode: "boolean" }).notNull().default(
+    sql`1`,
+  ),
+  ipv6Enabled: integer("ipv6_enabled", { mode: "boolean" }).notNull().default(
+    sql`0`,
+  ),
 });

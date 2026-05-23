@@ -9,6 +9,9 @@ import {
   updateDNSRecord,
 } from "./zones/zone_id/dns_records.ts";
 
+// for dummy client type export
+import { initClient } from "@ts-rest/core";
+
 export const apiCloudflareCom = c.router({
   user: {
     tokens: {
@@ -34,3 +37,13 @@ export const apiCloudflareCom = c.router({
     authorization: v.string(),
   },
 });
+
+// export dummy client type
+const dummyCfClient = initClient(apiCloudflareCom, {
+  baseUrl: "",
+  baseHeaders: {
+    authorization: "",
+  },
+});
+
+export type cfClient = typeof dummyCfClient;

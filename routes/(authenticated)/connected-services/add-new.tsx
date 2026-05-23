@@ -115,7 +115,7 @@ export default define.page(
           </FormFieldWithLabel>
 
           <FormFieldWithLabel label="API Key" forId="api_key">
-            <input type="text" name="api_key" id="api_key" required />
+            <input type="text" name="api_key" id="api_key" autocomplete="off" required />
           </FormFieldWithLabel>
 
           <button type="submit" class="primary-btn">Add Service</button>
