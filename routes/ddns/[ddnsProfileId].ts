@@ -254,13 +254,17 @@ async function updateDnsViaProfile(
     ipv4: requestUrlParams.get("ip") ?? requestUrlParams.get("ipv4"),
     ipv6: requestUrlParams.get("ipv6"),
   };
-  
-    profile.ipv4Enabled &&
-      span.setAttribute("ddnsIpV4", ip.ipv4 ?? "none - you forgot to add the ipv4 parameter");
-      profile.ipv6Enabled &&
-      span.setAttribute("ddnsIpV6", ip.ipv6 ?? "none - you forgot to add the ipv6 parameter");
-    const sourceIp = (ctx.info.remoteAddr as Deno.NetAddr).hostname;
-    span.setAttribute("sourceIp", sourceIp);
+
+  if (profile.ipv4Enabled) {
+    span.setAttribute("ddnsIpV4", ip.ipv4 ?? "missing");
+  }
+
+  if (profile.ipv6Enabled) {
+    span.setAttribute("ddnsIpV6", ip.ipv6 ?? "missing");
+  }
+
+  const sourceIp = (ctx.info.remoteAddr as Deno.NetAddr).hostname;
+  span.setAttribute("sourceIp", sourceIp);
 
   if (ip.ipv4 == null && profile.ipv4Enabled) {
     span.setStatus({
