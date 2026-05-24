@@ -251,9 +251,17 @@ async function updateDnsViaProfile(
   // Step 4 - Get the IP from the request
   const requestUrlParams = new URL(req.url).searchParams;
   const ip = {
-    ipv4: requestUrlParams.get("ip") ?? requestUrlParams.get("ip4"),
-    ipv6: requestUrlParams.get("ip6"),
+    ipv4: requestUrlParams.get("ip") ?? requestUrlParams.get("ipv4"),
+    ipv6: requestUrlParams.get("ipv6"),
   };
+  
+    profile.ipv4Enabled &&
+      span.setAttribute("ddnsIpV4", ip.ipv4 ?? "none - you forgot to add the ipv4 parameter");
+      profile.ipv6Enabled &&
+      span.setAttribute("ddnsIpV6", ip.ipv6 ?? "none - you forgot to add the ipv6 parameter");
+    const sourceIp = (ctx.info.remoteAddr as Deno.NetAddr).hostname;
+    span.setAttribute("sourceIp", sourceIp);
+
   if (ip.ipv4 == null && profile.ipv4Enabled) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
@@ -264,7 +272,7 @@ async function updateDnsViaProfile(
       status: 400,
     });
   }
-
+    
   if (ip.ipv6 == null && profile.ipv6Enabled) {
     span.setStatus({
       code: SpanStatusCode.ERROR,
@@ -276,13 +284,7 @@ async function updateDnsViaProfile(
     });
   }
 
-  profile.ipv4Enabled &&
-    span.setAttribute("ddnsIpV4", ip.ipv4 ?? "none - you should not see this.");
-  profile.ipv6Enabled &&
-    span.setAttribute("ddnsIpV6", ip.ipv6 ?? "none - you should not see this.");
 
-  const sourceIp = (ctx.info.remoteAddr as Deno.NetAddr).hostname;
-  span.setAttribute("sourceIp", sourceIp);
 
   // Log the authorized request
   // await logAuthorizedDDNSUpdateRequest({

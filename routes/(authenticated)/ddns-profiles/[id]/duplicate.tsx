@@ -10,37 +10,7 @@ import { DDNSProfilesTable } from "@/lib/db/schemas/ddns_profiles.table.ts";
 import { ConnectedServicesTable } from "@/lib/db/schemas/connected_services.table.ts";
 import { generateSecureRandomString } from "@/utils/auth_helpers.ts";
 import { and, eq } from "drizzle-orm";
-
-const DnsRecordSchema = z.object({
-  record_name: z.string().min(1),
-  zone_id: z.string().min(1),
-});
-
-const DuplicateDDNSProfileSchema = z.object({
-  profile_name: z.string().min(1),
-  connected_service_id: z.uuid(),
-  dns_records: z.string().transform((str, ctx) => {
-    try {
-      const parsed = JSON.parse(str);
-      const result = z.array(DnsRecordSchema).safeParse(parsed);
-      if (!result.success) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Invalid DNS records format",
-        });
-        return z.NEVER;
-      }
-      return result.data;
-    } catch {
-      ctx.addIssue({
-        code: "custom",
-        message: "DNS records must be valid JSON",
-      });
-      return z.NEVER;
-    }
-  }),
-  allowed_user_agent: z.string().optional(),
-});
+import { DDNSProfileFormSchema } from "@/schemas/ddns/profileForm.ts";
 
 export default define.page(async (ctx) => {
   const authResult = await ctx.state.authPromise;
@@ -83,7 +53,7 @@ export default define.page(async (ctx) => {
   // HANDLE POST REQUEST
   if (ctx.req.method === "POST") {
     const formData = await ctx.req.formData();
-    const parsedInput = DuplicateDDNSProfileSchema.safeParse(
+    const parsedInput = DDNSProfileFormSchema.safeParse(
       Object.fromEntries(formData),
     );
 
@@ -139,6 +109,8 @@ export default define.page(async (ctx) => {
     const ddnsPassword = generateSecureRandomString();
     const profileId = crypto.randomUUID();
     const now = new Date().toISOString();
+    const ipv4Enabled = parsedInput.data.ipv4_enabled;
+    const ipv6Enabled = parsedInput.data.ipv6_enabled;
 
     // Insert into DB
     await db.insert(DDNSProfilesTable).values({
@@ -153,6 +125,8 @@ export default define.page(async (ctx) => {
       createdAt: now,
       updatedAt: now,
       ownedBy: user.id,
+      ipv4Enabled: ipv4Enabled,
+      ipv6Enabled: ipv6Enabled,
     });
 
     return (
@@ -199,7 +173,7 @@ export default define.page(async (ctx) => {
         <div class="flex flex-col gap-2 p-4 bg-blue-50 border border-blue-300 rounded">
           <h3 class="font-bold">DDNS Update Endpoint:</h3>
           <code class="text-sm break-all">
-            POST {ctx.url.origin}/ddns/{profileId}?ip=YOUR_IP
+            POST {ctx.url.origin}/ddns/{profileId}?{ipv4Enabled ? "ipv4=<your_ipv4>" : ""}{ipv4Enabled && ipv6Enabled ? "&" : ""}{ipv6Enabled ? "ipv6=<your_ipv6>" : ""}
           </code>
           <p class="text-sm text-gray-600">
             Use Basic Auth with the credentials above
