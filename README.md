@@ -14,15 +14,41 @@ Shared local development secrets are loaded from the SOPS/age encrypted file
 resolver file. This lets JB and his brother share the same local development
 values without committing plaintext secrets.
 
-Setup:
+Setup on a new machine:
 
-1. Install `sops` and `age`.
-2. Make sure SOPS can access your age identity. For SSH recipients, SOPS does
-   not decrypt via `ssh-agent`; use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` or
-   `SOPS_AGE_SSH_PRIVATE_KEY_CMD`.
-3. Add the brother's age or SSH public recipient to `.sops.yaml`, then run
-   `sops updatekeys secrets/shared.env.enc.yaml`.
-4. Run commands through the existing `deno task ...` wrappers.
+1. Install `sops`, `age`, Go, and `age-plugin-sshagent`:
+
+   ```sh
+   go install github.com/eszio/age-plugin-sshagent@latest
+   ```
+
+2. Ensure the Go bin directory is on `PATH`, for example `~/go/bin`.
+3. Enable Bitwarden's SSH agent and load/unlock the `ssh-ed25519` key used for
+   this repo. Bitwarden should ask before approving signing operations.
+4. Generate this machine's local age-plugin identity:
+
+   ```sh
+   mkdir -p ~/.config/sops/age
+   age-plugin-sshagent list
+   age-plugin-sshagent keygen -k "bjesuiter@macos" -o ~/.config/sops/age/core-bjesuiter-de-sshagent.txt
+   age-plugin-sshagent recipient -i ~/.config/sops/age/core-bjesuiter-de-sshagent.txt
+   ```
+
+5. Set SOPS to use that identity file:
+
+   ```sh
+   export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/core-bjesuiter-de-sshagent.txt"
+   ```
+
+6. Verify without printing values:
+
+   ```sh
+   sops --decrypt secrets/shared.env.enc.yaml >/dev/null
+   deno run -A npm:varlock@1.7.2 load
+   ```
+
+7. To add another developer, add their printed `age1...` recipient to
+   `.sops.yaml`, then run `sops updatekeys secrets/shared.env.enc.yaml`.
 
 Personal `.env`/`.env.local` files are still gitignored and can override shared
 values. CI and production should keep using platform secrets with the same env

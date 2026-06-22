@@ -1,11 +1,11 @@
 # SOPS/age config for shared local development secrets.
 #
-# Current recipient set contains JB's SSH public key only.
-# Add the brother's age or SSH public recipient later, then run:
+# Current recipient set should use age-plugin-sshagent-derived age1 recipients
+# for Bitwarden SSH-agent-backed developer keys.
+# Add the brother's age1 recipient later, then run:
 # sops updatekeys secrets/shared.env.enc.yaml
-# Do not commit age private keys.
-# Note: SOPS age SSH-key decrypt does not use ssh-agent. Configure
-# SOPS_AGE_SSH_PRIVATE_KEY_FILE or SOPS_AGE_SSH_PRIVATE_KEY_CMD for SSH identities.
+# Do not commit age private keys. age-plugin-sshagent identity files contain no
+# secret material, but keep them local so each machine can select its own agent key.
 
 creation_rules:
   - path_regex: ^secrets/.*\.env\.enc\.yaml$
