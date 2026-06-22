@@ -1,6 +1,3 @@
-// Automatically load environment variables from a `.env` file
-import "@std/dotenv/load";
-
 import { App, staticFiles, trailingSlashes } from "fresh";
 
 // bjesuiter: custom code before starting fresh (if needed)
