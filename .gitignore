@@ -3,6 +3,7 @@
 !.env.schema
 !.env.template
 !.env.jb
+!.env.codikyo
 
 # Fresh build directory
 _fresh/
