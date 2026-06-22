@@ -9,17 +9,23 @@ Local development config is described in `.env.schema` and loaded through
 Varlock wrappers in `deno.json`. Exported env var names stay unchanged for app
 runtime, CI, and production platform secrets.
 
-For JB macOS local dev secrets, use project-scoped Keychain items:
+Shared local development secrets are loaded from the SOPS/age encrypted file
+`secrets/shared.env.enc.yaml` through the committed `.env.shared` Varlock
+resolver file. This lets JB and his brother share the same local development
+values without committing plaintext secrets.
 
-- service: `varlock`
-- account: `core-bjesuiter-de:<ENV_VAR_NAME>`
-- repo provenance: `/Users/bjesuiter/Develop/bjesuiter/core.bjesuiter.de`
+Setup:
 
-Varlock 1.7.2 does not expose a `keychain(prompt)` API for customizing the
-native picker heading/title or supporting text with project context. Avoid
-global item names keyed only by env var name; use the explicit scoped
-`keychain(service="varlock", account="core-bjesuiter-de:<ENV_VAR_NAME>")`
-references in `.env.schema` instead.
+1. Install `sops` and `age`.
+2. Replace the placeholder recipients in `.sops.yaml` with both developers' age
+   public recipients.
+3. Create `secrets/shared.env.enc.yaml` from `secrets/shared.env.yaml.example`
+   using `sops --encrypt`.
+4. Run commands through the existing `deno task ...` wrappers.
+
+Personal `.env`/`.env.local` files are still gitignored and can override shared
+values. CI and production should keep using platform secrets with the same env
+var names.
 
 ## Services
 

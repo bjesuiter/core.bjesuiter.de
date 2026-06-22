@@ -2,6 +2,7 @@
 .env*
 !.env.schema
 !.env.template
+!.env.shared
 
 # Fresh build directory
 _fresh/
