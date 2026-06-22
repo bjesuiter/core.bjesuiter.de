@@ -1,11 +1,12 @@
 # SOPS/age config for shared local development secrets.
 #
-# Replace the placeholder recipients below with the age public recipients for
-# JB and his brother before creating or re-keying secrets/shared.env.enc.yaml.
+# Current recipient set contains JB's SSH public key only.
+# Add the brother's age or SSH public recipient later, then run:
+# sops updatekeys secrets/shared.env.enc.yaml
 # Do not commit age private keys.
+# Note: SOPS age SSH-key decrypt does not use ssh-agent. Configure
+# SOPS_AGE_SSH_PRIVATE_KEY_FILE or SOPS_AGE_SSH_PRIVATE_KEY_CMD for SSH identities.
 
 creation_rules:
   - path_regex: ^secrets/.*\.env\.enc\.yaml$
-    age: >-
-      age1REPLACE_WITH_JB_PUBLIC_RECIPIENT,
-      age1REPLACE_WITH_BROTHER_PUBLIC_RECIPIENT
+    age: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE8TCTcTcogANRynAnz1cE7FWxUotMhC1x/zFn456JPR bjesuiter@Zephir-MBP-16.local

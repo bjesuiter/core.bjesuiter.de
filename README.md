@@ -17,10 +17,11 @@ values without committing plaintext secrets.
 Setup:
 
 1. Install `sops` and `age`.
-2. Replace the placeholder recipients in `.sops.yaml` with both developers' age
-   public recipients.
-3. Create `secrets/shared.env.enc.yaml` from `secrets/shared.env.yaml.example`
-   using `sops --encrypt`.
+2. Make sure SOPS can access your age identity. For SSH recipients, SOPS does
+   not decrypt via `ssh-agent`; use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` or
+   `SOPS_AGE_SSH_PRIVATE_KEY_CMD`.
+3. Add the brother's age or SSH public recipient to `.sops.yaml`, then run
+   `sops updatekeys secrets/shared.env.enc.yaml`.
 4. Run commands through the existing `deno task ...` wrappers.
 
 Personal `.env`/`.env.local` files are still gitignored and can override shared

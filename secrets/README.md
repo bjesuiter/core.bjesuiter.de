@@ -20,18 +20,22 @@ Expected plaintext keys inside that encrypted file:
 Setup:
 
 1. Install `sops` and `age`.
-2. Replace the placeholder recipients in `.sops.yaml` with the age public
-   recipients for JB and his brother.
-3. Create a temporary plaintext YAML file outside the repo or in `/tmp` with the
+2. Make sure SOPS can access your age identity. For SSH recipients, SOPS does
+   not decrypt via `ssh-agent`; set `SOPS_AGE_SSH_PRIVATE_KEY_FILE` to the
+   private key path or `SOPS_AGE_SSH_PRIVATE_KEY_CMD` to a command that prints
+   an unencrypted private key.
+3. Add the brother's age or SSH public recipient to `.sops.yaml` later, then
+   run `sops updatekeys secrets/shared.env.enc.yaml`.
+4. Create a temporary plaintext YAML file outside the repo or in `/tmp` with the
    keys above.
-4. Encrypt it:
+5. Encrypt it:
 
    ```sh
    sops --encrypt --input-type yaml --output-type yaml /tmp/core-bjesuiter-shared.env.yaml > secrets/shared.env.enc.yaml
    ```
 
-5. Remove the temporary plaintext file.
-6. Verify without printing values:
+6. Remove the temporary plaintext file.
+7. Verify without printing values:
 
    ```sh
    sops --decrypt secrets/shared.env.enc.yaml >/dev/null
