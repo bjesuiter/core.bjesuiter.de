@@ -24,7 +24,8 @@ Setup on a new machine:
 
 2. Store each `.env.jb` account in macOS Keychain service `varlock`, using the
    account names from `.env.jb`, for example
-   `core-bjesuiter-de:jb:TURSO_AUTH_TOKEN`.
+   `core-bjesuiter-de:jb:TURSO_AUTH_TOKEN`. The profile reads them with the
+   macOS `security find-generic-password` CLI.
 3. Run commands through the existing `deno task ...` wrappers.
 
 Personal `.env`/`.env.local` files are still gitignored and can override
