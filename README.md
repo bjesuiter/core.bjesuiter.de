@@ -9,50 +9,27 @@ Local development config is described in `.env.schema` and loaded through
 Varlock wrappers in `deno.json`. Exported env var names stay unchanged for app
 runtime, CI, and production platform secrets.
 
-Shared local development secrets are loaded from the SOPS/age encrypted file
-`secrets/shared.env.enc.yaml` through the committed `.env.shared` Varlock
-resolver file. This lets JB and his brother share the same local development
-values without committing plaintext secrets.
+Local development values are selected by `DEV_ENV` and loaded from committed
+per-profile resolver files such as `.env.jb`. Each developer can keep distinct
+provider references without committing plaintext secrets or sharing the same
+secret values.
 
 Setup on a new machine:
 
-1. Install `sops`, `age`, Go, and `age-plugin-sshagent`:
+1. Create a gitignored `.env.local` selector:
 
    ```sh
-   go install github.com/eszio/age-plugin-sshagent@latest
+   printf 'DEV_ENV=jb\n' > .env.local
    ```
 
-2. Ensure the Go bin directory is on `PATH`, for example `~/go/bin`.
-3. Enable Bitwarden's SSH agent and load/unlock the `ssh-ed25519` key used for
-   this repo. Bitwarden should ask before approving signing operations.
-4. Generate this machine's local age-plugin identity:
+2. Store each `.env.jb` account in macOS Keychain service `varlock`, using the
+   account names from `.env.jb`, for example
+   `core-bjesuiter-de:jb:TURSO_AUTH_TOKEN`.
+3. Run commands through the existing `deno task ...` wrappers.
 
-   ```sh
-   mkdir -p ~/.config/sops/age
-   age-plugin-sshagent list
-   age-plugin-sshagent keygen -k "bjesuiter@macos" -o ~/.config/sops/age/core-bjesuiter-de-sshagent.txt
-   age-plugin-sshagent recipient -i ~/.config/sops/age/core-bjesuiter-de-sshagent.txt
-   ```
-
-5. Set SOPS to use that identity file:
-
-   ```sh
-   export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/core-bjesuiter-de-sshagent.txt"
-   ```
-
-6. Verify without printing values:
-
-   ```sh
-   sops --decrypt secrets/shared.env.enc.yaml >/dev/null
-   deno run -A npm:varlock@1.7.2 load
-   ```
-
-7. To add another developer, add their printed `age1...` recipient to
-   `.sops.yaml`, then run `sops updatekeys secrets/shared.env.enc.yaml`.
-
-Personal `.env`/`.env.local` files are still gitignored and can override shared
-values. CI and production should keep using platform secrets with the same env
-var names.
+Personal `.env`/`.env.local` files are still gitignored and can override
+profile values. CI and production should keep using platform secrets with the
+same env var names.
 
 ## Services
 
