@@ -9,17 +9,17 @@
     "type-check": "deno check main.ts",
     "check-all": "deno fmt --check && deno lint && deno check main.ts",
     "cache": "deno cache main.ts",
-    "dev": "deno run -A npm:varlock@1.7.2 run -- deno run -A --unstable-kv --watch=static/,routes/ dev.ts",
-    "build": "deno run -A npm:varlock@1.7.2 run -- deno run -A --unstable-kv dev.ts build",
-    "preview": "deno run -A npm:varlock@1.7.2 run -- deno run -A --unstable-kv main.ts",
-    "deploy": "deno run -A npm:varlock@1.7.2 run -- sh -c 'deno task build && deployctl deploy --prod'",
+    "dev": "fish -lc 'varlock run -- deno run -A --unstable-kv --watch=static/,routes/ dev.ts'",
+    "build": "fish -lc 'varlock run -- deno run -A --unstable-kv dev.ts build'",
+    "preview": "fish -lc 'varlock run -- deno run -A --unstable-kv main.ts'",
+    "deploy": "fish -lc 'varlock run -- sh -c \"deno task build && deployctl deploy --prod\"'",
     "update": "deno run -Ar jsr:@fresh/update",
-    "db-push": "deno run -A npm:varlock@1.7.2 run -- sh -c 'deno task db-push-dev && deno task db-push-prod'",
-    "db-push-dev": "deno run -A npm:varlock@1.7.2 run -- drizzle-kit --config .config/drizzle-dev.config.ts push",
-    "db-push-prod": "deno run -A npm:varlock@1.7.2 run -- drizzle-kit --config .config/drizzle-prod.config.ts push",
-    "db-studio-dev": "deno run -A npm:varlock@1.7.2 run -- drizzle-kit --config .config/drizzle-dev.config.ts studio",
-    "db-studio-prod": "deno run -A npm:varlock@1.7.2 run -- drizzle-kit --config .config/drizzle-prod.config.ts studio",
-    "playground-ddns": "deno run -A npm:varlock@1.7.2 run -- deno run -A --unstable-kv --watch playground/ddns_playground.local.ts"
+    "db-push": "fish -lc 'varlock run -- sh -c \"deno task db-push-dev && deno task db-push-prod\"'",
+    "db-push-dev": "fish -lc 'varlock run -- drizzle-kit --config .config/drizzle-dev.config.ts push'",
+    "db-push-prod": "fish -lc 'varlock run -- drizzle-kit --config .config/drizzle-prod.config.ts push'",
+    "db-studio-dev": "fish -lc 'varlock run -- drizzle-kit --config .config/drizzle-dev.config.ts studio'",
+    "db-studio-prod": "fish -lc 'varlock run -- drizzle-kit --config .config/drizzle-prod.config.ts studio'",
+    "playground-ddns": "fish -lc 'varlock run -- deno run -A --unstable-kv --watch playground/ddns_playground.local.ts'"
   },
   "lint": {
     "rules": {

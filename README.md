@@ -9,6 +9,8 @@ Local development config is described in `.env.schema` and loaded through
 Varlock wrappers in `deno.json`. Exported env var names stay unchanged for app
 runtime, CI, and production platform secrets.
 
+This repo requires Varlock installed globally and available on `PATH`.
+
 Local development values are selected by `DEV_ENV` and loaded from committed
 per-profile resolver files such as `.env.jb`. Each developer can keep distinct
 provider references without committing plaintext secrets or sharing the same
@@ -24,8 +26,9 @@ Setup on a new machine:
 
 2. Store each `.env.jb` account in macOS Keychain service `varlock`, using the
    account names from `.env.jb`, for example
-   `core-bjesuiter-de:jb:TURSO_AUTH_TOKEN`. The profile reads them with the
-   macOS `security find-generic-password` CLI.
+   `core-bjesuiter-de:jb:TURSO_AUTH_TOKEN`. The profile currently uses a
+   temporary `exec(security find-generic-password ...)` bridge because Varlock's
+   helper-access flow for already-imported secrets is not ready yet.
 3. Run commands through the existing `deno task ...` wrappers.
 
 Personal `.env`/`.env.local` files are still gitignored and can override
